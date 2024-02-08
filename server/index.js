@@ -10,18 +10,23 @@ app.use(cors())
 mongoose.connect("mongodb://127.0.0.1:27017/NotificationsSystem");
 
 
-app.post('/signup',(req,res)=>{
+app.post('/signup',async(req,res)=>{
     const formData = req.body.formData;
-
-    // 'formData' contains the data sent from the client
-   // console.log(formData);
-  
-    // Add your registration logic here
+  try{
+     // Check if the username already exists
+     const ExistingUser=await UsersModel.findOne({username:formData.username});
+    if(ExistingUser){
+        return res.json({success:false, message:'Username already exists' } )
+    }
+   // Username doesn't exist, create a new user
     UsersModel.create(formData)
-    .then(user =>res.json(user))
-    .catch(err=> res.json(err))
-    // Respond to the client (this is just an example response)
-   // res.json({ success: true, message: 'User registered successfully' });
+    res.json({ success: true, message: 'User registered successfully' });
+
+    }catch (error) {
+    console.error('Error during signup:', error);
+    return res.status(500).json({ success: false, message: 'Internal server error', error: error });
+  }
+ 
 })
 
 app.listen(3001, ()=>{

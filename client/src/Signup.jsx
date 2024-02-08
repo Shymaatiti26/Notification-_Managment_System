@@ -10,6 +10,7 @@ const Register = () => {
     email: '',
     phone:'',
     password: '',
+    confirmPassword:''
   });
 
   const handleInputChange = (e) => {
@@ -20,14 +21,29 @@ const Register = () => {
     });
   };
 
+  const [showPasswordMismatchAlert,setShowPasswordMismatchAlert]=useState(false);
+
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add your registration logic here
+    
+    //check if the password and the confirmation password are not the same write error msg 
+    if (formData.password!==formData.confirmPassword){
+        setShowPasswordMismatchAlert(true)
+
+    }else{
+      setShowPasswordMismatchAlert(false)  //hide the error password msg
+    //send form data and wait to response
+    //const respone= await axios.post('http://localhost:3001/signup',{formData});
     axios.post('http://localhost:3001/signup',{formData})
     .then(result => console.log(result))
     .catch(err=> console.log(err))
     //console.log('Form data submitted:', formData);
-    // You can make an API call to register the user or perform any other actions
+  
+
+    }
+
   };
 
   return (
@@ -45,6 +61,7 @@ const Register = () => {
           />
         </label>
         <br />
+        
 
         <label>
           Email:
@@ -87,12 +104,18 @@ const Register = () => {
           <input
             type="password"
             name="confirmPassword"
-            //value={formData.confirmPassword}
-            //onChange={handleInputChange}
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
             required
           />
         </label>
         <br />
+
+        {showPasswordMismatchAlert && (
+          <div style={{ color: 'red' }}>
+            Passwords do not match. Please check and try again.
+          </div>
+        )}
 
         <button type="submit">Register</button>
       </form>
