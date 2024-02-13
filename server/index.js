@@ -2,6 +2,7 @@ const express =require("express")
 const mongoose = require('mongoose')
 const cors = require("cors")
 const UsersModel = require('./models/User')
+const jwt = require('jsonwebtoken');
 
 const app=express()
 app.use(express.json())
@@ -28,6 +29,39 @@ app.post('/signup',async(req,res)=>{
   }
  
 })
+
+// Login route
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    const user =await UsersModel.findOne({username:username})
+    const userP=await UsersModel.findOne({password:password})
+    if(user){
+      if (userP) {
+        res.json({ success: true, message: 'Login successful' });
+      }else{
+        res.json({ success: false, message: 'Wrong password' });
+      }
+
+    }else {
+      res.json({ success: false, message: "No such user" })
+
+    }
+    /*
+    const user = await UsersModel.findOne({ username, password });
+    if (user) {
+      const token = jwt.sign({ username: user.username }, 'secret_key');
+      res.json({ success: true, message: 'Login successful', token });
+    } else {
+      res.status(401).json({ success: false, message: 'Invalid username or password' });
+    }*/
+  } catch (err) {
+    console.error('Error during login:', err.message);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
+
 
 app.listen(3001, ()=>{
     console.log("server is running")

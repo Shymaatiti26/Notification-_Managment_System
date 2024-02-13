@@ -1,0 +1,88 @@
+/* Home.css */
+html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+.home-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: hsl(246, 34%, 78%);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 0;
+  }
+
+  .split-container {
+    flex: 1;
+    display: flex;
+    flex-direction:row;
+    background-color: #b8b4da;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .logo-container {
+    flex:1;
+    display: flex;
+    flex-direction:column;
+    max-width: 700px;
+    align-items: center;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #fcfcfc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  header h1 {
+    font-size: 2em;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  
+  
+  h2 {
+    color: #333;
+  }
+  
+  
+  .signup-button,
+  .login-button {
+    background-color: #5500ff;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+  }
+  
+  .signup-button:hover,
+  .login-button:hover {
+    background-color: #0056b3;
+  }
+  
+  footer {
+    text-align: center;
+    color: #777;
+    margin-top: 30px;
+  }
+
+    .logo {
+        max-width:fit-content;
+        height: auto;
+        margin-bottom: 10px;
+        width: 700px; /* Set the width as per your requirement */
+        height: 400px; /* Set the height as per your requirement */
+        padding: 10px;
+      }
+
+  

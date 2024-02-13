@@ -4,6 +4,7 @@ import './Signup.css'
 import {Link} from "react-router-dom";
 import axios from 'axios'
 
+
 const Register = () => {
   const [formData, setFormData] = useState({
     username: '',
@@ -22,37 +23,54 @@ const Register = () => {
   };
 
   const [showPasswordMismatchAlert,setShowPasswordMismatchAlert]=useState(false);
+  const[showUserExistAlert,setShowUserExistAlert]=useState(false);
+  //const[InputError,setInputError]=useState(false);
+
+  //send form data and wait to response function
+  const registerUser = async (formData) => {
+    try{
+    const response= await axios.post('http://localhost:3001/signup',{formData});
+    return response;
+    }catch(error){
+        throw error;
+    }
+  };
 
 
+  
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
+  const handleSubmit = async(e) => {
+     e.preventDefault();
+    const responseData=await registerUser(formData);
+
+    //check if user name exist show error msg
+    if(responseData.data.success===false){
+        setShowUserExistAlert(true)
+
+    }else{
+        setShowUserExistAlert(false)
+    }
+
     //check if the password and the confirmation password are not the same write error msg 
-    if (formData.password!==formData.confirmPassword){
-        setShowPasswordMismatchAlert(true)
+    if(formData.password !== formData.confirmPassword){
+    
+        setShowPasswordMismatchAlert(true) //show the error msg
 
     }else{
       setShowPasswordMismatchAlert(false)  //hide the error password msg
-    //send form data and wait to response
-    //const respone= await axios.post('http://localhost:3001/signup',{formData});
-    axios.post('http://localhost:3001/signup',{formData})
-    .then(result => console.log(result))
-    .catch(err=> console.log(err))
-    //console.log('Form data submitted:', formData);
-  
 
     }
 
   };
 
   return (
-    <div>
+    <div class="register-container" >
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
         <label>
           Username:
           <input
+            className={showUserExistAlert ? 'errorMsg':''}
             type="text"
             name="username"
             value={formData.username}
@@ -102,6 +120,7 @@ const Register = () => {
         <label>
           Confirm Password:
           <input
+          className={showPasswordMismatchAlert ? 'errorMsg':''}
             type="password"
             name="confirmPassword"
             value={formData.confirmPassword}
@@ -110,10 +129,15 @@ const Register = () => {
           />
         </label>
         <br />
-
         {showPasswordMismatchAlert && (
-          <div style={{ color: 'red' }}>
+          <div div class="error">
             Passwords do not match. Please check and try again.
+          </div>
+        )}
+
+         {showUserExistAlert && (
+          <div class="error">
+            Username is already used
           </div>
         )}
 
