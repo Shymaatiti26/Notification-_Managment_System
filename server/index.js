@@ -3,12 +3,14 @@ const mongoose = require('mongoose')
 const cors = require("cors")
 const UsersModel = require('./models/User')
 const jwt = require('jsonwebtoken');
+const { useState } = require("react");
 
 const app=express()
 app.use(express.json())
 app.use(cors())
 
 mongoose.connect("mongodb://127.0.0.1:27017/NotificationsSystem");
+//const username='lily'//to save the user name that have loged in
 
 
 app.post('/signup',async(req,res)=>{
@@ -62,6 +64,18 @@ app.post('/login', async (req, res) => {
   }
 });
 
+/*
+app.post('/UserPage',async(req,res)=>{
+  try{
+  res.json({username:username})
+  }catch (err) {
+    console.error('Error during login:', err.message);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+  
+
+});
+*/
 
 app.listen(3001, ()=>{
     console.log("server is running")
