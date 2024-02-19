@@ -16,7 +16,7 @@ const Login = () => {
       console.log(response.data);
       // Redirect to another page upon successful login
       if(response.data.succsess){
-      navigate('/welcome'); // Use navigate function to redirect
+        navigate('/welcome'); // Use navigate function to redirect
       }else{
         alert("Wrong Username or Password");
 
