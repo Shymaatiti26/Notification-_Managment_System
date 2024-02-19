@@ -5,7 +5,7 @@ import Home from './Home'
 import Login from './Login'
 import Welcome from './Welcome'
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
-
+import MessageForm from './MessageForm'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -17,6 +17,7 @@ function App() {
       <Route path='/Home' element={<Home/>}></Route>
       <Route path='/Login' element={<Login/>}></Route>
       <Route path='/Welcome' element={<Welcome/>}></Route>
+      <Route path='/MessageForm' element={<MessageForm/>}></Route>
     </Routes>
     </BrowserRouter>
  /*   
