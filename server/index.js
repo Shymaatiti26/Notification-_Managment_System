@@ -1,115 +1,118 @@
 const express =require("express")
 const mongoose = require('mongoose')
 const cors = require("cors")
-const UsersModel = require('./models/User')
+const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
-//import Chat from "./chat";
-const http = require('http');
-const socketIo = require('socket.io');
+const bodyParser = require('body-parser');
+const nodemailer = require('nodemailer');
 const app=express()
-app.use(express.json())
+const connectDB = require('./connectDB')
+const loginRouter= require('./routes/loginRouter')
+const signup= require('./routes/signupRouter')
+const newMessage= require('./routes/NewMessageHandler')
+app.use(cors())
 
-app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000'],
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // Enable credentials (cookies, authorization headers, etc.)
-}));
+//mongoose.connect("mongodb://127.0.0.1:27017/NotificationsSystem");
 
-mongoose.connect("mongodb://127.0.0.1:27017/NotificationsSystem");
+const PORT = process.env.PORT || 5000;
+app.use(bodyParser.json());
 
+connectDB().then(r => console.log('DB connection successful!'))
 
-// Use http.createServer to create a server
-const server = http.createServer(app);
+app.use("/",signup);
+app.use("/",loginRouter);
+app.use("/",newMessage);
 
- // Initialize Socket.IO with the server
- const io = socketIo(server, {
-  cors: {
-    origin: ['http://localhost:5173', 'http://localhost:3000'], // Replace with your React app's URL
-    methods: ['GET', 'POST'],
-  },
-});
+app.listen(3001, ()=>{
+  console.log("server is running")
+})
+// app.post('/signup',async(req,res)=>{
+//     const formData = req.body.formData;
+//   try{
+//      // Check if the username already exists
+//      const ExistingUser=await UsersModel.findOne({username:formData.username});
+//     if(ExistingUser){
+//         return res.json({success:false, message:'Username already exists' } )
+//     }
+//    // Username doesn't exist, create a new user
+//     UsersModel.create(formData)
+//     res.json({ success: true, message: 'User registered successfully' });
 
-//signup route
-app.post('/signup',async(req,res)=>{
-    const formData = req.body.formData;
-  try{
-     // Check if the username already exists
-     const ExistingUser=await UsersModel.findOne({username:formData.username});
-    if(ExistingUser){
-        return res.json({success:false, message:'Username already exists' } )
-    }
-   // Username doesn't exist, create a new user
-    UsersModel.create(formData)
-    res.json({ success: true, message: 'User registered successfully' });
-
-    }catch (error) {
-    console.error('Error during signup:', error);
-    return res.status(500).json({ success: false, message: 'Internal server error', error: error });
-  }
+//     }catch (error) {
+//     console.error('Error during signup:', error);
+//     return res.status(500).json({ success: false, message: 'Internal server error', error: error });
+//   }
  
-})
+// })
 
-// Login route
-app.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+// // Login route
+// app.post('/login', async (req, res) => {
+//   const { username, password } = req.body;
 
-  try {
-    const user =await UsersModel.findOne({username:username})
-    const userP=await UsersModel.findOne({password:password})
-    if(user){
-      if (userP) {
-        res.json({ success: true, message: 'Login successful' });
-      }else{
-        res.json({ success: false, message: 'Wrong password' });
-      }
+//   try {
+//     const user =await UsersModel.findOne({username:username})
+//     const userP=await UsersModel.findOne({password:password})
+//     if(user){
+//       if (userP) {
+//         res.json({ success: true, message: 'Login successful' });
+//       }else{
+//         res.json({ success: false, message: 'Wrong password' });
+//       }
 
-    }else {
-      res.json({ success: false, message: "No such user" })
+//     }else {
+//       res.json({ success: false, message: "No such user" })
 
-    }
-  } catch (err) {
-    console.error('Error during login:', err.message);
-    res.status(500).json({ success: false, message: 'Internal server error' });
-  }
-});
+//     }
+//     /*
+//     const user = await UsersModel.findOne({ username, password });
+//     if (user) {
+//       const token = jwt.sign({ username: user.username }, 'secret_key');
+//       res.json({ success: true, message: 'Login successful', token });
+//     } else {
+//       res.status(401).json({ success: false, message: 'Invalid username or password' });
+//     }*/
+//   } catch (err) {
+//     console.error('Error during login:', err.message);
+//     res.status(500).json({ success: false, message: 'Internal server error' });
+//   }
+// });
 
+// // POST endpoint to handle message sending
+// app.post('/MessageForm', async (req, res) => {
+//   const { message, recipients, sendEmail } = req.body;
 
+//   // Handle sending message via email if enabled
+//   if (sendEmail) {
+//     const transporter = nodemailer.createTransport({
+//       // Configure your email service provider here
+//       service: 'gmail',
+//       auth: {
+//         user: 'your_email@gmail.com',
+//         pass: 'your_password',
+//       },
+//     });
 
-// Socket.IO event handling for chat
-io.on('connection', (socket) => {
-  console.log('User connected');
+//     const mailOptions = {
+//       from: 'your_email@gmail.com',
+//       to: recipients.join(', '),
+//       subject: 'New Message',
+//       text: message,
+//     };
 
-  // Listen for incoming chat messages
-  socket.on('send-message', (msg) => {
-    // Broadcast the message to all connected clients
-    io.emit('receive-message', msg);
-    console.log(msg)
-  });
-
-
-
-
-  // Cleanup on user disconnect
-  socket.on('disconnect', () => {
-    console.log('User disconnected');
-  });
-});
-
-/*
-app.post('/UserPage',async(req,res)=>{
-  try{
-  res.json({username:username})
-  }catch (err) {
-    console.error('Error during login:', err.message);
-    res.status(500).json({ success: false, message: 'Internal server error' });
-  }
-  
-
-});
-*/
-
-const PORT = process.env.PORT || 3001;
-server.listen(PORT, () => {
-  console.log(`Socket.IO server is running on port ${PORT}`);
-
-})
+//     transporter.sendMail(mailOptions, (error, info) => {
+//       if (error) {
+//         console.error('Error sending email:', error);
+//         res.status(500).send('Error sending email');
+//       } else {
+//         console.log('Email sent:', info.response);
+//         res.send('Message sent successfully');
+//       }
+//     });
+//   } else {
+//     // Handle sending message via other means (e.g., messaging service)
+//     // This part is not implemented in this example
+//     console.log('Message sent:', message);
+//     res.send('Message sent successfully');
+//   }
+//   MessageModel.create(req.body);
+// });
