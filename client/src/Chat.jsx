@@ -75,6 +75,9 @@ const Chat = ( {room} ) => {
           type="text"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
+          onKeyPress ={(event)=>{
+            event.key==="Enter" && sendMessage();
+          }}
         />
         <button onClick={sendMessage}>Send</button>
       </div>
