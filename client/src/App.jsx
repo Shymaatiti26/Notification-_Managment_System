@@ -6,10 +6,12 @@ import Login from './Login'
 import Welcome from './Welcome'
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import MessageForm from './MessageForm'
+import ProfilePage from './Profile'
+//import { useParams } from 'react-router-dom';
 
 function App() {
   const [count, setCount] = useState(0)
-
+  //const { userId } = useParams();
   return (
     <BrowserRouter>
     <Routes>
@@ -18,6 +20,7 @@ function App() {
       <Route path='/Login' element={<Login/>}></Route>
       <Route path='/Welcome' element={<Welcome/>}></Route>
       <Route path='/MessageForm' element={<MessageForm/>}></Route>
+      <Route path="/Profile/:userId" element={<ProfilePage/>}></Route>
     </Routes>
     </BrowserRouter>
  /*   
