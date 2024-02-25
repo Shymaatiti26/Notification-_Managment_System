@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import Signup from './Signup'
+import Register from './Signup'
 import Home from './Home'
 import Login from './Login'
 import Welcome from './Welcome'
@@ -8,21 +8,25 @@ import UserPage from './UserPage'
 import Chat from './Chat'
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import MessageForm from './MessageForm'
-
-
+import ProfilePage from './Profile'
+//import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <BrowserRouter>
     <Routes>
-      <Route path='/Signup' element={<Signup/>}></Route>
-      <Route path='/Home' element={<Home/>}></Route>
-      <Route path='/Login' element={<Login/>}></Route>
-      <Route path='/Welcome' element={<Welcome/>}></Route>
-      <Route path='/MessageForm' element={<MessageForm/>}></Route>
-      <Route path='/UserPage/:username' element={<UserPage/>}></Route>
-      <Route path='/Chat/:username' element={<Chat />}></Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="/UserPage" element={<UserPage />} />
+        <Route path='/register' element={<Register />} />
+        <Route path='/Home' element={<Home />} />
+        <Route path='/Welcome' element={<Welcome />} />
+        <Route path='/MessageForm' element={<MessageForm />} />
+        <Route path='/Chat/:username' element={<Chat />} />
+        <Route path='/Profile/:userId' element={<ProfilePage />} />
+        <Route path='/login/UserPage' element={<UserPage />} />
+        <Route path="/login/register" element={<Register />} />
+        
     </Routes>
     </BrowserRouter>
  /*   

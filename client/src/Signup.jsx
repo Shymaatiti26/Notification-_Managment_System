@@ -6,12 +6,12 @@ import axios from 'axios'
 
 
 const Register = () => {
+  var confirmPass;
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     phone:'',
     password: '',
-    confirmPassword:''
   });
 
   const handleInputChange = (e) => {
@@ -29,7 +29,7 @@ const Register = () => {
   //send form data and wait to response function
   const registerUser = async (formData) => {
     try{
-    const response= await axios.post('http://localhost:3001/signup',{formData});
+    const response= await axios.post('http://localhost:3001/api/v1/register',{formData});
     return response;
     }catch(error){
         throw error;
@@ -46,20 +46,19 @@ const Register = () => {
     //check if user name exist show error msg
     if(responseData.data.success===false){
         setShowUserExistAlert(true)
-
     }else{
         setShowUserExistAlert(false)
     }
 
-    //check if the password and the confirmation password are not the same write error msg 
-    if(formData.password !== formData.confirmPassword){
+    // //check if the password and the confirmation password are not the same write error msg 
+    // if(formData.password !== formData.confirmPassword){
     
-        setShowPasswordMismatchAlert(true) //show the error msg
+    //     setShowPasswordMismatchAlert(true) //show the error msg
 
-    }else{
-      setShowPasswordMismatchAlert(false)  //hide the error password msg
+    // }else{
+    //   setShowPasswordMismatchAlert(false)  //hide the error password msg
 
-    }
+    // }
 
   };
 
@@ -117,17 +116,17 @@ const Register = () => {
         </label>
         <br />
 
-        <label>
+        {/* <label>
           Confirm Password:
           <input
           className={showPasswordMismatchAlert ? 'errorMsg':''}
             type="password"
             name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleInputChange}
-            required
+           // value={formData.confirmPassword}
+            //onChange={handleInputChange}
+            //required
           />
-        </label>
+        </label> */}
         <br />
         {showPasswordMismatchAlert && (
           <div div class="error">

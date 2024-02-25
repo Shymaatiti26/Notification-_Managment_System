@@ -1,39 +1,89 @@
-// src/components/Login.js
+// // src/components/Login.js
+// import React, { useState } from 'react';
+// import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
+// import axios from 'axios';
+// import './Login.css';
+
+// const Login = () => {
+//   const [email, setEmail] = useState('');
+//   const [password, setPassword] = useState('');
+//   const navigate = useNavigate(); // Initialize useNavigate hook
+
+//   const handleLogin = async (e) => {
+//     e.preventDefault();
+//     try {
+//       const response = await axios.post('http://localhost:3001/api/v1/login', { email, password });
+//       console.log(response.data);
+//       // Redirect to another page upon successful login
+//       if(response.data.succsess){
+//       navigate('/welcome'); // Use navigate function to redirect
+//       }else{
+//         alert("Wrong Email or Password");
+
+//       }
+//     } catch (error) {
+//       console.error('Login failed:', error);
+//       // Handle login failure
+//       alert('Invalid Email or password');
+//     }
+//   };
+
+//   return (
+//     <div className="login-container">
+//       <h2>Login</h2>
+//       <form onSubmit={handleLogin}>
+//         <input type="text" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+//         <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+//         <button type="submit">Login</button>
+//       </form>
+//     </div>
+//   );
+// };
+
+// export default Login;
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import axios from 'axios';
-import './Login.css';
-
+import { useNavigate } from 'react-router-dom';
+import './Signup'
 const Login = () => {
-  const [username, setUsername] = useState('');
-  const [Enteredpassword, setPassword] = useState('');
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const signUp = () => {
+    navigate("./register");
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:3001/login', { username, Enteredpassword });
-      console.log(response.data);
-      // Redirect to another page upon successful login
-      if(response.data.succsess){
-      navigate('/welcome'); // Use navigate function to redirect
-      }else{
-        alert("Wrong Username or Password");
 
-      }
+    try {
+      const response = await axios.post('http://localhost:3001/api/v1/login', { email, password });
+      console.log(response.data); // Assuming the response contains token or user data
+      // Redirect to dashboard or perform any other action upon successful login
+      navigate("./UserPage");
     } catch (error) {
-      console.error('Login failed:', error);
-      // Handle login failure
-      alert('Invalid username or password');
+      setError(error.response.data.message);
     }
   };
 
   return (
-    <div className="login-container">
+    <div>
       <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
-        <input type="password" placeholder="Password" value={Enteredpassword} onChange={(e) => setPassword(e.target.value)} />
+      {error && <div style={{ color: 'red' }}>{error}</div>}
+      <div className="loginButton github center" onClick={signUp}>
+                    Sign Up
+      </div>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Email:</label>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        </div>
+        <div>
+          <label>Password:</label>
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        </div>
         <button type="submit">Login</button>
       </form>
     </div>
