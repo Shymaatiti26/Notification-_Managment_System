@@ -2,7 +2,8 @@ const mongoose =require('mongoose')
 
 const messageSchema = new mongoose.Schema({
     sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
-    recipients: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }],
+   // recipients: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }],
+    group: {type : mongoose.Schema.Types.ObjectId ,ref: "Group"},
     message: { type: String, required: true },
     timeSent: { type: Date, default: Date.now },
     seen: { type: Boolean, default: false }
