@@ -23,9 +23,7 @@ function App() {
         <Route path='/Welcome' element={<Welcome />} />
         <Route path='/MessageForm' element={<MessageForm />} />
         <Route path='/Chat/:username' element={<Chat />} />
-        <Route path='/Profile/:userId' element={<ProfilePage />} />
-        <Route path='/login/UserPage' element={<UserPage />} />
-        <Route path="/login/register" element={<Register />} />
+        <Route path='/Profile' element={<ProfilePage />} />
         
     </Routes>
     </BrowserRouter>
