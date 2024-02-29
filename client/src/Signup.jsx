@@ -1,7 +1,7 @@
 // src/Register.js
 import React, { useState } from 'react';
 import './Signup.css'
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import axios from 'axios'
 
 
@@ -13,8 +13,6 @@ const Register = () => {
     phone:'',
     password: '',
   });
-
-  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -31,7 +29,7 @@ const Register = () => {
   //send form data and wait to response function
   const registerUser = async (formData) => {
     try{
-    const response= await axios.post('http://localhost:3001/api/v1/register',formData);
+    const response= await axios.post('http://localhost:3001/api/v1/register',{formData});
     return response;
     }catch(error){
         throw error;
@@ -49,8 +47,6 @@ const Register = () => {
     if(responseData.data.success===false){
         setShowUserExistAlert(true)
     }else{
-      localStorage.setItem('userId',responseData.data.user._id);
-        navigate("/UserPage")
         setShowUserExistAlert(false)
     }
 
@@ -67,67 +63,86 @@ const Register = () => {
   };
 
   return (
-    
-    <div className="form-wrapper" style={{backgroundColor:'white'}}>
-    <h1 className="title">Sign up</h1>
-    <form className="form"onSubmit={handleSubmit}>
-      <div className="form-row">
+    <div class="register-container" >
+      <h2>Register</h2>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Username:
+          <input
+            className={showUserExistAlert ? 'errorMsg':''}
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleInputChange}
+            required
+          />
+        </label>
+        <br />
         
-        <div className="form-group">
-          <label>
-            <span className="sr-only">User Name</span>
-            <input id="username" name="username" type="text" placeholder="User Name" className="form-input" required value={formData.username}
-            onChange={handleInputChange}/>
-          </label>
-        </div>
-      </div>
-      <div className="form-group">
-        <label>
-          <span className="sr-only">Email</span>
-          <input type="email" name="email" placeholder="Email" className="form-input" required value={formData.email}
-            onChange={handleInputChange}/>
-        </label>
-      </div>
-      <div className="form-group">
-        <label>
-          <span className="sr-only">Phone</span>
-          <input type="text" name="phone" placeholder="Phone" className="form-input" required value={formData.phone}
-            onChange={handleInputChange}/>
-        </label>
-      </div>
-      <div className="form-group">
-        <label>
-          <span className="sr-only">Password</span>
-          <input type="password" name="password" placeholder="Password" className="form-input" required value={formData.password}
-            onChange={handleInputChange}/>
-        </label>
-      </div>
-      <br />
 
-{showPasswordMismatchAlert && (
-  <div className="error">
-    Passwords do not match. Please check and try again.
-  </div>
-)}
+        <label>
+          Email:
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            required
+          />
+        </label>
+        <br />
 
- {showUserExistAlert && (
-  <div className="error">
-    Email is already used
-  </div>
-)}
-      <div className="form-group">
-        <input type="submit" value="Register" className="form-submit"/>
-      </div>
+        <label>
+          Phone:
+          <input
+            type="tel"
+            name="phone"
+            value={formData.phone}
+            onChange={handleInputChange}
+            required
+          />
+        </label>
+        <br />
 
-      <footer className="form-footer">
-          <div>
-            Already have an account?
-            <Link to="/login" className="form-link">Log in</Link>
+        <label>
+          Password:
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
+            required
+          />
+        </label>
+        <br />
+
+        {/* <label>
+          Confirm Password:
+          <input
+          className={showPasswordMismatchAlert ? 'errorMsg':''}
+            type="password"
+            name="confirmPassword"
+           // value={formData.confirmPassword}
+            //onChange={handleInputChange}
+            //required
+          />
+        </label> */}
+        <br />
+        {showPasswordMismatchAlert && (
+          <div div class="error">
+            Passwords do not match. Please check and try again.
           </div>
-      </footer>
-    </form>
-  </div>
+        )}
 
+         {showUserExistAlert && (
+          <div class="error">
+            Username is already used
+          </div>
+        )}
+
+        <button type="submit">Register</button>
+      </form>
+    </div>
   );
 };
 

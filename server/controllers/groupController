@@ -1,0 +1,19 @@
+const ErrorHandler = require('../utils/errorHandler')
+const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
+const Group = require('../models/GroupModel');
+
+//Create new group => /api/v1/createGroup
+exports.createGroup=catchAsyncErrors(async(req,res,next)=>{
+    try {
+        const groupName = req.body.groupName;
+        const group = await Group.create({ groupName: groupName,
+        });
+    
+        console.log('Group created:', group);
+        res.send('Group created successfully');
+      } catch (error) {
+        console.error('Error creating group:', error);
+        next(error); // Pass the error to the error handling middleware
+      }
+
+})
