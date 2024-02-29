@@ -20,6 +20,7 @@ const Profile=require('./routes/Profile')
 const cookieParser = require('cookie-parser')
 const errorMiddleware= require('./middlewares/errors')
 const auth= require('./routes/auth')
+const groupRouter=require('./routes/groupRouter')
 
 app.use(express.json())
 app.use(cookieParser())
@@ -77,6 +78,7 @@ app.use("/",Profile);
 
 app.use('/api/v1',auth);
 app.use(errorMiddleware)
+app.use('/api/v1',groupRouter)
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
