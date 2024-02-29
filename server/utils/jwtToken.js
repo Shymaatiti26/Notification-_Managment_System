@@ -1,25 +1,9 @@
 //Create and send token and save in the cookie.
 
+const jwt = require("jsonwebtoken")
 
-const sendToken = (user, statusCode, res) => {
-
-    console.log("sendToken");
-    //Create Jwt token
-    const token = user.getJwtToken();
-    console.log("JWTToken");
-    //Options for cookie
-    const options = {
-        expires: new Date(
-            Date.now() + 7 * 24 * 60 * 60 * 1000
-        ),
-        httpOnly:true
-    }
-    res.status(statusCode).cookie('token',token,options).json({
-        success:true,
-        token,
-        user
-    })
-
+const createToken =(_id)=>{
+    return jwt.sign({_id},'gghgbjkdbbmmnmcfhjlsdjla',{expiresIn: '3d'})
 }
 
-module.exports = sendToken;
+module.exports = createToken;

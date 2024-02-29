@@ -1,13 +1,14 @@
 const User = require('../models/User')
 const ErrorHandler = require('../utils/errorHandler')
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
-const sendToken = require('../utils/jwtToken');
+const createToken = require('../utils/jwtToken');
+
 
 
 
 //Register a user => api/v1/register
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
-   
+   try{
     const { username, email,phone, password } = req.body;
     //console.log("hi");
     console.log(req.body);
@@ -17,7 +18,14 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
         phone,
         password,     
     })
-    sendToken(user, 200, res)
+    const token = createToken(user._id)
+    console.log({token});
+    res.status(200).json({username,token})
+}
+catch(err) {
+    console.error('Error during signup:', err);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
+}
 })
 
 //Login User => /api/v1/login
@@ -40,7 +48,10 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler('Invalid Email or Password', 401));
     }
 
-    sendToken(user, 200, res)
+    const token = createToken(user._id)
+    //console.log({token});
+    res.status(200).json({username:user.username,token})
+    
 
 })
 
@@ -100,6 +111,7 @@ exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
 })
 // Logout user => /api/v1/logout
 exports.logout = catchAsyncErrors(async (req, res, next) => {
+    /*
     res.cookie('token', null, {
         expires: new Date(Date.now()),
         httpOnly: true
@@ -107,7 +119,9 @@ exports.logout = catchAsyncErrors(async (req, res, next) => {
     res.status(200).json({
         success: true,
         message: 'Logged out'
-    })
+    })*/
+
+
 })
 
 // Admin Routes
@@ -158,6 +172,7 @@ exports.updateUser = catchAsyncErrors(async (req, res, next) => {
     })
 
 })
+
 
 //Delete user  =>   /api/v1/admin/user/:id
 exports.deleteUser = catchAsyncErrors(async (req, res, next) => {

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import './Chat.css'
 import { useParams } from 'react-router-dom';
+import ScrollToBottom from 'react-scroll-to-bottom';
 
 const Chat = ( {room} ) => {
   const [messages, setMessages] = useState([]);
@@ -51,13 +52,14 @@ const Chat = ( {room} ) => {
     <div className='main-container '>
 
       <div className='chat-header'>
-        <p>Live Chat</p>
+        <p>Group Name</p>
       </div>
 
       <div className='chat-body'>
+        <ScrollToBottom className='message-container'>
           {messages.map((message) => {
             return (
-              <dive className='message' id={username===message.author ? "you" : "other"}>
+              <div className='message' id={username===message.author ? "you" : "other"}>
                 <div className='message-content'>
                   <p>{message.message}</p>
                 </div>
@@ -65,9 +67,10 @@ const Chat = ( {room} ) => {
                   <p>{message.time} {message.author} </p>
                 </div>
 
-              </dive>
+              </div>
             )
           })}
+        </ScrollToBottom>
       </div>
 
       <div className='chat-footer'>

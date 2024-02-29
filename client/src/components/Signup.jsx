@@ -1,11 +1,14 @@
 // src/Register.js
 import React, { useState } from 'react';
 import './Signup.css'
-import {Link, useNavigate} from "react-router-dom";
+import {Link, json, useNavigate} from "react-router-dom";
 import axios from 'axios'
+import { useAuthContext } from '../hooks/useAuthComtext';
+
 
 
 const Register = () => {
+  const {dispatch} =useAuthContext()
   var confirmPass;
   const [formData, setFormData] = useState({
     username: '',
@@ -49,7 +52,13 @@ const Register = () => {
     if(responseData.data.success===false){
         setShowUserExistAlert(true)
     }else{
-      localStorage.setItem('userId',responseData.data.user._id);
+      //save the user to local storage
+      localStorage.setItem('user',JSON.stringify(responseData.data));
+
+      //update the auth context
+      dispatch({type: 'LOGIN', payload:responseData.data})
+
+
         navigate("/UserPage")
         setShowUserExistAlert(false)
     }

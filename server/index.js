@@ -9,7 +9,7 @@ const connectDB = require('./connectDB')
 const loginRouter= require('./routes/loginRouter')
 const signup= require('./routes/signupRouter')
 const newMessage= require('./routes/NewMessageHandler')
-const chat=require('./routes/chatRouter')
+//const chat=require('./routes/chatRouter')
 const app=express()
 //app.use(cors())
 const http = require('http');
@@ -72,7 +72,7 @@ connectDB().then(r => console.log('DB connection successful!'))
 // app.use("/",signup);
 // app.use("/",loginRouter);
 app.use("/",newMessage);
-app.use("/",chat);
+//app.use("/",chat);
 app.use("/",Profile);
 
 

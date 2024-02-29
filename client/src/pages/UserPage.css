@@ -5,6 +5,7 @@
   flex-direction: column;
   min-height:800px;
   background-color: hsl(246, 34%, 78%);
+  
  
 
 }
@@ -48,4 +49,14 @@
     cursor: pointer;
     transition: background-color 0.3s;
     margin-top: 10px;
+  }
+
+
+  .chat-box{
+    max-height: 100px;
+    max-width: 400px;
+    
+
+
+
   }
