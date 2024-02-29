@@ -48,8 +48,10 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
 // Get cuurently looged in user details => /api/v1/me
 exports.getUserProfile =  catchAsyncErrors(async (req, res, next) => {
     const userId = req.query.userId;
+    console.log(userId);
     const user =  await User.findById(userId);
 
+    
     res.status(200).json({
         success:true,
         user
