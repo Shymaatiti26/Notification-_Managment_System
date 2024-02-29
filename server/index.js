@@ -9,7 +9,7 @@ const connectDB = require('./connectDB')
 const loginRouter= require('./routes/loginRouter')
 const signup= require('./routes/signupRouter')
 const newMessage= require('./routes/NewMessageHandler')
-const chat=require('./routes/chatRouter')
+//const chat=require('./routes/chatRouter')
 const app=express()
 //app.use(cors())
 const http = require('http');
@@ -20,6 +20,7 @@ const Profile=require('./routes/Profile')
 const cookieParser = require('cookie-parser')
 const errorMiddleware= require('./middlewares/errors')
 const auth= require('./routes/auth')
+const groupRouter=require('./routes/groupRouter')
 
 app.use(express.json())
 app.use(cookieParser())
@@ -71,11 +72,12 @@ connectDB().then(r => console.log('DB connection successful!'))
 // app.use("/",signup);
 // app.use("/",loginRouter);
 app.use("/",newMessage);
-app.use("/",chat);
+//app.use("/",chat);
 app.use("/",Profile);
 
 
 app.use('/api/v1',auth);
+app.use('/api/v1',groupRouter)
 app.use(errorMiddleware)
 
 const PORT = process.env.PORT || 3001;

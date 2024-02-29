@@ -4,7 +4,6 @@ const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 const sendToken = require('../utils/jwtToken');
 
 
-
 //Register a user => api/v1/register
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
    
@@ -179,6 +178,12 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
     res.status(200).json({
         success:true
     })
+
+})
+
+//Create group => /api/v1/createGroup
+exports.createGroup=catchAsyncErrors(async(req,res,next)=>{
+    console.log("User created:");
 
 })
 

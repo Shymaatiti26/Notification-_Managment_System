@@ -6,8 +6,9 @@ import Login from './Login'
 import Welcome from './Welcome'
 import UserPage from './UserPage'
 import Chat from './Chat'
+import CreateGroup from './CreateGroup'
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
-import MessageForm from './MessageForm'
+import ScheduleMessage from './ScheduleMessage'
 import ProfilePage from './Profile'
 //import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 function App() {
@@ -21,7 +22,8 @@ function App() {
         <Route path='/register' element={<Register />} />
         <Route path='/Home' element={<Home />} />
         <Route path='/Welcome' element={<Welcome />} />
-        <Route path='/MessageForm' element={<MessageForm />} />
+        <Route path='/ScheduleMessage' element={<ScheduleMessage />} />
+        <Route path='/CreateGroup' element={<CreateGroup/>}/>
         <Route path='/Chat/:username' element={<Chat />} />
         <Route path='/Profile/:userId' element={<ProfilePage />} />
         <Route path='/login/UserPage' element={<UserPage />} />
