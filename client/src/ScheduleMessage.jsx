@@ -56,7 +56,6 @@ const ScheduleMessage = () => {
         recipients,
         sendEmail,
       });
-      console.log(response.data);
     } catch (error) {
       console.error('Error sending message:', error);
     }

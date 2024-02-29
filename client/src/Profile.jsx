@@ -1,21 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const ProfilePage = ({ userId }) => {
-  //let { userId } = useParams();
+const ProfilePage = () => {
+  const userId=localStorage.getItem('userId');
   const [isEditing, setIsEditing] = useState(false); 
-  const [user, setUser] = useState({
-    username: 'shymaa',
-    email: 'a',
-    phone: 'a',
-    password: 'a'
-  });
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/Profile',userId);
-        setUser(response.data);
+        const response = await axios.get('http://localhost:3001/api/v1/me',userId);
+        setUser(response.data.user);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -25,15 +20,36 @@ const ProfilePage = ({ userId }) => {
       fetchUserData();
     }
   }, [userId]);  
+  // useEffect(() => {
+  //   const fetchUserProfile = async (req) => {
+  //     try {
+  //       const token = localStorage.getItem('token'); // Assuming you stored the JWT token in localStorage upon login
+  //       console.log(token);
+  //       const userId = localStorage.getItem('userId')
+  //       const response = await axios.get('http://localhost:3001/api/v1/me', {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //         params: { userId }
+  //       });
+  //       setUser(response.data.user);
+  //     } catch (error) {
+  //       setError(error.response.data.message);
+  //     }
+  //   };
+
+  //   fetchUserProfile();
+  // }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });
+    console.log("username:",user.username);
   };
 
   const saveChanges = async () => {
     try {
-      await axios.put('http://localhost:3001/MyProfile', user); // Adjust endpoint accordingly
+      await axios.put('http://localhost:3001/api/v1/me/update', user); // Adjust endpoint accordingly
       setIsEditing(false); // Disable editing mode after saving changes
       console.log('Changes saved successfully');
     } catch (error) {
@@ -47,7 +63,7 @@ const ProfilePage = ({ userId }) => {
     {isEditing ? ( // Render input fields when in editing mode
       <form>
         <div>
-          <label>Username:</label>
+          <label>Name:</label>
           <input type="text" name="username" value={user.username} onChange={handleInputChange} />
         </div>
         <div>
@@ -67,7 +83,7 @@ const ProfilePage = ({ userId }) => {
     ) : ( // Render profile information as text when not in editing mode
       <div>
         <div>
-          <strong>Username:</strong> {user.username}
+          <strong>Name:</strong> {user.username}
         </div>
         <div>
           <strong>Email:</strong> {user.email}

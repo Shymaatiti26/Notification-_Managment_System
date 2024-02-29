@@ -16,7 +16,6 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
         phone,
         password,     
     })
-    console.log("User created:", user);
     sendToken(user, 200, res)
 })
 
@@ -24,24 +23,18 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
 exports.loginUser = catchAsyncErrors(async (req, res, next) => {
     const { email, password } = req.body;
 
-    console.log(27);
     //Check if email and password is enterd by user
     if (!email || !password) {
-        console.log(28);
         return next(new ErrorHandler('Please enter email & password !'))
     }
 
     //Finding user in database
     const user = await User.findOne({ email }).select('+password');
-    console.log(36);
     if (!user) {
-        console.log(38);
         return next(new ErrorHandler('Invalid Email or Password', 401));
     }
-    console.log(40);
     //Checks if password is correct or not
     const isPasswordMatched = await user.comparePassword(password)
-    console.log(43);
     if (!isPasswordMatched) {
         return next(new ErrorHandler('Invalid Email or Password', 401));
     }
@@ -53,13 +46,15 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
 
 // Get cuurently looged in user details => /api/v1/me
 exports.getUserProfile =  catchAsyncErrors(async (req, res, next) => {
-    console.log(req);
-    const user =  await User.findById(req.user.id);
+    const userId = req.query.userId;
+    const user =  await User.findById(userId);
 
     res.status(200).json({
         success:true,
         user
     })
+    console.log("userid",userId);
+    console.log("user is:",user);
 
 })
 
