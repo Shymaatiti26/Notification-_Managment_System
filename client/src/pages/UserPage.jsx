@@ -43,7 +43,7 @@ const UserPage = ()=>{
               <button onClick={handleProfile}>Profile</button>
               </div>)}
 
-                <div className='chat-box'> <Chat> </Chat> </div>
+                <div className='chat-box'> <Chat groupId={localStorage.getItem('group')} /> </div>
             
         </div>
     );

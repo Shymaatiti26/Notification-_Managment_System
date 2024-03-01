@@ -50,12 +50,23 @@ const io = socketIo(server, {
 io.on('connection', (socket) => {
   console.log('User connected');
 
+ 
+  
+  socket.on('joinGroup',(data)=>{
+    socket.join(data);
+    console.log(`joined group: ${data}`)
+
+  })
+
   // Listen for incoming chat messages
   socket.on('send-message', (msg) => {
     // Broadcast the message to all connected clients
-    io.emit('receive-message', msg);
+    io.to(msg.groupId).emit('receive-message', msg);
+    //io.to().emit('receive-message', msg);
     console.log(msg)
   });
+
+
 
   // Cleanup on user disconnect
   socket.on('disconnect', () => {

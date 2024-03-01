@@ -6,14 +6,37 @@ const Group = require('../models/GroupModel');
 exports.createGroup=catchAsyncErrors(async(req,res,next)=>{
     try {
         const groupName = req.body.groupName;
-        const group = await Group.create({ groupName: groupName,
-        });
-    
-        console.log('Group created:', group);
-        res.send('Group created successfully');
+        const group = await Group.create({ groupName: groupName});
+        res.json({groupId: group._id});
       } catch (error) {
         console.error('Error creating group:', error);
         next(error); // Pass the error to the error handling middleware
       }
 
 })
+
+//Get All groups that this user have=> /api/v1/UserGroupList
+exports.getUserGroups=catchAsyncErrors(async(req,res,next) =>{  
+  try{
+  //const userId = req.user.id
+  //const groups = await Group.find({ users: { $in: [ObjectId(userId)] } }).toArray();
+  const groups = await Group.find({  });
+  if(!groups){
+    return next(new ErrorHandler("No groups" ,404))
+   }
+   console.log(groups)
+   res.json(groups)
+  }catch (error) {
+    console.error('Error get user  Groups :', error);
+    next(error); // Pass the error to the error handling middleware
+  }
+
+
+})
+
+//Add  a user to a specific group=> /api/v1/addUserToGroup
+exports.addUserToGroup=catchAsyncErrors(async (req,res,next) =>{
+  
+
+})
+

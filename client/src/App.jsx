@@ -9,7 +9,9 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import ScheduleMessage from './components/ScheduleMessage'
 import ProfilePage from './components/Profile'
 import CreateGroup from './components/CreateGroup'
+import UserGroupsList from './components/UserGroupsList'
 import { AuthContextProvider } from './context/AuthContext'
+
 //import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 function App() {
   const [count, setCount] = useState(0)
@@ -26,6 +28,7 @@ function App() {
         <Route path='/Profile' element={<ProfilePage />} />
         <Route path='/ScheduleMessage' element={<ScheduleMessage />} />
         <Route path='/CreateGroup' element={<CreateGroup/>}/>
+        <Route path='/UserGroupsList' element={<UserGroupsList/>}/>
         
     </Routes>
     </AuthContextProvider>

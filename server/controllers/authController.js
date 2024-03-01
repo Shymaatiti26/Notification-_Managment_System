@@ -20,7 +20,7 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
     })
     const token = createToken(user._id)
     console.log({token});
-    res.status(200).json({username,token})
+    res.status(200).json({username,token,_id:user._id,group:''})
 }
 catch(err) {
     console.error('Error during signup:', err);
@@ -50,7 +50,7 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
 
     const token = createToken(user._id)
     //console.log({token});
-    res.status(200).json({username:user.username,token})
+    res.status(200).json({username:user.username,token,_id:user._id,group:''})
     
 
 })

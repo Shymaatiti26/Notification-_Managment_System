@@ -4,25 +4,32 @@ import io from 'socket.io-client';
 import './Chat.css'
 import { useParams } from 'react-router-dom';
 import ScrollToBottom from 'react-scroll-to-bottom';
+import { useAuthContext } from '../hooks/useAuthComtext';
 
-const Chat = ( {room} ) => {
+const Chat = ( {groupId} ) => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [socket, setSocket] = useState(null);
-  const { username } = useParams();
+  const {user} = useAuthContext()
   
   
 
 
-  useEffect(() => {
+  useEffect( () => {
     // Connect to the server
     const newSocket = io('http://localhost:3001');
     setSocket(newSocket);
 
+    
+
     // Listen for incoming messages
     newSocket.on('receive-message', (message) => {
+      //console.log(message)
       setMessages((prevMessages) => [...prevMessages, message]);
     });
+
+    
+
 
     // Cleanup on component unmount
     return () => {
@@ -31,18 +38,26 @@ const Chat = ( {room} ) => {
   }, []);
 
   const sendMessage = async () => {
+    joinGroup();
     if (inputMessage.trim() !== '') {
       const messageData= {
-        room :room,
-        author: username,
+        groupId :groupId,
+        author: user.username,
         message: inputMessage,
         time: new Date(Date.now()).getHours()  + ":" + new Date().getMinutes(),
 
       }
+      console.log("sending", messageData);
+      console.log("user", user);
       await socket.emit('send-message', messageData);
       setInputMessage('');
     }
   };
+
+  const joinGroup= async ()=>{
+    await socket.emit('joinGroup',groupId);
+  }
+
 
   
 
@@ -59,7 +74,7 @@ const Chat = ( {room} ) => {
         <ScrollToBottom className='message-container'>
           {messages.map((message) => {
             return (
-              <div className='message' id={username===message.author ? "you" : "other"}>
+              <div className='message' id={user.username===message.author ? "you" : "other"}>
                 <div className='message-content'>
                   <p>{message.message}</p>
                 </div>
