@@ -53,16 +53,16 @@ const UserPage = ()=>{
     return(
         <div className='main-container'>
             {error && <div style={{ color: 'red' }}>{error}</div>}
-            {user &&(<div className='toolbar'>
+            {user &&(<div className='toolbar' style={{marginTop:'85px'}}>
                 <div className='toolbar-username'>
-                Welcome <br></br>{user.name}
+                Welcome <br></br>{user.username}
                 </div>
               <img className="toolbar-logo" src="/images/logo.png"/>
               <button onClick={handleLogout}>Logout</button>
               <button onClick={handleProfile}>Profile</button>
             </div>)}
             {user && (<div>
-                <h3>Welcome, {user.name} </h3>
+                <h3>Welcome, {user.username} </h3>
                 <br></br>
             </div>)}
         </div>

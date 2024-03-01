@@ -56,8 +56,6 @@ exports.getUserProfile =  catchAsyncErrors(async (req, res, next) => {
         success:true,
         user
     })
-    console.log("userid",userId);
-    console.log("user is:",user);
 
 })
 
@@ -82,19 +80,20 @@ exports.updatePassword =  catchAsyncErrors(async (req, res, next) => {
 
 //Update user profile =>   /api/v1/me/update
 exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
+    const userId= req.body.id;
     const newUserData = { 
-        name: req.body.name,
+        username: req.body.username,
         email: req.body.email,
         phone:req.body.phone
     }
 
-
-    const user = await User.findByIdAndUpdate(req.user.id,newUserData,{
+    console.log("reqbody",req.body.id);
+    const user = await User.findByIdAndUpdate(userId,newUserData,{
         new:true,
         runValidators:true,
         useFindAndModify:false
     })
-
+console.log("updated user is:",user);
     res.status(200).json({
         success:true
     })
