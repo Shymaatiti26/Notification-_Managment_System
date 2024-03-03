@@ -34,9 +34,11 @@ exports.getUserGroups=catchAsyncErrors(async(req,res,next) =>{
 
 })
 
+
 //Add  a user to a specific group=> /api/v1/addUserToGroup
 exports.addUserToGroup=catchAsyncErrors(async (req,res,next) =>{
   
 
 })
+
 

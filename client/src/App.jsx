@@ -11,6 +11,7 @@ import ProfilePage from './components/Profile'
 import CreateGroup from './components/CreateGroup'
 import UserGroupsList from './components/UserGroupsList'
 import { AuthContextProvider } from './context/AuthContext'
+import { ChakraProvider, CSSReset } from "@chakra-ui/react";
 
 //import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 function App() {

@@ -5,12 +5,14 @@ import './Chat.css'
 import { useParams } from 'react-router-dom';
 import ScrollToBottom from 'react-scroll-to-bottom';
 import { useAuthContext } from '../hooks/useAuthComtext';
+import axios from 'axios';
 
 const Chat = ( {groupId} ) => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [socket, setSocket] = useState(null);
   const {user} = useAuthContext()
+  const groupData=JSON.parse(localStorage.getItem('group'))
   
   
 
@@ -20,14 +22,18 @@ const Chat = ( {groupId} ) => {
     const newSocket = io('http://localhost:3001');
     setSocket(newSocket);
 
-    
 
     // Listen for incoming messages
     newSocket.on('receive-message', (message) => {
       //console.log(message)
       setMessages((prevMessages) => [...prevMessages, message]);
     });
+/*
+    useEffect(()=>{
+      //location.reload();
 
+    },[groupData])
+*/
     
 
 
@@ -36,6 +42,13 @@ const Chat = ( {groupId} ) => {
       newSocket.disconnect();
     };
   }, []);
+
+  //get group data groupName,LastMessages
+  const getGroupData = async ()=>{
+    const response = await axios.post('',{groupId})
+
+
+  }
 
   const sendMessage = async () => {
     joinGroup();
@@ -64,10 +77,10 @@ const Chat = ( {groupId} ) => {
   
 
   return (
-    <div className='main-container '>
+    <div className='chatMain-container '>
 
       <div className='chat-header'>
-        <p>Group Name</p>
+        <p>{groupData.groupName}</p>
       </div>
 
       <div className='chat-body'>

@@ -7,6 +7,9 @@ import '../components/Login';
 import '../components/Profile';
 import Chat from '../components/Chat'
 import { useAuthContext } from '../hooks/useAuthComtext';
+import { Grid, GridItem } from '@chakra-ui/react'
+import UserGroupsList from '../components/UserGroupsList';
+
 
 //import { useLogout } from './hooks/useLogout';
 const UserPage = ()=>{
@@ -15,6 +18,12 @@ const UserPage = ()=>{
     const navigate = useNavigate();
     const {user} = useAuthContext()
     const {dispatch} =useAuthContext()
+    const groupData=JSON.parse(localStorage.getItem('group'))
+
+    useEffect(()=>{
+
+
+    })
 
     const handleProfile = async() =>{
       navigate('/Profile');
@@ -39,12 +48,15 @@ const UserPage = ()=>{
                 Welcome <br></br>{user.username}
                 </div>
               <img className="toolbar-logo" src="/images/logo.png"/>
-              <button onClick={handleLogout}>Logout</button>
-              <button onClick={handleProfile}>Profile</button>
+              <button className='logout-button' onClick={handleLogout}>Logout</button>
+              <button className='logout-button' onClick={handleProfile}>Profile</button>
               </div>)}
 
-                <div className='chat-box'> <Chat groupId={localStorage.getItem('group')} /> </div>
-            
+              <Grid templateColumns='repeat(5, 1fr)' gap={6}>
+                <GridItem w='100%' h='10'> <UserGroupsList></UserGroupsList></GridItem>
+                <GridItem  w='100%' h='10' className='chat-box'> <Chat groupId={groupData.groupId} /> </GridItem>
+                
+              </Grid>
         </div>
     );
 

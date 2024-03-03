@@ -1,0 +1,56 @@
+.myGroups_box {
+  background-color: #fdfdfd;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  min-width: 300px;
+  max-height:fit-content;
+}
+
+.myGroups-head {
+  max-height: fit-content;
+  max-width: fit-content;
+  border-radius: 6px;
+  background: #420e72;
+  position: relative;
+  color: aliceblue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.groupBox {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #b8b4da;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  max-height: 100px;
+  cursor: pointer;
+}
+.groups {
+  height: 500px;
+}
+
+.ceateGroup-button {
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  background-color: #420e72;
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: auto;
+  height: 20px;
+}
+
+.groupTitle {
+  margin: 0;
+  color: #fff;
+}

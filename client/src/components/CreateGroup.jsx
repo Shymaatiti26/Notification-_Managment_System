@@ -3,6 +3,7 @@ import React, { useState, useEffect} from 'react';
 import axios from 'axios'
 import io from 'socket.io-client';
 import { useAuthContext } from '../hooks/useAuthComtext';
+import './CreateGroup.css'
 
 const CreateGroup = () =>{
     const [groupName, setGroupName] = useState('')
@@ -70,7 +71,7 @@ const CreateGroup = () =>{
 
 
 
-        <button type="submit">Create</button>
+        <button className='create-button' type="submit">Create</button>
       </form>
 
         </div>
