@@ -21,9 +21,13 @@ const UserGroupsList = () => {
   //const [groups, setGroups] = useState([{groupName:"jnm"}, {groupName:"jnm",lastMessage:"hbjhn"}, {groupName:"jnm",lastMessage:"hbjhn"}]);
   const [groups, setGroups] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [latestMessage,setLatestMessage] = useState();
+  
+
 
   useEffect(() => {
     getUserGroups();
+    //getLatestMessage();
   }, []);
 
   //get all the user groups from db and store them on groups
@@ -31,7 +35,7 @@ const UserGroupsList = () => {
     try {
       //const response = await axios.post('http://localhost:3001/api/v1/UserGroupList',user.data._id)
       //setGroups(response.data.users)
-      const response = await axios.post(
+      const response = await axios.get(
         "http://localhost:3001/api/v1/UserGroupList"
       );
       console.log(response.data);
@@ -41,6 +45,7 @@ const UserGroupsList = () => {
     }
   };
 
+  //set the group data in the local storage
   const openGroup = (groupId, groupName) => {
     console.log(groupId);
     localStorage.setItem(
@@ -49,6 +54,21 @@ const UserGroupsList = () => {
     );
     location.reload();
   };
+
+  //delete Group 
+  const deleteGroup=(groupId)=>{
+    const response=axios.post('http://localhost:3001/api/v1/deleteGroup',{groupId})
+  };
+
+  /*
+  //get the latest message
+  const getLatestMessage = () =>{
+    const response=axios.get('http://localhost:3001/api/v1/getLatestMessage',{groupId})
+    if(response){
+      setLatestMessage(response.data.latestMessage);
+    }
+
+  };*/
 
   return (
     <div className="myGroups_box">
@@ -82,8 +102,10 @@ const UserGroupsList = () => {
             onClick={() => openGroup(group._id, group.groupName)}
           >
             <strong>{group.groupName}</strong>
-            <p>Last Message: {group.lastMessage}</p>
-            <button>Delete</button>
+            <p>Last Message: {group.latestMessage}</p>
+            <div className="footer">
+            <button className="delete_button" onClick={()=>deleteGroup(group._id)}>Delete</button>
+            </div>
           </Box>
         ))}
       </VStack>

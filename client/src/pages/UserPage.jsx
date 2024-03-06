@@ -18,7 +18,7 @@ const UserPage = ()=>{
     const navigate = useNavigate();
     const {user} = useAuthContext()
     const {dispatch} =useAuthContext()
-    const groupData=JSON.parse(localStorage.getItem('group'))
+    const groupData=JSON.parse(localStorage.getItem('group',))
 
     useEffect(()=>{
 
@@ -54,7 +54,7 @@ const UserPage = ()=>{
 
               <Grid templateColumns='repeat(5, 1fr)' gap={6}>
                 <GridItem w='100%' h='10'> <UserGroupsList></UserGroupsList></GridItem>
-                <GridItem  w='100%' h='10' className='chat-box'> <Chat groupId={groupData.groupId} /> </GridItem>
+                <GridItem  w='100%' h='10' className='chat-box'> {groupData&&<Chat groupId={groupData.groupId} />} </GridItem>
                 
               </Grid>
         </div>

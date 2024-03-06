@@ -30,7 +30,7 @@
   background-color: #b8b4da;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   margin: 0;
-  max-height: 100px;
+  max-height: 120px;
   cursor: pointer;
 }
 .groups {
@@ -53,4 +53,26 @@
 .groupTitle {
   margin: 0;
   color: #fff;
+}
+
+
+.footer{
+  display: flex;
+  align-items: end;
+  justify-content: end;
+
+}
+
+.delete_button{
+  padding: 2px;
+  border: none;
+  border-radius: 8px;
+  background-color: #420e72;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: fit-content;
+  height:fit-content; 
+  align-items: end;
 }

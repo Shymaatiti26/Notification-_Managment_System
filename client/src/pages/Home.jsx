@@ -10,12 +10,12 @@ const Home=()=>{
   
     const handleSignIn=() =>{
       //  window.location='/register'
-      setChangeWind(false)
+      setChangeWind(true)
     }
 
     const handleLogin=() =>{
      // window.location='/login'
-      setChangeWind(true)
+      setChangeWind(false)
   }
 
 return(

@@ -131,3 +131,8 @@
   transition: background-color 0.3s;
 
 }
+
+.chatMessages-body{
+  height:400px;
+
+}

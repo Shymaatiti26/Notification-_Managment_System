@@ -21,7 +21,7 @@ const ProfilePage = () => {
           },
           params: { userId },
 });
-        setUser(response.data.user);
+        setUser(response.data);
       } catch (error) {
         setError(error.response.data.message);
       }

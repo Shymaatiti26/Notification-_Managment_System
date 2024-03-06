@@ -22,18 +22,14 @@ const Chat = ( {groupId} ) => {
     const newSocket = io('http://localhost:3001');
     setSocket(newSocket);
 
-
+     getGroupMessages(groupData.groupId);
     // Listen for incoming messages
     newSocket.on('receive-message', (message) => {
       //console.log(message)
       setMessages((prevMessages) => [...prevMessages, message]);
+      saveMessageToServer(message);
     });
-/*
-    useEffect(()=>{
-      //location.reload();
 
-    },[groupData])
-*/
     
 
 
@@ -43,10 +39,23 @@ const Chat = ( {groupId} ) => {
     };
   }, []);
 
-  //get group data groupName,LastMessages
-  const getGroupData = async ()=>{
-    const response = await axios.post('',{groupId})
+  //save group message on db
+  const saveMessageToServer =async (message) =>{
+    const response = await axios.post('http://localhost:3001/api/v1/getMessage',{message})
+  }
 
+  //get group LastMessages
+  const getGroupMessages = async ()=>{
+    const response = await axios.post('http://localhost:3001/api/v1/sendMessages',{groupId})
+    console.log(response.data.message)
+    setMessages(response.data.messages)
+
+
+  }
+
+  //set the latest message in group
+  const setLatestMessage = async (groupId,latestMessage) =>{
+     const response = await axios.post('http://localhost:3001/api/v1/setLatestMessage',{groupId:groupId,latestMessage:latestMessage})
 
   }
 
@@ -55,16 +64,20 @@ const Chat = ( {groupId} ) => {
     if (inputMessage.trim() !== '') {
       const messageData= {
         groupId :groupId,
-        author: user.username,
+        sender: user.username,
         message: inputMessage,
-        time: new Date(Date.now()).getHours()  + ":" + new Date().getMinutes(),
+        timeSent: new Date(Date.now()).getHours()  + ":" + new Date().getMinutes(),
 
       }
+      setLatestMessage(messageData.groupId,messageData.message);
+
       console.log("sending", messageData);
       console.log("user", user);
       await socket.emit('send-message', messageData);
       setInputMessage('');
     }
+
+
   };
 
   const joinGroup= async ()=>{
@@ -85,19 +98,21 @@ const Chat = ( {groupId} ) => {
 
       <div className='chat-body'>
         <ScrollToBottom className='message-container'>
+          <div className='chatMessages-body'>
           {messages.map((message) => {
             return (
-              <div className='message' id={user.username===message.author ? "you" : "other"}>
+              <div className='message' id={user.username===message.sender ? "you" : "other"}>
                 <div className='message-content'>
                   <p>{message.message}</p>
                 </div>
                 <div className='message-meta'>
-                  <p>{message.time} {message.author} </p>
+                  <p>{message.timeSent} {message.sender} </p>
                 </div>
 
               </div>
             )
           })}
+          </div>
         </ScrollToBottom>
       </div>
 
