@@ -31,6 +31,7 @@ const CreateGroup = () =>{
           setGroupId(JSON.stringify(response.data.groupId))
           //setGroupId(response.data)
           localStorage.setItem('group', response.data.groupId)
+          localStorage.setItem('group', {groupName})
           /*
           alert(groupId + " Group is created!")
           //console.log(groupId)

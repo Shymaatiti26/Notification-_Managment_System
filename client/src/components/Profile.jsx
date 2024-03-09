@@ -8,16 +8,18 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const token = JSON.parse(localStorage.getItem('user',{token}));
+        const userData = JSON.parse(localStorage.getItem('user'));
+
         /*
         localStorage.setItem(
           "group",
           JSON.stringify({ groupId: groupId, groupName: groupName })
         );*/
-        const userId = JSON.parse(localStorage.getItem('user',{_id}));
+        const userId = userData._id;
+        
         const response = await axios.get('http://localhost:3001/api/v1/me', {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${userData.token}`,
           },
           params: { userId },
 });

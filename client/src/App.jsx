@@ -12,7 +12,9 @@ import CreateGroup from './components/CreateGroup'
 import UserGroupsList from './components/UserGroupsList'
 import { AuthContextProvider } from './context/AuthContext'
 import { ChakraProvider, CSSReset } from "@chakra-ui/react";
+import Groups from './pages/Groups'
 
+//import SearchComponent from './components/SearchComponent';
 //import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 function App() {
   const [count, setCount] = useState(0)
@@ -30,7 +32,8 @@ function App() {
         <Route path='/ScheduleMessage' element={<ScheduleMessage />} />
         <Route path='/CreateGroup' element={<CreateGroup/>}/>
         <Route path='/UserGroupsList' element={<UserGroupsList/>}/>
-        
+        <Route path='/groups' element={<Groups/>}/>
+        {/* <Route path='/SearchComponent' element={<SearchComponent/>}/> */}
     </Routes>
     </AuthContextProvider>
     </BrowserRouter>
