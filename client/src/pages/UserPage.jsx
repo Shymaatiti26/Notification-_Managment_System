@@ -25,7 +25,7 @@ const UserPage = ()=>{
   
             // dispatch logout action
             dispatch({ type: 'LOGOUT' })
-            navigate('/Home');
+            navigate('/Login');
 
 
     };

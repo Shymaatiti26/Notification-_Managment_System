@@ -21,9 +21,12 @@ const Login = () => {
       //const token = response.data; // Assuming the response contains token or user data
 
       //localStorage.setItem('token',token);
+      localStorage.setItem('token',token);
+      //console.log();
+      localStorage.setItem('userId',response.data.user._id);
       console.log(response.data);
       //save the user to local storage
-      localStorage.setItem('user',JSON.stringify(response.data));
+      //localStorage.setItem('user',JSON.stringify(response.data));
 
       //update the auth context
       dispatch({type: 'LOGIN', payload:response.data})

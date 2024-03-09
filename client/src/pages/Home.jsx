@@ -22,8 +22,8 @@ return(
     
 <div className="home-container ">
         
-    <div class="split-container">
-      <div class="logo-container">
+    <div className="split-container">
+      <div className="logo-container">
          <img className="logo" src="images/logo.png"/>
           <button onClick={handleSignIn} className="signup-button">Sign Up</button>
           <button onClick={handleLogin} className="login-button">Log In</button>
