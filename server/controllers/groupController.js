@@ -40,7 +40,7 @@ exports.getUserGroups=catchAsyncErrors(async(req,res,next) =>{
 
 })
 
-//delete 
+//delete group from db 
 exports.deleteGroup=catchAsyncErrors(async(req,res,next)=>{
 
   try{
@@ -62,6 +62,7 @@ exports.deleteGroup=catchAsyncErrors(async(req,res,next)=>{
   }
 })
 
+//save the latest message in group in db => api/v1/setLatestMessage
 exports.setLatestMessage=catchAsyncErrors(async(req,res,next)=>{
   try {
     const groupId = req.body.groupId
