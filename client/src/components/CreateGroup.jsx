@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import io from "socket.io-client";
 import { useAuthContext } from "../hooks/useAuthComtext";
 import "./CreateGroup.css";
 
 const CreateGroup = () => {
   const [groupName, setGroupName] = useState("");
   const [groupId, setGroupId] = useState("");
-  const socket = io("http://localhost:3001");
   const { user } = useAuthContext();
   const [groupExistErr, setGroupExistErr] = useState(false);
 

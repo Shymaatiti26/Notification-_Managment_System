@@ -13,6 +13,7 @@ import UserGroupsList from './components/UserGroupsList'
 import { AuthContextProvider } from './context/AuthContext'
 import { ChakraProvider, CSSReset } from "@chakra-ui/react";
 import Groups from './pages/Groups'
+import Settings from './components/Settings'
 
 //import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 function App() {
@@ -32,6 +33,7 @@ function App() {
         <Route path='/CreateGroup' element={<CreateGroup/>}/>
         <Route path='/UserGroupsList' element={<UserGroupsList/>}/>
         <Route path='/groups' element={<Groups/>}/>
+        <Route path='/Settings' element={<Settings/>}/>
 
         
     </Routes>

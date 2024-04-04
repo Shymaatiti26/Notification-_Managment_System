@@ -51,8 +51,13 @@ const io = socketIo(server, {
 io.on('connection', (socket) => {
   console.log('User connected');
 
- 
-  
+
+  socket.on('userRoom',(userId)=>{
+    socket.join(userId)
+    console.log('set user Room success ')
+
+  })
+
   socket.on('joinGroup',(data)=>{
     socket.join(data);
     console.log(`joined group: ${data}`)
@@ -63,7 +68,10 @@ io.on('connection', (socket) => {
   socket.on('send-message', (msg) => {
     // Broadcast the message to all connected clients
     io.to(msg.groupId).emit('receive-message', msg);
-    //io.to().emit('receive-message', msg);
+    msg.users.forEach(user => {
+      socket.in(user.id).emit('receive-notif', msg)
+    });
+
     console.log(msg)
   });
 

@@ -17,47 +17,64 @@ import {
 import CreateGroup from "./CreateGroup";
 
 const UserGroupsList = () => {
-  const { user } = useAuthContext();
-  //const [groups, setGroups] = useState([{groupName:"jnm"}, {groupName:"jnm",lastMessage:"hbjhn"}, {groupName:"jnm",lastMessage:"hbjhn"}]);
-  const [groups, setGroups] = useState([]);
+  const { user,selectedGroup, setSelectedGroup,groups, setGroups } = useAuthContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [latestMessage,setLatestMessage] = useState();
+  const [openedGroup, setOpenedGroup] = useState('');
   
 
 
   useEffect(() => {
+    //getUserGroups();
+    //getLatestMessage();
+  },[groups]);
+
+  useEffect(() => {
     getUserGroups();
     //getLatestMessage();
-  }, []);
+  });
+  
+/*
+  useEffect(() => {
+    localStorage.setItem(
+      "group",
+      JSON.stringify({ groupId: openedGroup._id, groupName: openedGroup.groupName, users: openedGroup.users })
+    );
+    //getLatestMessage();
+  },[openedGroup]);
+*/
 
   //get all the user groups from db and store them on groups
   const getUserGroups = async () => {
     try {
-      //const response = await axios.post('http://localhost:3001/api/v1/UserGroupList',user.data._id)
+      console.log("hhh",user)
+      //const userId = user._id;
+      //const response = await axios.get('http://localhost:3001/api/v1/UserGroupList',{userId})
       //setGroups(response.data.users)
-      const response = await axios.get(
-        "http://localhost:3001/api/v1/UserGroupList"
-      );
+      const response = await axios.get("http://localhost:3001/api/v1/UserGroupList");
       console.log(response.data);
-      setGroups(response.data);
+      setGroups(response.data)
+      
+
     } catch (error) {
       throw error;
     }
   };
 
   //set the group data in the local storage
-  const openGroup = (groupId, groupName) => {
-    console.log(groupId);
+  const openGroup = (groupId, groupName,groupUsers) => {
+    
     localStorage.setItem(
       "group",
-      JSON.stringify({ groupId: groupId, groupName: groupName })
+      JSON.stringify({ groupId: groupId, groupName: groupName, users: groupUsers })
     );
-    location.reload();
   };
 
   //delete Group 
   const deleteGroup=(groupId)=>{
     const response=axios.post('http://localhost:3001/api/v1/deleteGroup',{groupId})
+    location.reload()
+    
   };
 
   /*
@@ -99,7 +116,7 @@ const UserGroupsList = () => {
             className="groupBox"
             p={4}
             key={group._id}
-            onClick={() => openGroup(group._id, group.groupName)}
+            onClick={() => {setSelectedGroup(group)}}
           >
             <strong>{group.groupName}</strong>
             <p>Last Message: {group.latestMessage}</p>
