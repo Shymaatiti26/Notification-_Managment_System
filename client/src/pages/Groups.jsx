@@ -6,9 +6,15 @@ import './Groups.css'
 const Groups = () => {
   const [groups, setGroups] = useState([]);
   const [followedGroups, setFollowedGroups] = useState([]);
-  const [followStatus, setFollowStatus] = useState({});
-  
+
   useEffect(() => {
+    // Load followed groups from localStorage on component mount
+    const storedFollowedGroups = JSON.parse(localStorage.getItem('followedGroups'));
+    if (storedFollowedGroups) {
+      setFollowedGroups(storedFollowedGroups);
+    }
+
+    // Fetch groups from the server
     axios.get('http://localhost:3001/api/v1/getAllGroups')
       .then(response => {
         setGroups(response.data);
@@ -17,7 +23,38 @@ const Groups = () => {
         console.error('Error fetching groups:', error);
       });
   }, []);
-  
+
+  const handleFollow = (groupId) => {
+    const userData = JSON.parse(localStorage.getItem('user'));
+    const userId = userData._id;
+
+    if (followedGroups.includes(groupId)) {
+      // If the group is already followed, unfollow it
+      axios.put('http://localhost:3001/api/v1/RemoveUserFromGroup', { userId, groupId })
+        .then(() => {
+          // Update the state
+          setFollowedGroups(followedGroups.filter(id => id !== groupId));
+          // Update localStorage
+          localStorage.setItem('followedGroups', JSON.stringify(followedGroups.filter(id => id !== groupId)));
+        })
+        .catch(error => {
+          console.error('Error removing user from group:', error);
+        });
+    } else {
+      // If the group is not followed, follow it
+      axios.put('http://localhost:3001/api/v1/UpdateGroup', { userId, groupId })
+        .then(() => {
+          // Update the state
+          setFollowedGroups([...followedGroups, groupId]);
+          // Update localStorage
+          localStorage.setItem('followedGroups', JSON.stringify([...followedGroups, groupId]));
+        })
+        .catch(error => {
+          console.error('Error updating group:', error);
+        });
+    }
+  };
+
   const columns = React.useMemo(
     () => [
       {
@@ -25,26 +62,17 @@ const Groups = () => {
         accessor: 'groupName',
       },
       {
-        // Header: 'Follow/Unfollow',
-        // accessor: 'id',
-        // Cell: ({ value }) => (
-        //   <button type='button' style={{color:'blue'}}onClick={() => handleFollow(value)}>Follow</button>
-        // )
         Header: 'Follow/Unfollow',
         accessor: '_id',
         Cell: ({ row }) => (
-          // <button type='button' style={{ color: followedGroups.includes(row.original._id) ? 'red' : 'blue' }} onClick={() => handleFollow(row.original._id)}>
-          //   {followedGroups.includes(row.original._id) ? 'Unfollow' : 'Follow'}
-          // </button>
           <button
-           className={followedGroups.includes(row.original._id) ? 'unfollow-button' : 'follow-button'}
-           onClick={() => handleFollow(row.original._id)}
+            className={followedGroups.includes(row.original._id) ? 'unfollow-button' : 'follow-button'}
+            onClick={() => handleFollow(row.original._id)}
           >
-          {followedGroups.includes(row.original._id) ? 'Unfollow' : 'Follow'}
+            {followedGroups.includes(row.original._id) ? 'Unfollow' : 'Follow'}
           </button>
         )
       }
-      
     ],
     [followedGroups]
   );
@@ -71,36 +99,6 @@ const Groups = () => {
     useGlobalFilter,
     usePagination
   );
-
-  // const handleFollow = (groupId) => {
-  //   if (followedGroups.includes(groupId)) {
-  //       setFollowedGroups(followedGroups.filter(id => id !== groupId));
-  //     } else {
-  //       setFollowedGroups([...followedGroups, groupId]);
-  //     }
-  //   console.log('Follow group with ID:', groupId);
-  // };
-  const handleFollow = (groupId) => {
-    const userData= JSON.parse(localStorage.getItem('user'));
-    const userId=userData._id;
-    if (followedGroups.includes(groupId)) {
-      axios.put('http://localhost:3001/api/v1/RemoveUserFromGroup', { userId,groupId })
-        .then(() => {
-          setFollowedGroups(followedGroups.filter(id => id !== groupId));
-        })
-        .catch(error => {
-          console.error('Error removing user from group:', error);
-        });
-    } else {
-      axios.put('http://localhost:3001/api/v1/UpdateGroup', { userId,groupId })
-        .then(() => {
-          setFollowedGroups([...followedGroups, groupId]);
-        })
-        .catch(error => {
-          console.error('Error updating group:', error);
-        });
-    }
-  };
 
   return (
     <div className='searchInputDiv'>

@@ -70,6 +70,11 @@ const Settings = () => {
           <Switch marginLeft={3} id="email-alerts" size="lg" />
         </div>
 
+        <div className="sendByEmail">
+          <p>Get the messages by mail:</p>
+          <Switch marginLeft={3} id="email-alerts" size="lg" />
+        </div>
+
         <div className="groupAdmin">
             <p>group  admins:</p>
         </div>

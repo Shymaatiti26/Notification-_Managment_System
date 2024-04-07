@@ -12,6 +12,13 @@
     align-content: space-between;
 }
 
+.sendByEmail{
+  display:  flex;
+  flex-direction: row;
+  margin-top: 10px;
+  align-content: space-between;
+}
+
 .save-button {
     background-color: #553597;
     color: #fff;
