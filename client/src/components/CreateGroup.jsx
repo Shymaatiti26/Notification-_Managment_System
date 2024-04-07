@@ -9,6 +9,7 @@ const CreateGroup = () => {
   const { user } = useAuthContext();
   const [groupExistErr, setGroupExistErr] = useState(false);
 
+
   useEffect(() => {
     // This will be executed when groupId changes
     if (groupId !== "") {
@@ -19,9 +20,10 @@ const CreateGroup = () => {
   }, [groupId]);
 
   const handleSubmit = async () => {
+    const username = user.username;
     const response = await axios.post(
       "http://localhost:3001/api/v1/createGroup",
-      { groupName }
+      { groupName ,username}
     );
     if(!response.data.exist){
     setGroupId(JSON.stringify(response.data.groupId));

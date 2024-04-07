@@ -16,11 +16,12 @@ const groupSchema = new mongoose.Schema({
             ref:"Message"
         }],
 
-    groupAdmin:{
-        type: mongoose.Schema.Types.ObjectId,
+    groupAdmin:[{
+        type: String,
         ref:"User"
-    },
-    latestMessage:{type:String}
+    }],
+    latestMessage:{type:String},
+    latestMessageTime:{type:String}
 
 },
 {timestamps: true}

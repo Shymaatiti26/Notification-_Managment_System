@@ -4,10 +4,11 @@
   padding: 20px;
   border-radius: 8px;
   background-color: hsl(246, 34%, 78%);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   margin: 0;
   min-width:500px;
   min-height:fit-content;
+  margin-top: 20px;
 }
 
 .chat-header {
@@ -138,4 +139,11 @@ margin-left: auto;
 .chatMessages-body{
   height:400px;
 
+}
+
+.closeIcon{
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  
 }

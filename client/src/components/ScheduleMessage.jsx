@@ -5,26 +5,60 @@ import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import  "./ScheduleMessage.css"
+import { CalendarIcon} from '@chakra-ui/icons'
+import io from "socket.io-client";
+import { useAuthContext } from "../hooks/useAuthComtext";
 
 
 
 const ScheduleMessage = () => {
   const [message, setMessage] = useState('');
-  const [recipients, setRecipients] = useState([]);
+  const [toGroups, setToGroups] = useState([]);
   const [sendEmail, setSendEmail] = useState(false);
-  const [users, setUsers] = useState([]);
   const [options, setOptions] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
+  
+  const {
+    user,
+    notification,
+    setNotification,
+    selectedGroup,
+    setSelectedGroup,
+    setShowChat,socket, setSocket
+  } = useAuthContext();
+   const mySocket = io("http://localhost:3001");
+
+
+
+
+  
 
   useEffect(() => {
+
+
+   
     const fetchUsers = async () => {
+      
+      
       try {
+        /*
+        //get all existing users
         const response = await axios.get('http://localhost:3001/api/users');
         setUsers(response.data);
         const givenOptions = response.data.map(user => ({
           label: user.username,
           value: user._id
+        }));*/
+
+        //get all existing groups
+        const response = await axios.get('http://localhost:3001/api/v1/getGroups');
+        console.log(response.data)
+        const givenOptions = response.data.groups.map(group => ({
+          label: group.groupName,
+          value: group
         }));
+
+
         setOptions(givenOptions)
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -35,37 +69,56 @@ const ScheduleMessage = () => {
   }, []);
 
   // // Function to handle recipient selection
-  // const handleRecipientChange = (e) => {
-  //   const selectedRecipients = Array.from(e.target.selectedOptions, (option) => option.value);
-  //   setRecipients(selectedRecipients);
+  // const handleGroupsChange = (e) => {
+  //   const selectedGroups = Array.from(e.target.selectedOptions, (option) => option.value);
+  //   setToGroups(selectedGroups);
   // };
-  const handleRecipientChange = (e) => {
-    const selectedRecipients = Array.from(e, (option) => option.value);
-    setRecipients(selectedRecipients);
+  const handleGroupsChange = (e) => {
+    const selectedGroups = Array.from(e, (option) => option.value);
+    setToGroups(selectedGroups);
   };
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
   
+  //send msg form to the server (Send button)
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      /*
       const response = await axios.post('http://localhost:3001/MessageForm', {
         message,
-        recipients,
+        toGroups,
         sendEmail,
       });
-      console.log(response.data);
+      */
+      
+      toGroups.forEach(group => {
+       mySocket.emit("joinGroup", group._id);
+       mySocket.emit("userRoom", user._id);
+      const messageData = {
+        groupId: group._id,
+        sender: user.username,
+        message: message,
+        timeSent:
+          new Date(Date.now()).getHours() + ":" + new Date().getMinutes(),
+        users: group.users,
+        groupName: group.groupName,
+        group: group,
+      };
+       mySocket.emit("send-message", messageData);
+      });
+
     } catch (error) {
       console.error('Error sending message:', error);
     }
   };
 
 
-  //   const handleRecipientChange = (e) => {
-  //   const selectedRecipients = Array.from(e.target.selectedOptions, (option) => option.value);
-  //   setRecipients(selectedRecipients);
+  //   const handleGroupsChange = (e) => {
+  //   const selectedGroups = Array.from(e.target.selectedOptions, (option) => option.value);
+  //   setToGroups(selectedGroups);
   // };
 
 
@@ -75,6 +128,7 @@ const ScheduleMessage = () => {
       <form onSubmit={handleSubmit}>
 
         <div className='datePicker'>
+          <CalendarIcon boxSize={7} />
       <DatePicker 
         className='datePicker'
         selected={selectedDate}
@@ -96,27 +150,17 @@ const ScheduleMessage = () => {
 
         <div>
         <label>
-            Recipients:
+            Choose groups:
             <Select
             options={options}
             isMulti
-            onChange={handleRecipientChange}
+            onChange={handleGroupsChange}
             />
           </label>
         </div>
 
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              checked={sendEmail}
-              onChange={() => setSendEmail(!sendEmail)}
-            />
-            Send via Email
-          </label>
-        </div>
 
-        <button type="submit">Send</button>
+        <button className='SendButton' type="submit">Send</button>
       </form>
     </div>
   );

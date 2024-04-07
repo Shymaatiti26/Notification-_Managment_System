@@ -17,11 +17,11 @@ const Settings = () => {
   const { user, selectedGroup, group,errorAlert,setErrorAlert,showErr,setShowErr } = useAuthContext();
   const [groupExistErr, setGroupExistErr] = useState(false);
   const [groupName, setGroupName] = useState(selectedGroup.groupName);
-
+  const groupId = selectedGroup._id;
 
 
   const handleSubmit = async () => {
-    const groupId = selectedGroup._id;
+    
     const response = await axios.post(
       "http://localhost:3001/api/v1/changeGgoupName",
       { groupName, groupId }
@@ -35,6 +35,13 @@ const Settings = () => {
       //setShowErr(false);
     }
   };
+
+    //delete Group 
+    const deleteGroup=(groupId)=>{
+      const response=axios.post('http://localhost:3001/api/v1/deleteGroup',{groupId})
+      location.reload()
+      
+    };
 
   return (
     <div>
@@ -58,6 +65,15 @@ const Settings = () => {
           <Switch marginLeft={3} id="email-alerts" size="lg" />
         </div>
 
+        <div className="groupSenders">
+          <p>All group members can send Messages:</p>
+          <Switch marginLeft={3} id="email-alerts" size="lg" />
+        </div>
+
+        <div className="groupAdmin">
+            <p>group  admins:</p>
+        </div>
+
         <din className="groupUsers">
           <strong>Group Members</strong>
           <VStack
@@ -75,9 +91,14 @@ const Settings = () => {
           </VStack>
         </din>
 
-        <button className="create-button" type="submit">
+        <button className="save-button" type="submit">
           Save
         </button>
+
+        <button className="delete-button" onClick={()=>deleteGroup(groupId)}>
+            Delete Group
+        </button>
+        
 
         {groupExistErr && <p>group name is existed!</p>}
       </form>

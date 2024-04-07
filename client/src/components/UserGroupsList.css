@@ -76,3 +76,9 @@
   height:fit-content; 
   align-items: end;
 }
+
+.sendingTime{
+  font-size: 15px;
+  color:#6c7a89;
+
+}

@@ -17,24 +17,24 @@ import {
 import CreateGroup from "./CreateGroup";
 
 const UserGroupsList = () => {
-  const { user,selectedGroup, setSelectedGroup,groups, setGroups } = useAuthContext();
+  const { user, selectedGroup, setSelectedGroup, groups, setGroups,showChat,setShowChat } =
+    useAuthContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [latestMessage,setLatestMessage] = useState();
-  const [openedGroup, setOpenedGroup] = useState('');
+  const [latestMessage, setLatestMessage] = useState();
+  const [openedGroup, setOpenedGroup] = useState("");
+  const userData = JSON.parse(localStorage.getItem("user")); //get the user  info of current logged in user
+  const userId = userData._id;
   
 
-
-  useEffect(() => {
-    //getUserGroups();
-    //getLatestMessage();
-  },[groups]);
 
   useEffect(() => {
     getUserGroups();
+   // console.log(user1);
+    //console.log(user1._id);
     //getLatestMessage();
-  });
-  
-/*
+  }, [groups]);
+
+  /*
   useEffect(() => {
     localStorage.setItem(
       "group",
@@ -47,20 +47,23 @@ const UserGroupsList = () => {
   //get all the user groups from db and store them on groups
   const getUserGroups = async () => {
     try {
-      console.log("hhh",user)
-      //const userId = user._id;
-      //const response = await axios.get('http://localhost:3001/api/v1/UserGroupList',{userId})
-      //setGroups(response.data.users)
-      const response = await axios.get("http://localhost:3001/api/v1/UserGroupList");
+      const response = await axios.get(
+        "http://localhost:3001/api/v1/UserGroupList",
+        {
+          headers: {
+            Authorization: `Bearer ${userData.token}`,
+          },
+          params: { userId },
+        }
+      );
       console.log(response.data);
-      setGroups(response.data)
-      
-
+      setGroups(response.data);
     } catch (error) {
       throw error;
     }
   };
 
+  /*
   //set the group data in the local storage
   const openGroup = (groupId, groupName,groupUsers) => {
     
@@ -68,14 +71,27 @@ const UserGroupsList = () => {
       "group",
       JSON.stringify({ groupId: groupId, groupName: groupName, users: groupUsers })
     );
-  };
+  };*/
 
-  //delete Group 
-  const deleteGroup=(groupId)=>{
-    const response=axios.post('http://localhost:3001/api/v1/deleteGroup',{groupId})
-    location.reload()
+  //unfollow group
+  const unfollorGroup = async (groupId) => {
+    setShowChat(false)
+    const response = await axios.post(
+      "http://localhost:3001/api/v1//UnfollowGroup",
+      { groupId ,userId},
+    );
     
   };
+
+  const IsUsergroupAdmin=(group)=>{
+    if(user.username==group.groupAdmin){
+      return  true;
+    }else{
+      return false;
+    }
+  }
+
+  
 
   /*
   //get the latest message
@@ -93,7 +109,7 @@ const UserGroupsList = () => {
         <HStack>
           <h3 className="groupTitle">My Groups</h3>
 
-          <Modal isOpen={isOpen} onClose={onClose}>
+          <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <ModalContent bg="#b8b4da">
               <ModalCloseButton />
@@ -112,16 +128,28 @@ const UserGroupsList = () => {
       <br />
       <VStack className="groups" spacing={2} align="stretch" overflowY="auto">
         {groups.map((group) => (
+          <Box>
           <Box
             className="groupBox"
             p={4}
             key={group._id}
-            onClick={() => {setSelectedGroup(group)}}
+            onClick={() => {
+              setSelectedGroup(group);
+              setShowChat(true);
+            }}
           >
             <strong>{group.groupName}</strong>
-            <p>Last Message: {group.latestMessage}</p>
-            <div className="footer">
-            <button className="delete_button" onClick={()=>deleteGroup(group._id)}>Delete</button>
+            <p>Last Message: {group.latestMessage} </p>
+            <p className="sendingTime">{group.latestMessageTime}</p>
+
+          </Box>           
+           <div className="footer">
+              <button
+                className="delete_button"
+                onClick={() => unfollorGroup(group._id)}
+              >
+                Unfollow
+              </button>
             </div>
           </Box>
         ))}

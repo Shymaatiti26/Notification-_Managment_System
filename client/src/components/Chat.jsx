@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { useAuthContext } from "../hooks/useAuthComtext";
 import axios from "axios";
-import { SettingsIcon } from "@chakra-ui/icons";
+import { SettingsIcon,CloseIcon } from "@chakra-ui/icons";
 import {
   Modal,
   ModalOverlay,
@@ -20,7 +20,6 @@ import Settings from "./Settings";
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
-  const [socket, setSocket] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     user,
@@ -28,10 +27,12 @@ const Chat = () => {
     setNotification,
     selectedGroup,
     setSelectedGroup,
+    setShowChat,socket, setSocket
   } = useAuthContext();
   const groupData = JSON.parse(localStorage.getItem("group"));
   //const [groupId,setGroupId] = useState();
   let groupId = selectedGroup._id;
+  
 
   useEffect(() => {
     //setGroupId(selectedGroup._id)
@@ -46,7 +47,7 @@ const Chat = () => {
 
     // Listen for incoming messages
     newSocket.on("receive-message", (message) => {
-      //console.log(message)
+      console.log('tttt')
       setMessages((prevMessages) => [...prevMessages, message]);
       setNotification((prevNotif) => [...prevNotif, message]);
       saveMessageToServer(message);
@@ -105,7 +106,7 @@ const Chat = () => {
         groupName: selectedGroup.groupName,
         group: selectedGroup,
       };
-      setLatestMessage(messageData.groupId, messageData.message);
+      setLatestMessage(messageData.groupId, messageData);
 
       console.log("sending", messageData);
       console.log("user", user);
@@ -126,8 +127,10 @@ const Chat = () => {
 
   return (
     <div className="chatMain-container ">
+     <div className="closeIcon"><CloseIcon cursor= 'pointer' color='white' marginLeft="auto" onClick={()=>{setShowChat(false)}}/></div>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      
+      <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent bg="#b8b4da">
           <ModalCloseButton />
@@ -140,7 +143,7 @@ const Chat = () => {
       <div className="chat-header">
         <p>{selectedGroup.groupName}</p>
         <div className="settingIcon">
-          <SettingsIcon boxSize={6} onClick={onOpen} />
+          <SettingsIcon cursor= 'pointer' boxSize={6} onClick={onOpen} />
         </div>
       </div>
 

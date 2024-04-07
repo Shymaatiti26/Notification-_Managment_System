@@ -4,6 +4,7 @@
   flex-direction: column;
   min-height:800px;
   background-color: #b8b4da;
+  width: auto;
   
  
 
@@ -141,4 +142,11 @@
   
   .rotate {
     transform: rotate(180deg);
+  }
+
+  .mainContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    
   }

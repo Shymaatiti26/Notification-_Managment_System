@@ -6,9 +6,10 @@ const Group = require("../models/GroupModel");
 exports.createGroup = catchAsyncErrors(async (req, res, next) => {
   try {
     const groupName = req.body.groupName;
+    const groupAdmin =req.body.username;
     const groupN = await Group.findOne({ groupName: groupName });
     if (!groupN) {
-      const group = await Group.create({ groupName: groupName });
+      const group = await Group.create({ groupName: groupName , groupAdmin : groupAdmin });
       res.json({ groupId: group._id, exist: false });
     } else {
       console.log("this group Name exist");
@@ -24,10 +25,9 @@ exports.createGroup = catchAsyncErrors(async (req, res, next) => {
 //Get All groups that this user have=> /api/v1/UserGroupList
 exports.getUserGroups = catchAsyncErrors(async (req, res, next) => {
   try {
-    const userId = req.body.userId;
-    //console.log(`user id is ${}`);
-    //const groups = await Group.find({ users: userId });
-    const groups = await Group.find({});
+    const userId = req.query.userId;
+    const groups = await Group.find({ users: userId });
+    //const groups = await Group.find({});
     if (!groups) {
       return next(new ErrorHandler("No groups", 404));
     }
@@ -59,10 +59,11 @@ exports.deleteGroup = catchAsyncErrors(async (req, res, next) => {
 exports.setLatestMessage = catchAsyncErrors(async (req, res, next) => {
   try {
     const groupId = req.body.groupId;
-    const latestMessage = req.body.latestMessage;
+    const latestMessage = req.body.latestMessage.message;
+    const sendingTime = req.body.latestMessage.timeSent
     console.log(`latestMessage:${latestMessage}`);
     const group = await Group.findByIdAndUpdate(groupId, {
-      $set: { latestMessage: latestMessage },
+      $set: { latestMessage: latestMessage ,latestMessageTime: sendingTime },
     });
     if (!group) {
       console.log("group not found");
@@ -179,3 +180,38 @@ exports.ChangeGgoupName = catchAsyncErrors(async (req, res, next) => {
     res.status(500).send("Error updating group name");
   }
 });
+
+//delete user from Group users array => api/v1//UnfollowGroup
+exports.UnfollowGroup =  catchAsyncErrors(async (req, res, next) => {
+  const groupId = req.body.groupId;
+  const userId = req.body.userId;
+ try{
+  Group.findOneAndUpdate(
+    { _id: groupId }, // Query condition to find the group by its ID
+    { $pull: { users: userId } }, // Use $pull operator to remove the user from the users array
+    { new: true } // Option to return the updated document
+  )
+    .then(updatedGroup => {
+      if (!updatedGroup) {
+        // Handle case where group with the given ID is not found
+        console.log('Group not found');
+        return;
+      }
+      console.log('User removed successfully');
+    })
+  } catch (error) {
+    console.error("Error unfollow group:", error);
+    res.status(500).send("Error unfollow group");
+  }
+})
+
+// get all groups=> /api/v1/getGroups
+exports.getGroups = catchAsyncErrors(async (req, res, next) => {
+
+  const groups = await Group.find();
+
+  res.status(200).json({
+      success:true,
+      groups
+  })
+})

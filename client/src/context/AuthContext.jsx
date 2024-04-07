@@ -19,7 +19,8 @@ export const AuthContextProvider = ({ children }) => {
   const [groups, setGroups] = useState([]); //the chats in the group list
   const[error,setError]=useState('');//any error that can  occur on the user page
   const [showErr,setShowErr] = useState(false);
-
+  const[showChat,setShowChat] = useState(false);
+  const [socket, setSocket] = useState();
 
   const [state, dispatch] = useReducer(authReducer, {
     user: null,
@@ -38,7 +39,7 @@ export const AuthContextProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ ...state, dispatch, notification,
-      setNotification,selectedGroup, setSelectedGroup, groups, setGroups,showErr,setShowErr,error,setError }}>
+      setNotification,selectedGroup, setSelectedGroup, groups, setGroups,showErr,setShowErr,error,setError,showChat,setShowChat,socket, setSocket }}>
      
       {children}
     </AuthContext.Provider>

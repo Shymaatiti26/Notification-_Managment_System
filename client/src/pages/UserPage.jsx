@@ -28,6 +28,7 @@ import {
   AlertTitle,
   AlertDescription,
 } from "@chakra-ui/react";
+import ScheduleMessage from "../components/ScheduleMessage";
 
 //import { useLogout } from './hooks/useLogout';
 const UserPage = () => {
@@ -42,7 +43,7 @@ const UserPage = () => {
   const { user,errorAlert,setErrorAlert,showErr,setShowErr } = useAuthContext();
   const { dispatch } = useAuthContext();
   //const groupData=JSON.parse(localStorage.getItem('group',))
-  const { notification, setNotification, selectedGroup, setSelectedGroup } =useAuthContext();
+  const { notification, setNotification, selectedGroup, setSelectedGroup,showChat } =useAuthContext();
 
   useEffect(() => {}, [selectedGroup,showErr]);
 
@@ -130,14 +131,14 @@ const UserPage = () => {
         </div>
       )}
       
-      <Grid templateColumns="repeat(5, 1fr)" gap={6}>
+      <Grid className='mainContainer' templateColumns="repeat(5, 1fr)" gap={6}  >
         <GridItem w="100%" h="10">
           {" "}
           <UserGroupsList></UserGroupsList>
         </GridItem>
         <GridItem w="100%" h="10" className="chat-box">
           {" "}
-          {selectedGroup && <Chat />}
+          {showChat  && <Chat />}
         </GridItem>
       </Grid>
       

@@ -67,12 +67,11 @@ io.on('connection', (socket) => {
   // Listen for incoming chat messages
   socket.on('send-message', (msg) => {
     // Broadcast the message to all connected clients
+    console.log("Message Received : ",msg,'end')
     io.to(msg.groupId).emit('receive-message', msg);
     msg.users.forEach(user => {
       socket.in(user.id).emit('receive-notif', msg)
     });
-
-    console.log(msg)
   });
 
 
