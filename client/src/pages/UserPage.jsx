@@ -1,7 +1,5 @@
 import "./UserPage.css";
-import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../components/Login";
 import "../components/Profile";
@@ -9,17 +7,8 @@ import Chat from "../components/Chat";
 import { useAuthContext } from "../hooks/useAuthComtext";
 import { Grid, GridItem } from "@chakra-ui/react";
 import UserGroupsList from "../components/UserGroupsList";
-import { BellIcon } from "@chakra-ui/icons";
-import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
-  MenuDivider,
-} from "@chakra-ui/react";
+import { BellIcon,SearchIcon } from "@chakra-ui/icons";
+import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import NotificationBadge from "react-notification-badge";
 import { Effect } from "react-notification-badge";
 import {
@@ -29,6 +18,18 @@ import {
   AlertDescription,
 } from "@chakra-ui/react";
 import ScheduleMessage from "../components/ScheduleMessage";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  useDisclosure,
+  Button,
+} from "@chakra-ui/react";
+import Groups from './Groups'
 
 //import { useLogout } from './hooks/useLogout';
 const UserPage = () => {
@@ -40,12 +41,29 @@ const UserPage = () => {
     setDropdownOpen(!dropdownOpen);
   };
   const navigate = useNavigate();
-  const { user,errorAlert,setErrorAlert,showErr,setShowErr } = useAuthContext();
+  const {
+    user,
+    errorAlert,
+    setErrorAlert,
+    showErr,
+    setShowErr,
+    setIsGroupAdmin,
+    IsGroupAdmin,
+  } = useAuthContext();
   const { dispatch } = useAuthContext();
   //const groupData=JSON.parse(localStorage.getItem('group',))
-  const { notification, setNotification, selectedGroup, setSelectedGroup,showChat } =useAuthContext();
+  const {
+    notification,
+    setNotification,
+    selectedGroup,
+    setSelectedGroup,
+    showChat,
+    setShowChat,
+  } = useAuthContext();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const btnRef = React.useRef();
 
-  useEffect(() => {}, [selectedGroup,showErr]);
+  useEffect(() => {}, []);
 
   const handleProfile = async () => {
     navigate("/Profile");
@@ -69,13 +87,15 @@ const UserPage = () => {
 
   return (
     <div className="main-container">
-      {showErr && <Alert status="error">
-        <AlertIcon />
-        <AlertTitle>Your browser is outdated!</AlertTitle>
-        <AlertDescription>
-          Your Chakra experience may be degraded.
-        </AlertDescription>
-      </Alert>}
+      {showErr && (
+        <Alert status="error">
+          <AlertIcon />
+          <AlertTitle>Your browser is outdated!</AlertTitle>
+          <AlertDescription>
+            Your Chakra experience may be degraded.
+          </AlertDescription>
+        </Alert>
+      )}
       {error && <div style={{ color: "red" }}>{error}</div>}
       {user && (
         <div className="navbar">
@@ -87,9 +107,32 @@ const UserPage = () => {
             <button className="navbar-button" onClick={handleMessage}>
               Send Message
             </button>
-            <button className="navbar-button" onClick={handleGroups}>
-              Search Groups
-            </button>
+            <button className="navbar-button" onClick={onOpen}>
+              Search Group
+            
+
+            <SearchIcon className="searchIcon" boxSize={6} ref={btnRef} colorScheme="teal" >
+              Open
+              
+            </SearchIcon></button>
+            <Drawer
+              isOpen={isOpen}
+              placement="right"
+              onClose={onClose}
+              finalFocusRef={btnRef}
+            >
+              <DrawerOverlay />
+              <DrawerContent>
+                <DrawerCloseButton />
+                <DrawerHeader>Search Group</DrawerHeader>
+
+                <DrawerBody>
+                  <Groups></Groups>
+                </DrawerBody>
+
+
+              </DrawerContent>
+            </Drawer>
           </div>
           <div className="navbar-right">
             <Menu>
@@ -107,6 +150,7 @@ const UserPage = () => {
                     key={notif._id}
                     onClick={() => {
                       setSelectedGroup(notif.group);
+                      setShowChat(true);
                       setNotification(notification.filter((n) => n !== notif));
                     }}
                   >
@@ -130,18 +174,17 @@ const UserPage = () => {
           </div>
         </div>
       )}
-      
-      <Grid className='mainContainer' templateColumns="repeat(5, 1fr)" gap={6}  >
+
+      <Grid className="mainContainer" templateColumns="repeat(5, 1fr)" gap={6}>
         <GridItem w="100%" h="10">
           {" "}
           <UserGroupsList></UserGroupsList>
         </GridItem>
         <GridItem w="100%" h="10" className="chat-box">
           {" "}
-          {showChat  && <Chat />}
+          {showChat && <Chat />}
         </GridItem>
       </Grid>
-      
     </div>
   );
 };

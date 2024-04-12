@@ -150,3 +150,10 @@
     justify-content: space-between;
     
   }
+
+  .searchIcon{
+    cursor: pointer;
+    margin-left: 5px;
+
+
+  }

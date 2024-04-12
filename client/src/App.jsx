@@ -14,6 +14,7 @@ import { AuthContextProvider } from './context/AuthContext'
 import { ChakraProvider, CSSReset } from "@chakra-ui/react";
 import Groups from './pages/Groups'
 import Settings from './components/Settings'
+import ScheduledMsgsList from './components/ScheduledMsgsList'
 
 //import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 function App() {
@@ -34,6 +35,7 @@ function App() {
         <Route path='/UserGroupsList' element={<UserGroupsList/>}/>
         <Route path='/groups' element={<Groups/>}/>
         <Route path='/Settings' element={<Settings/>}/>
+        <Route path='/ScheduledMsgsList' element={<ScheduledMsgsList/>}/>
 
         
     </Routes>

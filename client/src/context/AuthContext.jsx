@@ -21,6 +21,7 @@ export const AuthContextProvider = ({ children }) => {
   const [showErr,setShowErr] = useState(false);
   const[showChat,setShowChat] = useState(false);
   const [socket, setSocket] = useState();
+  const [IsGroupAdmin, setIsGroupAdmin] = useState();
 
   const [state, dispatch] = useReducer(authReducer, {
     user: null,
@@ -39,7 +40,8 @@ export const AuthContextProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ ...state, dispatch, notification,
-      setNotification,selectedGroup, setSelectedGroup, groups, setGroups,showErr,setShowErr,error,setError,showChat,setShowChat,socket, setSocket }}>
+      setNotification,selectedGroup, setSelectedGroup, groups, setGroups,showErr,setShowErr,error,setError,showChat,
+      setShowChat,socket, setSocket, IsGroupAdmin, setIsGroupAdmin }}>
      
       {children}
     </AuthContext.Provider>

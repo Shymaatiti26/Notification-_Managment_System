@@ -105,9 +105,10 @@ margin-left: auto;
 }
 
 .chat-footer {
-  height: 40px;
+  height:fit-content;
   border-top: none;
   display: flex;
+  flex-direction: column;
   margin-top: 10px;
 }
 
@@ -147,3 +148,20 @@ margin-left: auto;
   margin-bottom: 10px;
   
 }
+
+.senMessage{
+  display: flex;
+  flex-direction: row;
+  height: 40px;
+
+}
+
+
+.sendLater{
+  display: flex;
+  flex-direction: row;
+  padding: 5px;
+
+}
+
+

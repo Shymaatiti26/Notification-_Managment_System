@@ -40,3 +40,16 @@
     transition: background-color 0.3s;
     margin-left: 10px;
   }
+
+  .groupMembers {
+    height: 150px;
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 7px;
+  }
+
+  .groupAdmins {
+    height: 70px;
+    background-color: #fff;
+    border-radius: 5px;
+  }

@@ -102,7 +102,7 @@ const Groups = () => {
 
   return (
     <div className='searchInputDiv'>
-      <h2>Groups</h2>
+     
       <input
         type="text"
         className='searchInputGroup'

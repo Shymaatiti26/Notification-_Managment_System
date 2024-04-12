@@ -14,34 +14,53 @@ import {
 import { SmallCloseIcon } from "@chakra-ui/icons";
 
 const Settings = () => {
-  const { user, selectedGroup, group,errorAlert,setErrorAlert,showErr,setShowErr } = useAuthContext();
+  const {
+    user,
+    selectedGroup,
+    group,
+    errorAlert,
+    setErrorAlert,
+    showErr,
+    setShowErr,
+    IsGroupAdmin, setIsGroupAdmin
+  } = useAuthContext();
   const [groupExistErr, setGroupExistErr] = useState(false);
   const [groupName, setGroupName] = useState(selectedGroup.groupName);
   const groupId = selectedGroup._id;
 
+  useEffect(()=>{
+    checkAdmin();
+  })
 
   const handleSubmit = async () => {
-    
     const response = await axios.post(
       "http://localhost:3001/api/v1/changeGgoupName",
       { groupName, groupId }
     );
 
     if (response.data.exist) {
-      setErrorAlert('group name is existed!');
+      setErrorAlert("group name is existed!");
       setShowErr(true);
     } else {
-      
       //setShowErr(false);
     }
   };
 
-    //delete Group 
-    const deleteGroup=(groupId)=>{
-      const response=axios.post('http://localhost:3001/api/v1/deleteGroup',{groupId})
-      location.reload()
-      
-    };
+  //delete Group
+  const deleteGroup = (groupId) => {
+    const response = axios.post("http://localhost:3001/api/v1/deleteGroup", {
+      groupId,
+    });
+    location.reload();
+  };
+
+  //check if the loged in user is the group admin
+  const checkAdmin = () => {
+    selectedGroup.groupAdmin.forEach((admin) => {
+      if (admin == user.username) 
+      setIsGroupAdmin(true);
+    });
+  };
 
   return (
     <div>
@@ -49,13 +68,15 @@ const Settings = () => {
         <h3>Group Settings</h3>
 
         <label>
-          Group Name:
+          Group Name: 
+          {IsGroupAdmin &&
           <input
             type="text"
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
             required
-          />
+          />}
+          {!IsGroupAdmin && <strong> {groupName}</strong>}
         </label>
 
         <br />
@@ -65,24 +86,37 @@ const Settings = () => {
           <Switch marginLeft={3} id="email-alerts" size="lg" />
         </div>
 
-        <div className="groupSenders">
+        {IsGroupAdmin && <div className="groupSenders">
           <p>All group members can send Messages:</p>
           <Switch marginLeft={3} id="email-alerts" size="lg" />
-        </div>
+        </div>}
 
         <div className="sendByEmail">
           <p>Get the messages by mail:</p>
           <Switch marginLeft={3} id="email-alerts" size="lg" />
         </div>
 
-        <div className="groupAdmin">
-            <p>group  admins:</p>
+        <div className="IsGroupAdmin">
+          <strong>Group Admins</strong>
+          <VStack
+            className="groupAdmins"
+            spacing={2}
+            align="stretch"
+            overflowY="auto"
+          >
+            {selectedGroup.groupAdmin.map((admin) => (
+              <Box>
+                <strong>{admin}</strong>
+                {IsGroupAdmin &&<SmallCloseIcon color="red.500"></SmallCloseIcon>}
+              </Box>
+            ))}
+          </VStack>
         </div>
 
-        <din className="groupUsers">
+        <div className="groupUsers">
           <strong>Group Members</strong>
           <VStack
-            className="groups"
+            className="groupMembers"
             spacing={2}
             align="stretch"
             overflowY="auto"
@@ -90,20 +124,19 @@ const Settings = () => {
             {selectedGroup.users.map((user) => (
               <Box>
                 <strong>{user}</strong>
-                <SmallCloseIcon color="red.500"></SmallCloseIcon>
+                {IsGroupAdmin &&<SmallCloseIcon color="red.500"></SmallCloseIcon>}
               </Box>
             ))}
           </VStack>
-        </din>
+        </div>
 
         <button className="save-button" type="submit">
           Save
         </button>
 
-        <button className="delete-button" onClick={()=>deleteGroup(groupId)}>
-            Delete Group
+        <button className="delete-button" onClick={() => deleteGroup(groupId)}>
+          Delete Group
         </button>
-        
 
         {groupExistErr && <p>group name is existed!</p>}
       </form>

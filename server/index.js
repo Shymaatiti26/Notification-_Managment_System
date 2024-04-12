@@ -15,6 +15,7 @@ const app=express()
 const http = require('http');
 const socketIo = require('socket.io');
 const Profile=require('./routes/Profile')
+const schedule = require('node-schedule');
 
 //new changes 
 const cookieParser = require('cookie-parser')
@@ -22,6 +23,7 @@ const errorMiddleware= require('./middlewares/errors')
 const auth= require('./routes/auth')
 const groupRouter=require('./routes/groupRouter')
 const messageRouter=require('./routes/messageRouter')
+//const task = require('./scheduleTasks');
 
 app.use(express.json())
 app.use(cookieParser())
@@ -47,10 +49,11 @@ const io = socketIo(server, {
   },
  });
 
+ 
+
  // Socket.IO event handling for chat
 io.on('connection', (socket) => {
   console.log('User connected');
-
 
   socket.on('userRoom',(userId)=>{
     socket.join(userId)
@@ -65,13 +68,25 @@ io.on('connection', (socket) => {
   })
 
   // Listen for incoming chat messages
-  socket.on('send-message', (msg) => {
+  socket.on('send-message', (msg,sendLater) => {
+
+    if(sendLater===true){
+    schedule.scheduleJob(msg.sendLaterDate, function(){
+      console.log("Message Received : ",msg,'end')
+      io.to(msg.groupId).emit('receive-message', msg,sendLater);
+      msg.users.forEach(user => {
+        socket.in(user.id).emit('receive-notif', msg)
+      });
+      
+    });}else{
+   
     // Broadcast the message to all connected clients
     console.log("Message Received : ",msg,'end')
-    io.to(msg.groupId).emit('receive-message', msg);
+    io.to(msg.groupId).emit('receive-message', msg,sendLater);
     msg.users.forEach(user => {
       socket.in(user.id).emit('receive-notif', msg)
     });
+  }
   });
 
 
@@ -99,6 +114,8 @@ app.use('/api/v1',auth);
 app.use(errorMiddleware)
 app.use('/api/v1',groupRouter)
 app.use('/api/v1',messageRouter)
+
+
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {

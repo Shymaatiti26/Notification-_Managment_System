@@ -2,11 +2,10 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 import "./Chat.css";
-import { useParams } from "react-router-dom";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { useAuthContext } from "../hooks/useAuthComtext";
 import axios from "axios";
-import { SettingsIcon,CloseIcon } from "@chakra-ui/icons";
+import { SettingsIcon, CloseIcon, CalendarIcon } from "@chakra-ui/icons";
 import {
   Modal,
   ModalOverlay,
@@ -16,6 +15,8 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import Settings from "./Settings";
+import DatePicker from "react-datepicker";
+import sound from '../assets/sound.wav'
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
@@ -27,17 +28,22 @@ const Chat = () => {
     setNotification,
     selectedGroup,
     setSelectedGroup,
-    setShowChat,socket, setSocket
+    setShowChat,
+    socket,
+    setSocket,
+    IsGroupAdmin,
+    setIsGroupAdmin,
   } = useAuthContext();
   const groupData = JSON.parse(localStorage.getItem("group"));
-  //const [groupId,setGroupId] = useState();
   let groupId = selectedGroup._id;
-  
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [sendLater, setSendLater] = useState(false);
 
   useEffect(() => {
     //setGroupId(selectedGroup._id)
     groupId = selectedGroup._id;
     getGroupMessages();
+    checkAdmin();
   }, [selectedGroup]);
 
   useEffect(() => {
@@ -46,11 +52,19 @@ const Chat = () => {
     setSocket(newSocket);
 
     // Listen for incoming messages
-    newSocket.on("receive-message", (message) => {
-      console.log('tttt')
+    newSocket.on("receive-message", (message,sendLater) => {
+      console.log("tttt");
       setMessages((prevMessages) => [...prevMessages, message]);
+      if(!selectedGroup._id===message.groupId){
       setNotification((prevNotif) => [...prevNotif, message]);
-      saveMessageToServer(message);
+      playSound();
+      }
+      if (sendLater){
+        //set the sendLater false
+      }
+      //saveMessageToServer(message,sendLater);
+      
+
     });
 
     /*
@@ -67,12 +81,14 @@ const Chat = () => {
   }, []);
 
   //save group message on db
-  const saveMessageToServer = async (message) => {
+  const saveMessageToServer = async (message,sendLater) => {
     const response = await axios.post(
       "http://localhost:3001/api/v1/getMessage",
-      { message }
+      { message ,sendLater}
     );
   };
+
+
 
   //get group LastMessages
   const getGroupMessages = async () => {
@@ -95,24 +111,36 @@ const Chat = () => {
   const sendMessage = async () => {
     joinGroup();
     setUserRoom();
+    let timeSend = null;//flag if the message is schedualed 
+    if(sendLater===true){
+      timeSend = selectedDate.getHours()+ ":" + selectedDate.getMinutes();
+    }else{
+      timeSend = new Date(Date.now()).getHours() + ":" + new Date().getMinutes()
+    }
+
     if (inputMessage.trim() !== "") {
       const messageData = {
         groupId: groupId,
         sender: user.username,
         message: inputMessage,
-        timeSent:
-          new Date(Date.now()).getHours() + ":" + new Date().getMinutes(),
+        timeSent:timeSend,
         users: selectedGroup.users,
-        groupName: selectedGroup.groupName,
         group: selectedGroup,
+        sendLater:sendLater,
       };
       setLatestMessage(messageData.groupId, messageData);
 
-      console.log("sending", messageData);
-      console.log("user", user);
-      await socket.emit("send-message", messageData);
-      //await socket.emit('sendNotif',messageData);
+      await socket.emit("send-message", messageData,sendLater);
       setInputMessage("");
+
+      //if(sendLater===true){
+        //save schedualed message to db
+        saveMessageToServer(messageData,sendLater);
+
+      //}
+
+
+      setSendLater(false);
     }
   };
 
@@ -125,11 +153,51 @@ const Chat = () => {
     await socket.emit("userRoom", user._id);
   };
 
+  //check if the loged in user is the group admin
+  const checkAdmin = () => {
+    let isAdmin = false; // Flag variable to track admin status
+    selectedGroup.groupAdmin.forEach((admin) => {
+      if (admin === user.username) {
+        isAdmin = true;
+      }
+    });
+    setIsGroupAdmin(isAdmin);
+  };
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
+  //turn date picker on/of
+  const turnDatePicker = () => {
+    if (sendLater === true) {
+      setSendLater(false);
+    } else {
+      setSendLater(true);
+    }
+  };
+
+  const playSound =() =>{
+    new Audio (sound).play();
+
+  };
+
+
+
+
   return (
     <div className="chatMain-container ">
-     <div className="closeIcon"><CloseIcon cursor= 'pointer' color='white' marginLeft="auto" onClick={()=>{setShowChat(false)}}/></div>
+      <div className="closeIcon">
+        <CloseIcon
+          cursor="pointer"
+          color="white"
+          marginLeft="auto"
+          onClick={() => {
+            setShowChat(false);
+          }}
+        />
+      </div>
 
-      
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent bg="#b8b4da">
@@ -143,12 +211,12 @@ const Chat = () => {
       <div className="chat-header">
         <p>{selectedGroup.groupName}</p>
         <div className="settingIcon">
-          <SettingsIcon cursor= 'pointer' boxSize={6} onClick={onOpen} />
+          <SettingsIcon cursor="pointer" boxSize={6} onClick={onOpen} />
         </div>
       </div>
 
       <div className="chat-body">
-        <ScrollToBottom className="message-container" >
+        <ScrollToBottom className="message-container">
           <div className="chatMessages-body">
             {messages.map((message) => {
               return (
@@ -170,18 +238,43 @@ const Chat = () => {
           </div>
         </ScrollToBottom>
       </div>
-
-      <div className="chat-footer">
-        <input
-          type="text"
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          onKeyPress={(event) => {
-            event.key === "Enter" && sendMessage();
-          }}
-        />
-        <button onClick={sendMessage}>Send</button>
-      </div>
+      {IsGroupAdmin && (
+        <div className="chat-footer">
+          <div className="senMessage">
+            <input
+              type="text"
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyPress={(event) => {
+                event.key === "Enter" && sendMessage();
+              }}
+            />
+            <button onClick={sendMessage}>Send</button>
+            <CalendarIcon
+              onClick={() => turnDatePicker()}
+              boxSize={7}
+              color={"#420e72"}
+              marginLeft={"10px"}
+              cursor={"pointer"}
+            ></CalendarIcon>
+          </div>
+          {sendLater && (
+            <div className="sendLater">
+              <strong>when to send:</strong>
+              <DatePicker
+                className="datePicker"
+                selected={selectedDate}
+                onChange={handleDateChange}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="MMMM d, yyyy h:mm aa"
+                placeholderText="Select date and time"
+              />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

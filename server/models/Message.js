@@ -5,6 +5,7 @@ const messageSchema = new mongoose.Schema({
     group: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }],
     message: { type: String, required: true },
     timeSent: { type: String},
+    sendLater: {type :String},
     //seen: { type: Boolean, default: false }
   });
 
