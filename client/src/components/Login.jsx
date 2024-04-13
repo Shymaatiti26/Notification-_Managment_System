@@ -50,10 +50,8 @@ const Login = () => {
     <div className="input-group">
       <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder='Password'/>
     </div>
-    <button type="submit">Login</button>
-    <div className="bottom-text">
-      <p>Don't have an account? <Link to="/register">Sign Up</Link></p>
-    </div>
+    <button className="loginButton" type="submit">Login</button>
+
   </form>
 </div>
   );

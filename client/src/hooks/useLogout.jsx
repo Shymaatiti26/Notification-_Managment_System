@@ -2,9 +2,12 @@
 import { useAuthContext } from './useAuthComtext'
 
 export const useLogout = () => {
-    const { dispatch } = useAuthContext()
+    const { dispatch ,setShowChat,setSelectedGroup} = useAuthContext()
   
     const logout = () => {
+      setSelectedGroup('');
+      setShowChat(false);
+
       // remove user from storage
       localStorage.removeItem('user')
   

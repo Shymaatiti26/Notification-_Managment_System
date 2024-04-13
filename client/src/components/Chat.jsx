@@ -55,10 +55,10 @@ const Chat = () => {
     newSocket.on("receive-message", (message,sendLater) => {
       console.log("tttt");
       setMessages((prevMessages) => [...prevMessages, message]);
-      if(!selectedGroup._id===message.groupId){
-      setNotification((prevNotif) => [...prevNotif, message]);
-      playSound();
-      }
+     // if(!selectedGroup._id===message.groupId){
+     // setNotification((prevNotif) => [...prevNotif, message]);
+      //playSound();
+      //}
       if (sendLater){
         //set the sendLater false
       }
@@ -67,12 +67,15 @@ const Chat = () => {
 
     });
 
-    /*
+   
     // Listen for user incoming notification
-    newSocket.on('receive-notif', (notif) => {
-      console.log(notification)
+    newSocket.on('receive-notif', (notif,user) => {
+      //console.log(notification)
       setNotification((prevNotif) => [...prevNotif, notif]);
-    });*/
+      playSound();
+
+      saveNotificationToServer(notif,user)
+    });
 
     // Cleanup on component unmount
     return () => {
@@ -84,9 +87,18 @@ const Chat = () => {
   const saveMessageToServer = async (message,sendLater) => {
     const response = await axios.post(
       "http://localhost:3001/api/v1/getMessage",
-      { message ,sendLater}
+      { message }
     );
+  
+
   };
+
+  //save notification in db 
+  const saveNotificationToServer = async (notification,userId) =>{
+    const response = await axios.post("http://localhost:3001/api/v1/saveNotification",{notification, userId})
+
+
+  }
 
 
 
@@ -99,6 +111,8 @@ const Chat = () => {
     console.log(response.data.message);
     setMessages(response.data.messages);
   };
+
+
 
   //set the latest message in group
   const setLatestMessage = async (groupId, latestMessage) => {

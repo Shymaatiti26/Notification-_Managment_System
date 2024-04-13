@@ -24,7 +24,7 @@ const UserGroupsList = () => {
     groups,
     setGroups,
     showChat,
-    setShowChat,setIsGroupAdmin,IsGroupAdmin
+    setShowChat,setIsGroupAdmin,IsGroupAdmin,setNotification,notification,
   } = useAuthContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [latestMessage, setLatestMessage] = useState();
@@ -34,10 +34,13 @@ const UserGroupsList = () => {
 
   useEffect(() => {
     getUserGroups();
+    
     // console.log(user1);
     //console.log(user1._id);
     //getLatestMessage();
   }, [groups]);
+
+
 
   /*
   useEffect(() => {
@@ -67,6 +70,8 @@ const UserGroupsList = () => {
       throw error;
     }
   };
+
+
 
   /*
   //set the group data in the local storage

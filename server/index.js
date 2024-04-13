@@ -56,6 +56,7 @@ io.on('connection', (socket) => {
   console.log('User connected');
 
   socket.on('userRoom',(userId)=>{
+    console.log(userId +"is in room")
     socket.join(userId)
     console.log('set user Room success ')
 
@@ -75,7 +76,7 @@ io.on('connection', (socket) => {
       console.log("Message Received : ",msg,'end')
       io.to(msg.groupId).emit('receive-message', msg,sendLater);
       msg.users.forEach(user => {
-        socket.in(user.id).emit('receive-notif', msg)
+        io.to(user).emit('receive-notif', msg)
       });
       
     });}else{
@@ -84,7 +85,7 @@ io.on('connection', (socket) => {
     console.log("Message Received : ",msg,'end')
     io.to(msg.groupId).emit('receive-message', msg,sendLater);
     msg.users.forEach(user => {
-      socket.in(user.id).emit('receive-notif', msg)
+      io.to(user).emit('receive-notif', msg,user)
     });
   }
   });

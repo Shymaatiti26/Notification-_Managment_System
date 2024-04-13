@@ -192,3 +192,50 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
 
 })
 
+//save notification in user db
+exports.saveNotification =catchAsyncErrors(async (req, res, next)=>{
+    const notification = req.body.notification;
+    const notif = {    sender:notification.sender ,
+        group:notification.group ,
+        message: notification.message,
+        timeSent:notification.timeSent,
+        sendLater:notification.sendLater,
+        groupName:notification.group.groupName,
+    }
+
+    const user = await User.findById(req.body.userId)
+    user.notifications.push(notif)
+    await user.save();
+
+})
+
+//get user notification from db
+exports.getUserNotifications = catchAsyncErrors(async(req, res, next)=>{
+    const user = await  User.findById(req.body.userId).populate('notifications.group')
+    
+    res.status(200).json(user.notifications);
+    //console.log(user.notifications);
+    
+
+
+});
+
+exports.deleteNotification = catchAsyncErrors(async(req, res, next)=>{
+    const notifId= req.body.notifId;
+    const userId = req.body.userId;
+
+    try{
+    const notif = await User.findByIdAndUpdate(
+        userId, 
+        { $pull: {notifications: { _id: notifId }} },
+        { new: true }
+    );
+    }
+    catch (error) {
+        console.error("Error delete notification:", error);
+        res.status(500).send("Error delete notification");
+      }
+
+    
+})
+

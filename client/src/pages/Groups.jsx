@@ -1,56 +1,84 @@
-import React, { useState, useEffect } from 'react';
-import { useTable, usePagination, useGlobalFilter } from 'react-table';
-import axios from 'axios';
-import './Groups.css'
+import React, { useState, useEffect } from "react";
+import { useTable, usePagination, useGlobalFilter } from "react-table";
+import axios from "axios";
+import "./Groups.css";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  useDisclosure,
+  Button,
+} from "@chakra-ui/react";
+import {SearchIcon } from "@chakra-ui/icons";
 
 const Groups = () => {
   const [groups, setGroups] = useState([]);
   const [followedGroups, setFollowedGroups] = useState([]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const btnRef = React.useRef();
 
   useEffect(() => {
     // Load followed groups from localStorage on component mount
-    const storedFollowedGroups = JSON.parse(localStorage.getItem('followedGroups'));
+    const storedFollowedGroups = JSON.parse(
+      localStorage.getItem("followedGroups")
+    );
     if (storedFollowedGroups) {
       setFollowedGroups(storedFollowedGroups);
     }
 
     // Fetch groups from the server
-    axios.get('http://localhost:3001/api/v1/getAllGroups')
-      .then(response => {
+    axios
+      .get("http://localhost:3001/api/v1/getAllGroups")
+      .then((response) => {
         setGroups(response.data);
       })
-      .catch(error => {
-        console.error('Error fetching groups:', error);
+      .catch((error) => {
+        console.error("Error fetching groups:", error);
       });
   }, []);
 
   const handleFollow = (groupId) => {
-    const userData = JSON.parse(localStorage.getItem('user'));
+    const userData = JSON.parse(localStorage.getItem("user"));
     const userId = userData._id;
 
     if (followedGroups.includes(groupId)) {
       // If the group is already followed, unfollow it
-      axios.put('http://localhost:3001/api/v1/RemoveUserFromGroup', { userId, groupId })
+      axios
+        .put("http://localhost:3001/api/v1/RemoveUserFromGroup", {
+          userId,
+          groupId,
+        })
         .then(() => {
           // Update the state
-          setFollowedGroups(followedGroups.filter(id => id !== groupId));
+          setFollowedGroups(followedGroups.filter((id) => id !== groupId));
           // Update localStorage
-          localStorage.setItem('followedGroups', JSON.stringify(followedGroups.filter(id => id !== groupId)));
+          localStorage.setItem(
+            "followedGroups",
+            JSON.stringify(followedGroups.filter((id) => id !== groupId))
+          );
         })
-        .catch(error => {
-          console.error('Error removing user from group:', error);
+        .catch((error) => {
+          console.error("Error removing user from group:", error);
         });
     } else {
       // If the group is not followed, follow it
-      axios.put('http://localhost:3001/api/v1/UpdateGroup', { userId, groupId })
+      axios
+        .put("http://localhost:3001/api/v1/UpdateGroup", { userId, groupId })
         .then(() => {
           // Update the state
           setFollowedGroups([...followedGroups, groupId]);
           // Update localStorage
-          localStorage.setItem('followedGroups', JSON.stringify([...followedGroups, groupId]));
+          localStorage.setItem(
+            "followedGroups",
+            JSON.stringify([...followedGroups, groupId])
+          );
         })
-        .catch(error => {
-          console.error('Error updating group:', error);
+        .catch((error) => {
+          console.error("Error updating group:", error);
         });
     }
   };
@@ -58,21 +86,25 @@ const Groups = () => {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Group Name',
-        accessor: 'groupName',
+        Header: "Group Name",
+        accessor: "groupName",
       },
       {
-        Header: 'Follow/Unfollow',
-        accessor: '_id',
+        Header: "Follow/Unfollow",
+        accessor: "_id",
         Cell: ({ row }) => (
           <button
-            className={followedGroups.includes(row.original._id) ? 'unfollow-button' : 'follow-button'}
+            className={
+              followedGroups.includes(row.original._id)
+                ? "unfollow-button"
+                : "follow-button"
+            }
             onClick={() => handleFollow(row.original._id)}
           >
-            {followedGroups.includes(row.original._id) ? 'Unfollow' : 'Follow'}
+            {followedGroups.includes(row.original._id) ? "Unfollow" : "Follow"}
           </button>
-        )
-      }
+        ),
+      },
     ],
     [followedGroups]
   );
@@ -94,58 +126,78 @@ const Groups = () => {
     {
       columns,
       data: groups,
-      initialState: { pageIndex: 0, pageSize: 10 } // Initial page index and page size
+      initialState: { pageIndex: 0, pageSize: 10 }, // Initial page index and page size
     },
     useGlobalFilter,
     usePagination
   );
 
   return (
-    <div className='searchInputDiv'>
-     
-      <input
+    <div className="searchInputDiv">
+      <button onClick={onOpen}> 
+        <SearchIcon
+          className="searchIcon"
+          boxSize={6}
+          ref={btnRef}
+          colorScheme="teal"
+        >
+          Open
+        </SearchIcon>
+        Search group 
+      </button>
+      <Drawer
+        isOpen={isOpen}
+        placement="right"
+        onClose={onClose}
+        finalFocusRef={btnRef}
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader>Search Group</DrawerHeader>
+
+          <DrawerBody>
+                <input
         type="text"
-        className='searchInputGroup'
+        className="searchInputGroup"
         placeholder="Search Group Name..."
         onChange={(e) => setGlobalFilter(e.target.value)}
       />
-      <table {...getTableProps()} className='groupTable'>
+      <table {...getTableProps()} className="groupTable">
         <thead>
-          {headerGroups.map(headerGroup => (
-            <tr {...headerGroup.getHeaderGroupProps()} className=''>
-              {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps()} className='groupTh'>{column.render('Header')} </th>
+          {headerGroups.map((headerGroup) => (
+            <tr {...headerGroup.getHeaderGroupProps()} className="">
+              {headerGroup.headers.map((column) => (
+                <th {...column.getHeaderProps()} className="groupTh">
+                  {column.render("Header")}{" "}
+                </th>
               ))}
             </tr>
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {rows.map(row => {
+          {rows.map((row) => {
             prepareRow(row);
             return (
               <tr {...row.getRowProps()}>
-                {row.cells.map(cell => {
-                  return <td className='groupTd'{...cell.getCellProps()}>{cell.render('Cell')}</td>;
+                {row.cells.map((cell) => {
+                  return (
+                    <td className="groupTd" {...cell.getCellProps()}>
+                      {cell.render("Cell")}
+                    </td>
+                  );
                 })}
               </tr>
             );
           })}
         </tbody>
       </table>
-      <div className='pagintorDiv'>
-        <button className='pagination-buttons' onClick={() => previousPage()} disabled={!canPreviousPage}>
-          Previous
-        </button>
-        <span>
-          Page{' '}
-          <strong>
-            {pageIndex + 1} of {pageCount}
-          </strong>{' '}
-        </span>
-        <button className='pagination-buttons' onClick={() => nextPage()} disabled={!canNextPage}>
-          Next
-        </button>
-      </div>
+
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
+
+ 
     </div>
   );
 };

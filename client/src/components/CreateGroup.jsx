@@ -6,7 +6,7 @@ import "./CreateGroup.css";
 const CreateGroup = () => {
   const [groupName, setGroupName] = useState("");
   const [groupId, setGroupId] = useState("");
-  const { user } = useAuthContext();
+  const { user ,showErr,setShowErr} = useAuthContext();
   const [groupExistErr, setGroupExistErr] = useState(false);
 
 
@@ -19,11 +19,11 @@ const CreateGroup = () => {
     }
   }, [groupId]);
 
-  const handleSubmit = async () => {
+  const Submit = async () => {
     const username = user.username;
     const response = await axios.post(
       "http://localhost:3001/api/v1/createGroup",
-      { groupName ,username}
+      { groupName ,user}
     );
     if(!response.data.exist){
     setGroupId(JSON.stringify(response.data.groupId));
@@ -33,9 +33,11 @@ const CreateGroup = () => {
       JSON.stringify({ groupId: groupId, groupName: groupName })
     );
     setGroupExistErr(false);
+    setShowErr(false);
   }else{
     //alert("This name already exist")
     setGroupExistErr(true);
+    setShowErr(true);
   }
   };
 
@@ -43,7 +45,7 @@ const CreateGroup = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form >
         <h3>Create New Group</h3>
 
         <label>
@@ -57,7 +59,7 @@ const CreateGroup = () => {
         </label>
         <br />
 
-        <button className="create-button" type="submit">
+        <button className="create-button" onClick={Submit}>
           Create
         </button>
         {groupExistErr && (<p>group name is  existed!</p>)}

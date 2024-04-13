@@ -18,7 +18,7 @@ export const AuthContextProvider = ({ children }) => {
   const [selectedGroup, setSelectedGroup] = useState(); //the selected chat in the groups list
   const [groups, setGroups] = useState([]); //the chats in the group list
   const[error,setError]=useState('');//any error that can  occur on the user page
-  const [showErr,setShowErr] = useState(false);
+  const [showErr,setShowErr] = useState();
   const[showChat,setShowChat] = useState(false);
   const [socket, setSocket] = useState();
   const [IsGroupAdmin, setIsGroupAdmin] = useState();

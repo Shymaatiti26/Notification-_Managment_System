@@ -15,6 +15,8 @@ exports.getMessage=catchAsyncErrors(async(req,res,next)=>{
     sendLater:message.sendLater,
 
     })  
+    const messageId=msgObj._id;
+    res.json(messageId)
 
 
 });

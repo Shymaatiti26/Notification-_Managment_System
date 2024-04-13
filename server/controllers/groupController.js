@@ -6,10 +6,13 @@ const Group = require("../models/GroupModel");
 exports.createGroup = catchAsyncErrors(async (req, res, next) => {
   try {
     const groupName = req.body.groupName;
-    const groupAdmin =req.body.username;
+    const groupAdmin =req.body.user.username;
+    const userId= req.body.user._id;
     const groupN = await Group.findOne({ groupName: groupName });
     if (!groupN) {
       const group = await Group.create({ groupName: groupName , groupAdmin : groupAdmin });
+      group.users.push(userId)
+      await group.save();
       res.json({ groupId: group._id, exist: false });
     } else {
       console.log("this group Name exist");
@@ -215,3 +218,22 @@ exports.getGroups = catchAsyncErrors(async (req, res, next) => {
       groups
   })
 })
+
+//get group by Id
+exports.getGroupByID =catchAsyncErrors(async (req, res, next)=>{
+  try {
+    const groupId = req.body.groupId;
+    const group = await Group.findById(groupId); // Replace 'Group' with your actual mongoose model name
+
+    if (!group) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+
+    res.status(200).json(group);
+  } catch (error) {
+    console.error('Error fetching group details:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+
+});
+

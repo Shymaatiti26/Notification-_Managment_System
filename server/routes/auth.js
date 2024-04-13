@@ -12,7 +12,11 @@ const{
     allUsers,
     getUserDetails,
     updateUser,
-    deleteUser} = require('../controllers/authController');
+    deleteUser,
+    saveNotification,
+    getUserNotifications,
+    deleteNotification,
+} = require('../controllers/authController');
 
 
 router.route('/register').post(registerUser);
@@ -22,6 +26,12 @@ router.route('/login').post(loginUser);
 router.route('/logout').post(logout);
 
 router.route('/me').get(getUserProfile);
+
+router.route('/saveNotification').post(saveNotification);
+
+router.route('/getUserNotifications').post(getUserNotifications);
+
+router.route('/deleteNotification').post(deleteNotification);
 
 
 /*

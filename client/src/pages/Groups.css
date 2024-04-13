@@ -12,12 +12,13 @@
   
   .searchInputDiv{
     align-items: center;
+    
   }
   .searchInputGroup{
     padding: 8px;
     margin-bottom: 20px;
     border: 1px solid #dad4d4;
-    width: 50%;
+    width: 100%;
   }
   
   .groupTable {

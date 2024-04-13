@@ -125,14 +125,10 @@ const Register = () => {
   </div>
 )}
       <div className="form-group">
-        <input type="submit" value="Register" className="form-submit"/>
+        <input  type="submit" value="Register" className="form-submit"/>
       </div>
 
       <footer className="form-footer">
-          <div>
-            Already have an account?
-            <Link to="/login" className="form-link">Log in</Link>
-          </div>
       </footer>
     </form>
   </div>

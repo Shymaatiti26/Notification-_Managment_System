@@ -40,7 +40,7 @@ const Settings = () => {
 
     if (response.data.exist) {
       setErrorAlert("group name is existed!");
-      setShowErr(true);
+      //setShowErr(true);
     } else {
       //setShowErr(false);
     }
@@ -134,9 +134,12 @@ const Settings = () => {
           Save
         </button>
 
+        {IsGroupAdmin && 
+
+
         <button className="delete-button" onClick={() => deleteGroup(groupId)}>
           Delete Group
-        </button>
+        </button>}
 
         {groupExistErr && <p>group name is existed!</p>}
       </form>

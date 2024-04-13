@@ -36,6 +36,16 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+
+    notifications: [{
+        sender:{type: String} ,
+        group: { type: String},
+        message:{type: String} ,
+        timeSent:{type: String},
+        sendLater:{type: String},
+        groupName:{type: String}
+    }],
+    
 })
 
 
