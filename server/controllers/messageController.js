@@ -16,6 +16,7 @@ exports.getMessage=catchAsyncErrors(async(req,res,next)=>{
 
     })  
     const messageId=msgObj._id;
+    //console.log('msgId: '+messageId)
     res.json(messageId)
 
 
@@ -35,9 +36,26 @@ exports.sendMessages=catchAsyncErrors(async(req,res,next)=>{
 
 exports.getScheduledMsgs = catchAsyncErrors(async(req,res,next)=>{
     const userName=req.query.userName;
-    const messages = await Message.find({sender:userName ,sendLater:true})
-    console.log("ll"+messages);
+    const messages = await Message.find({sender:userName ,sendLater:true}).populate({
+        path: 'group',
+        select: 'groupName' // Select the fields you want to populate from the 'group' model
+    });
     res.status(200).json(messages)
+
+});
+
+exports.setSenLaterToFalse =catchAsyncErrors(async(req,res,next)=>{
+    try{
+        
+   const {msgId}= req.body;
+   console.log('set sendLater succcess'+msgId);
+   const msg= await Message.findByIdAndUpdate(msgId,{sendLater: false},{new : true})
+   res.status(200).json(msg);
+   
+    }catch(err){    console.log("error set sendLater to false".error);
+}
+        
+
 
 });
 

@@ -1,31 +1,43 @@
 const mongoose = require("mongoose");
 
-const groupSchema = new mongoose.Schema({
+const groupSchema = new mongoose.Schema(
+  {
+    groupName: { type: String },
 
-    groupName:{type:String},
+    users: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
 
-    users:[{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+    muteOnUsers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
 
+    Messages: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Message",
+      },
+    ],
 
-        }],
-
-    Messages:[{
-            type: mongoose.Schema.Types.ObjectId,  
-            ref:"Message"
-        }],
-
-    groupAdmin:[{
+    groupAdmin: [
+      {
         type: String,
-        ref:"User"
-    }],
-    latestMessage:{type:String},
-    latestMessageTime:{type:String}
+        ref: "User",
+      },
+    ],
+    latestMessage: { type: String },
+    latestMessageTime: { type: String },
 
-},
-{timestamps: true}
+    groupSenders: { type: String },
+  },
+  { timestamps: true }
 );
 
-const  Group = mongoose.model("Group",groupSchema);
+const Group = mongoose.model("Group", groupSchema);
 module.exports = Group;

@@ -24,7 +24,7 @@ const UserGroupsList = () => {
     groups,
     setGroups,
     showChat,
-    setShowChat,setIsGroupAdmin,IsGroupAdmin,setNotification,notification,
+    setShowChat,setIsGroupAdmin,IsGroupAdmin,setNotification,notification,setGroupSenders,muteGroup,setMuteGroup
   } = useAuthContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [latestMessage, setLatestMessage] = useState();
@@ -34,6 +34,7 @@ const UserGroupsList = () => {
 
   useEffect(() => {
     getUserGroups();
+
     
     // console.log(user1);
     //console.log(user1._id);
@@ -92,6 +93,27 @@ const UserGroupsList = () => {
     );
   };
 
+  const getGroupSenders = async (groupId) =>{
+    const response = await axios.post(
+      "http://localhost:3001/api/v1//getGroupSenders",
+      { groupId}
+    );
+    setGroupSenders(response.data);
+
+  }
+
+  //check if group muted
+  const IsGroupMuted = async (groupId) =>{
+    const response = await axios.post(
+      "http://localhost:3001/api/v1//checkUserExistInMute",
+      { groupId,userId}
+    );
+    setMuteGroup(response.data);
+
+
+  };
+
+
 
 
   /*
@@ -138,6 +160,8 @@ const UserGroupsList = () => {
                 
                 setSelectedGroup(group);
                 setShowChat(true);
+                IsGroupMuted(group._id);
+                getGroupSenders(group._id);
                 
               }}
             >
@@ -148,7 +172,7 @@ const UserGroupsList = () => {
             <div className="footer">
               <button
                 className="delete_button"
-                onClick={() => unfollorGroup(group._id)}
+                onClick={() => {unfollorGroup(group._id); }}
               >
                 Unfollow
               </button>

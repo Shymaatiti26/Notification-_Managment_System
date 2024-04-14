@@ -27,7 +27,7 @@ const ScheduledMsgsList = () => {
 
   useEffect(() => {
     getScheduledMsgs();
-  }, []);
+  }, [messages]);
 
   const getScheduledMsgs = async () => {
     /*
@@ -53,20 +53,22 @@ const ScheduledMsgsList = () => {
 
   return (
     <div className="mymessages_box">
-      <button onClick={onOpen}>Scheduled Messages</button>
+      <button onClick={onOpen}>My Scheduled Messages</button>
 
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton color={'black'} />
           <ModalBody pb={6}>
-            <h3>Your Scheduled Messages</h3>
+            <h3>My Scheduled Messages</h3>
           <br />
       <VStack className="messages" spacing={2} align="stretch" overflowY="auto">
         {messages.map((message) => (
           <Box>
             <Box className="messageBox" p={4} key={message._id}>
-              <strong>To: {message.group}</strong>
+            {message.group.map((group) => (
+            <strong key={group._id}>Send To Group: {group.groupName}</strong>
+        ))}
               <p> Message: {message.message} </p>
               <p className="sendingTime">send message at: {message.timeSent}</p>
             </Box>

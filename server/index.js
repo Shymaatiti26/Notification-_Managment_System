@@ -69,12 +69,12 @@ io.on('connection', (socket) => {
   })
 
   // Listen for incoming chat messages
-  socket.on('send-message', (msg,sendLater) => {
+  socket.on('send-message', (msg,sendLater,msgId) => {
 
     if(sendLater===true){
     schedule.scheduleJob(msg.sendLaterDate, function(){
       console.log("Message Received : ",msg,'end')
-      io.to(msg.groupId).emit('receive-message', msg,sendLater);
+      io.to(msg.groupId).emit('receive-message', msg,sendLater,msgId);
       msg.users.forEach(user => {
         io.to(user).emit('receive-notif', msg)
       });
@@ -83,10 +83,13 @@ io.on('connection', (socket) => {
    
     // Broadcast the message to all connected clients
     console.log("Message Received : ",msg,'end')
-    io.to(msg.groupId).emit('receive-message', msg,sendLater);
+    io.to(msg.groupId).emit('receive-message', msg,sendLater,msgId);
+    
     msg.users.forEach(user => {
       io.to(user).emit('receive-notif', msg,user)
     });
+
+
   }
   });
 

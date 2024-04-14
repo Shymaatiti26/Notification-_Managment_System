@@ -6,12 +6,16 @@ const Group = require("../models/GroupModel");
 exports.createGroup = catchAsyncErrors(async (req, res, next) => {
   try {
     const groupName = req.body.groupName;
-    const groupAdmin =req.body.user.username;
-    const userId= req.body.user._id;
+    const groupAdmin = req.body.user.username;
+    const userId = req.body.user._id;
     const groupN = await Group.findOne({ groupName: groupName });
     if (!groupN) {
-      const group = await Group.create({ groupName: groupName , groupAdmin : groupAdmin });
-      group.users.push(userId)
+      const group = await Group.create({
+        groupName: groupName,
+        groupAdmin: groupAdmin,
+        groupSenders: false,
+      });
+      group.users.push(userId);
       await group.save();
       res.json({ groupId: group._id, exist: false });
     } else {
@@ -63,10 +67,10 @@ exports.setLatestMessage = catchAsyncErrors(async (req, res, next) => {
   try {
     const groupId = req.body.groupId;
     const latestMessage = req.body.latestMessage.message;
-    const sendingTime = req.body.latestMessage.timeSent
+    const sendingTime = req.body.latestMessage.timeSent;
     console.log(`latestMessage:${latestMessage}`);
     const group = await Group.findByIdAndUpdate(groupId, {
-      $set: { latestMessage: latestMessage ,latestMessageTime: sendingTime },
+      $set: { latestMessage: latestMessage, latestMessageTime: sendingTime },
     });
     if (!group) {
       console.log("group not found");
@@ -185,55 +189,140 @@ exports.ChangeGgoupName = catchAsyncErrors(async (req, res, next) => {
 });
 
 //delete user from Group users array => api/v1//UnfollowGroup
-exports.UnfollowGroup =  catchAsyncErrors(async (req, res, next) => {
+exports.UnfollowGroup = catchAsyncErrors(async (req, res, next) => {
   const groupId = req.body.groupId;
   const userId = req.body.userId;
- try{
-  Group.findOneAndUpdate(
-    { _id: groupId }, // Query condition to find the group by its ID
-    { $pull: { users: userId } }, // Use $pull operator to remove the user from the users array
-    { new: true } // Option to return the updated document
-  )
-    .then(updatedGroup => {
+  try {
+    Group.findOneAndUpdate(
+      { _id: groupId }, // Query condition to find the group by its ID
+      { $pull: { users: userId } }, // Use $pull operator to remove the user from the users array
+      { new: true } // Option to return the updated document
+    ).then((updatedGroup) => {
       if (!updatedGroup) {
         // Handle case where group with the given ID is not found
-        console.log('Group not found');
+        console.log("Group not found");
         return;
       }
-      console.log('User removed successfully');
-    })
+      console.log("User removed successfully");
+    });
   } catch (error) {
     console.error("Error unfollow group:", error);
     res.status(500).send("Error unfollow group");
   }
-})
+});
 
 // get all groups=> /api/v1/getGroups
 exports.getGroups = catchAsyncErrors(async (req, res, next) => {
-
   const groups = await Group.find();
 
   res.status(200).json({
-      success:true,
-      groups
-  })
-})
+    success: true,
+    groups,
+  });
+});
 
 //get group by Id
-exports.getGroupByID =catchAsyncErrors(async (req, res, next)=>{
+exports.getGroupByID = catchAsyncErrors(async (req, res, next) => {
   try {
     const groupId = req.body.groupId;
     const group = await Group.findById(groupId); // Replace 'Group' with your actual mongoose model name
 
     if (!group) {
-      return res.status(404).json({ message: 'Group not found' });
+      return res.status(404).json({ message: "Group not found" });
     }
 
     res.status(200).json(group);
   } catch (error) {
-    console.error('Error fetching group details:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error fetching group details:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
-
 });
 
+// get the group users from the group db
+exports.getGroupUsers = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const groupId = req.body.groupId;
+    const group = await Group.findById(groupId).populate("users", "username");
+
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+
+    const users = group.users || []; // Ensure a default value even if 'users' is undefined
+    res.json(users);
+  } catch (error) {
+    console.error("Error fetching group users:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+//set the GroupSender (all the group members can send) false/true
+exports.setGroupSender = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const groupId = req.body.groupId;
+    const groupSenders = req.body.groupSenders;
+    console.loge('here');
+    const group = await Group.findByIdAndUpdate(groupId, {
+      $set: { groupSenders: groupSenders },
+    });
+    console.loge('groupSenders:'+group.groupSenders);
+    if (!group) {
+      console.log("group not found");
+    }
+  } catch (error) {
+    console.log("error set groupSender:".error);
+    next(error);
+  }
+});
+
+//get the GroupSender (all the group members can send) false/true
+exports.getGroupSenders = catchAsyncErrors(async (req, res, next) => {
+  const groupId = req.body.groupId;
+  const group = await Group.findById(groupId);
+  res.json(group.groupSenders);
+});
+
+//add user by userId to muteOnUsers in group
+exports.setMuteGroup = catchAsyncErrors(async (req, res, next) => {
+  const { userId, groupId, muteGroup } = req.body;
+  try {
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return res.status(404).send("Group not found");
+    }
+
+    if (muteGroup===true) {
+      group.muteOnUsers.push(userId);
+      await group.save();
+      console.log('mute'+muteGroup)
+    } else {
+      group.muteOnUsers.pull(userId);
+      await group.save();
+      console.log('not mute'+ muteGroup)
+    }
+
+    res.status(200).send("User added to the array successfully");
+  } catch (error) {
+    console.error("Error updating muteOnUsers array:", error);
+    res.status(500).send("Error updating muteOnUsers array");
+  }
+});
+
+//check if user exist in the muteOnUsers  Array of a specific Group
+exports.checkUserExistInMute = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const { userId, groupId } = req.body;
+    const group = await Group.findById(groupId);
+
+    if (!group) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+
+    const isUserMuted = group.muteOnUsers.includes(userId);
+    console.log('isMuted:'+isUserMuted);
+    res.json( isUserMuted );
+  } catch (error) {
+    console.error('Error checking user in mute list:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});

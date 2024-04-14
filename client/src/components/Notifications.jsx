@@ -107,7 +107,7 @@ const Notifications = () => {
                 setNotification(notification.filter((n) => n !== notif));
               }}
             >
-              {`New Message in ${notif.groupName}`}
+              {`${notif.timeSent} ${notif.groupName}: ${notif.message}`}
             </MenuItem>
           ))}
         </MenuList>

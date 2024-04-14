@@ -32,7 +32,7 @@ const Chat = () => {
     socket,
     setSocket,
     IsGroupAdmin,
-    setIsGroupAdmin,
+    setIsGroupAdmin,groupSenders
   } = useAuthContext();
   const groupData = JSON.parse(localStorage.getItem("group"));
   let groupId = selectedGroup._id;
@@ -52,16 +52,18 @@ const Chat = () => {
     setSocket(newSocket);
 
     // Listen for incoming messages
-    newSocket.on("receive-message", (message,sendLater) => {
-      console.log("tttt");
+    newSocket.on("receive-message", (message,sendLater,msgId) => {
       setMessages((prevMessages) => [...prevMessages, message]);
+      
      // if(!selectedGroup._id===message.groupId){
      // setNotification((prevNotif) => [...prevNotif, message]);
       //playSound();
       //}
-      if (sendLater){
+      //if (sendLater===true){
         //set the sendLater false
-      }
+       // console.log('TTTT');
+        setSenLaterToFalse(msgId);
+      //}
       //saveMessageToServer(message,sendLater);
       
 
@@ -73,8 +75,9 @@ const Chat = () => {
       //console.log(notification)
       setNotification((prevNotif) => [...prevNotif, notif]);
       playSound();
-
-      saveNotificationToServer(notif,user)
+      notif.users.forEach(user => {
+        saveNotificationToServer(notif,user)
+      })
     });
 
     // Cleanup on component unmount
@@ -89,7 +92,16 @@ const Chat = () => {
       "http://localhost:3001/api/v1/getMessage",
       { message }
     );
+    return response.data;
   
+
+  };
+
+  const setSenLaterToFalse=async (msgId)=>{
+    const response = await axios.post(
+      "http://localhost:3001/api/v1/setSenLaterToFalse",
+      { msgId}
+    );
 
   };
 
@@ -141,15 +153,19 @@ const Chat = () => {
         users: selectedGroup.users,
         group: selectedGroup,
         sendLater:sendLater,
+        sendLaterDate:selectedDate,
       };
-      setLatestMessage(messageData.groupId, messageData);
+      if(sendLater===false){
+      setLatestMessage(messageData.groupId, messageData);}
 
-      await socket.emit("send-message", messageData,sendLater);
+      const msgId = await saveMessageToServer(messageData,sendLater);
+      console.log('msgIdFront:'+msgId);
+      await socket.emit("send-message", messageData,sendLater,msgId);
       setInputMessage("");
 
       //if(sendLater===true){
         //save schedualed message to db
-        saveMessageToServer(messageData,sendLater);
+        
 
       //}
 
@@ -157,6 +173,8 @@ const Chat = () => {
       setSendLater(false);
     }
   };
+
+
 
   const joinGroup = async () => {
     await socket.emit("joinGroup", groupId);
@@ -252,7 +270,7 @@ const Chat = () => {
           </div>
         </ScrollToBottom>
       </div>
-      {IsGroupAdmin && (
+      {( groupSenders || IsGroupAdmin) && (
         <div className="chat-footer">
           <div className="senMessage">
             <input

@@ -2,7 +2,7 @@ const mongoose =require('mongoose')
 
 const messageSchema = new mongoose.Schema({
     sender: { type: String, required: false },
-    group: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }],
+    group: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group', required: true }],
     message: { type: String, required: true },
     timeSent: { type: String},
     sendLater: {type :String},

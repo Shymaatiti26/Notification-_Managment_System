@@ -22,15 +22,21 @@ const Settings = () => {
     setErrorAlert,
     showErr,
     setShowErr,
-    IsGroupAdmin, setIsGroupAdmin
+    IsGroupAdmin,
+    setIsGroupAdmin,
+    groupSenders,
+    setGroupSenders,muteGroup,setMuteGroup,
   } = useAuthContext();
   const [groupExistErr, setGroupExistErr] = useState(false);
   const [groupName, setGroupName] = useState(selectedGroup.groupName);
   const groupId = selectedGroup._id;
+  const userId = user._id;
+  const [users, setUsers] = useState([]);
 
-  useEffect(()=>{
+  useEffect(() => {
     checkAdmin();
-  })
+    getGroupUsers();
+  });
 
   const handleSubmit = async () => {
     const response = await axios.post(
@@ -57,9 +63,47 @@ const Settings = () => {
   //check if the loged in user is the group admin
   const checkAdmin = () => {
     selectedGroup.groupAdmin.forEach((admin) => {
-      if (admin == user.username) 
-      setIsGroupAdmin(true);
+      if (admin == user.username) setIsGroupAdmin(true);
     });
+  };
+
+  // get the group users names
+  const getGroupUsers = async () => {
+    const response = await axios.post(
+      "http://localhost:3001/api/v1/getGroupUsers",
+      { groupId }
+    );
+    const users = response.data.map((user) => ({
+      label: user.username,
+      value: user,
+    }));
+    setUsers(users);
+  };
+
+  //deletre group member from the group
+  const deleteGroupMember = async (userId) => {
+    const response = await axios.post(
+      "http://localhost:3001/api/v1//UnfollowGroup",
+      { groupId, userId }
+    );
+  };
+
+  //handle the all group members can send switcher chenge
+  const handleGroupSendersChange = async () => {
+    setGroupSenders(!groupSenders);
+    const response = await axios.post(
+      "http://localhost:3001/api/v1/setGroupSender",
+      { groupId, groupSenders }
+    );
+  };
+
+  //handle the mute group switcher chenge
+  const handleMuteGroupChange = async () => {
+    setMuteGroup(!muteGroup);
+    const response = await axios.post(
+      "http://localhost:3001/api/v1/setMuteGroup",
+      { groupId, userId,muteGroup }
+    );
   };
 
   return (
@@ -68,14 +112,20 @@ const Settings = () => {
         <h3>Group Settings</h3>
 
         <label>
-          Group Name: 
-          {IsGroupAdmin &&
-          <input
-            type="text"
-            value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
-            required
-          />}
+          Group Name:
+          {IsGroupAdmin && (
+            <div className="changeGroupName2">
+              <input
+                type="text"
+                value={groupName}
+                onChange={(e) => setGroupName(e.target.value)}
+                required
+              />
+              <button className="save-button" type="submit">
+                Save
+              </button>
+            </div>
+          )}
           {!IsGroupAdmin && <strong> {groupName}</strong>}
         </label>
 
@@ -83,13 +133,27 @@ const Settings = () => {
 
         <div className="muteGroup">
           <p>Mute group:</p>
-          <Switch marginLeft={3} id="email-alerts" size="lg" />
+          <Switch
+            marginLeft={3}
+            id="Mute-alerts"
+            size="lg"
+            isChecked={muteGroup}
+            onChange={handleMuteGroupChange}
+          />
         </div>
 
-        {IsGroupAdmin && <div className="groupSenders">
-          <p>All group members can send Messages:</p>
-          <Switch marginLeft={3} id="email-alerts" size="lg" />
-        </div>}
+        {IsGroupAdmin && (
+          <div className="groupSenders">
+            <p>All group members can send Messages:</p>
+            <Switch
+              marginLeft={3}
+              id="sender-alerts"
+              size="lg"
+              isChecked={groupSenders}
+              onChange={handleGroupSendersChange}
+            />
+          </div>
+        )}
 
         <div className="sendByEmail">
           <p>Get the messages by mail:</p>
@@ -105,9 +169,14 @@ const Settings = () => {
             overflowY="auto"
           >
             {selectedGroup.groupAdmin.map((admin) => (
-              <Box>
+              <Box className="groupAdmin">
                 <strong>{admin}</strong>
-                {IsGroupAdmin &&<SmallCloseIcon color="red.500"></SmallCloseIcon>}
+                {admin === user.username && (
+                  <span style={{ fontWeight: "bold", color: "gray" }}>
+                    {" "}
+                    (you)
+                  </span>
+                )}
               </Box>
             ))}
           </VStack>
@@ -121,25 +190,37 @@ const Settings = () => {
             align="stretch"
             overflowY="auto"
           >
-            {selectedGroup.users.map((user) => (
-              <Box>
-                <strong>{user}</strong>
-                {IsGroupAdmin &&<SmallCloseIcon color="red.500"></SmallCloseIcon>}
+            {users.map((user) => (
+              <Box className="groupMember">
+                <strong>{user.label}</strong>
+                {!(user.value._id === userId) && IsGroupAdmin && (
+                  <button onClick={() => deleteGroupMember(user.value._id)}>
+                    <SmallCloseIcon
+                      className="closeIcon"
+                      boxSize={5}
+                      color="red.500"
+                    ></SmallCloseIcon>
+                  </button>
+                )}
+                {user.value._id === userId && (
+                  <span style={{ fontWeight: "bold", color: "gray" }}>
+                    {" "}
+                    (Admin)
+                  </span>
+                )}
               </Box>
             ))}
           </VStack>
         </div>
 
-        <button className="save-button" type="submit">
-          Save
-        </button>
-
-        {IsGroupAdmin && 
-
-
-        <button className="delete-button" onClick={() => deleteGroup(groupId)}>
-          Delete Group
-        </button>}
+        {IsGroupAdmin && (
+          <button
+            className="delete-button"
+            onClick={() => deleteGroup(groupId)}
+          >
+            Delete Group
+          </button>
+        )}
 
         {groupExistErr && <p>group name is existed!</p>}
       </form>

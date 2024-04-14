@@ -3,6 +3,12 @@
     flex-direction: row;
     margin-top: 10px;
     align-content: space-between;
+    justify-content: space-between;
+    padding: 5px;
+    border-radius: 8px;
+    background-color: #d7d5eb;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+   
 }
 
 .groupSenders{
@@ -10,6 +16,11 @@
     flex-direction: row;
     margin-top: 10px;
     align-content: space-between;
+    justify-content: space-between;
+    padding: 5px;
+    border-radius: 8px;
+    background-color: #d7d5eb;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .sendByEmail{
@@ -17,6 +28,11 @@
   flex-direction: row;
   margin-top: 10px;
   align-content: space-between;
+  justify-content: space-between;
+  padding: 5px;
+  border-radius: 8px;
+  background-color: #d7d5eb;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .save-button {
@@ -46,10 +62,54 @@
     background-color: #fff;
     border-radius: 5px;
     padding: 7px;
+    border-color: black;
+    border-width: 1px;
+
   }
 
   .groupAdmins {
     height: 70px;
     background-color: #fff;
     border-radius: 5px;
+    padding: 7px;
+    border-color: black;
+    border-width: 1px;
+    
+  }
+
+  .groupMember{
+    display: flex;
+    flex-direction: row;
+    padding: 5px;
+    border-radius: 8px;
+    background-color: #d7d5eb;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-height: 30px;
+    justify-content: space-between;
+    
+    
+
+
+  }
+
+  .groupAdmin{
+    display: flex;
+    flex-direction:row;
+    padding: 5px;
+    border-radius: 8px;
+    background-color: #d7d5eb;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-height: 30px;
+    justify-content: space-between;
+
+  }
+
+
+
+  .changeGroupName2{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    
+
   }
