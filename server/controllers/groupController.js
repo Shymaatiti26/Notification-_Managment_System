@@ -261,17 +261,16 @@ exports.setGroupSender = catchAsyncErrors(async (req, res, next) => {
   try {
     const groupId = req.body.groupId;
     const groupSenders = req.body.groupSenders;
-    console.loge('here');
+    console.log('here');
     const group = await Group.findByIdAndUpdate(groupId, {
       $set: { groupSenders: groupSenders },
     });
-    console.loge('groupSenders:'+group.groupSenders);
+    console.log('groupSenders:'+group.groupSenders);
     if (!group) {
       console.log("group not found");
     }
   } catch (error) {
     console.log("error set groupSender:".error);
-    next(error);
   }
 });
 
@@ -292,9 +291,13 @@ exports.setMuteGroup = catchAsyncErrors(async (req, res, next) => {
     }
 
     if (muteGroup===true) {
+      if(group.muteOnUsers.includes(userId)) {
+        console.log('mute fail because user is muted before ');
+      }else{
       group.muteOnUsers.push(userId);
       await group.save();
       console.log('mute'+muteGroup)
+      }
     } else {
       group.muteOnUsers.pull(userId);
       await group.save();
@@ -319,7 +322,7 @@ exports.checkUserExistInMute = catchAsyncErrors(async (req, res, next) => {
     }
 
     const isUserMuted = group.muteOnUsers.includes(userId);
-    console.log('isMuted:'+isUserMuted);
+    console.log('isUserIncludeInMute :'+isUserMuted);
     res.json( isUserMuted );
   } catch (error) {
     console.error('Error checking user in mute list:', error);

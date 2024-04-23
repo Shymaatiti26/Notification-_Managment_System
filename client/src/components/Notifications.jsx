@@ -31,7 +31,7 @@ const Notifications = () => {
     );
   };
 
-  
+  //get use notification from the database
   const getUserNotifications = async () => {
    // const userId = user._id;
     try {

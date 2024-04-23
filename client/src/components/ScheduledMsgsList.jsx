@@ -28,7 +28,7 @@ const ScheduledMsgsList = () => {
   useEffect(() => {
     getScheduledMsgs();
   }, [messages]);
-
+//get the user scheduled messages from db
   const getScheduledMsgs = async () => {
     /*
         const response = await axios.get('http://localhost:3001/api/v1/getScheduledMsgs ',{user});

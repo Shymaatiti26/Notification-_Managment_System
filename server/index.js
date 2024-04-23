@@ -23,6 +23,7 @@ const errorMiddleware= require('./middlewares/errors')
 const auth= require('./routes/auth')
 const groupRouter=require('./routes/groupRouter')
 const messageRouter=require('./routes/messageRouter')
+const userRouter= require('./routes/userRouter')
 //const task = require('./scheduleTasks');
 
 app.use(express.json())
@@ -118,6 +119,7 @@ app.use('/api/v1',auth);
 app.use(errorMiddleware)
 app.use('/api/v1',groupRouter)
 app.use('/api/v1',messageRouter)
+app.use('/api/v1',userRouter)
 
 
 

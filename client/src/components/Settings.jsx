@@ -37,7 +37,7 @@ const Settings = () => {
     checkAdmin();
     getGroupUsers();
   });
-
+//1.8.1.1.	handleSubmit: handle group name input change and save in db
   const handleSubmit = async () => {
     const response = await axios.post(
       "http://localhost:3001/api/v1/changeGgoupName",
@@ -88,23 +88,68 @@ const Settings = () => {
     );
   };
 
-  //handle the all group members can send switcher chenge
+  /*
+  //handle the all group members can send switcher change
   const handleGroupSendersChange = async () => {
     setGroupSenders(!groupSenders);
     const response = await axios.post(
       "http://localhost:3001/api/v1/setGroupSender",
       { groupId, groupSenders }
     );
+  };*/
+
+  const handleGroupSendersChange = async () => {
+    // Set the groupSenders state and use a callback function to execute axios.post
+    setGroupSenders(prevGroupSenders => {
+      // Toggle the groupSenders state
+      const newGroupSenders = !prevGroupSenders;
+  
+      // Now that the state has been updated, make the axios.post call
+      axios.post(
+        "http://localhost:3001/api/v1/setGroupSender",
+        { groupId, groupSenders: newGroupSenders } // Use the updated state here
+      ).then(response => {
+        // Handle response if needed
+      }).catch(error => {
+        // Handle error if needed
+      });
+  
+      // Return the new value of groupSenders
+      return newGroupSenders;
+    });
   };
 
-  //handle the mute group switcher chenge
+  const handleMuteGroupChange = async () => {
+    // Set the muteGroup state and use a callback function to execute axios.post
+    setMuteGroup(prevMuteGroup => {
+      // Toggle the muteGroup state
+      const newMuteGroup = !prevMuteGroup;
+  
+      // Now that the state has been updated, make the axios.post call
+      axios.post(
+        "http://localhost:3001/api/v1/setMuteGroup",
+        { groupId, userId, muteGroup: newMuteGroup } // Use the updated state here
+      ).then(response => {
+        // Handle response if needed
+      }).catch(error => {
+        // Handle error if needed
+      });
+  
+      // Return the new value of muteGroup
+      return newMuteGroup;
+    });
+  };
+  
+  
+/*
+  //handle the mute group switcher change
   const handleMuteGroupChange = async () => {
     setMuteGroup(!muteGroup);
     const response = await axios.post(
       "http://localhost:3001/api/v1/setMuteGroup",
       { groupId, userId,muteGroup }
     );
-  };
+  };*/
 
   return (
     <div>

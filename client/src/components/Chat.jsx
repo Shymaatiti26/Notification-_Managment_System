@@ -97,6 +97,7 @@ const Chat = () => {
 
   };
 
+  //set the group sendLater to false
   const setSenLaterToFalse=async (msgId)=>{
     const response = await axios.post(
       "http://localhost:3001/api/v1/setSenLaterToFalse",
@@ -134,6 +135,7 @@ const Chat = () => {
     );
   };
 
+  //check if to send the message now or it is scheduled and send the message with sokot.io according to that
   const sendMessage = async () => {
     joinGroup();
     setUserRoom();
@@ -175,12 +177,12 @@ const Chat = () => {
   };
 
 
-
+//join to socke.io group
   const joinGroup = async () => {
     await socket.emit("joinGroup", groupId);
   };
 
-  //join user room for notification
+  //join user room for notification in socket.io
   const setUserRoom = async () => {
     await socket.emit("userRoom", user._id);
   };
@@ -209,6 +211,7 @@ const Chat = () => {
     }
   };
 
+  //play notification sound
   const playSound =() =>{
     new Audio (sound).play();
 

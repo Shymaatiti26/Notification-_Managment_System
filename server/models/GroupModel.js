@@ -34,7 +34,7 @@ const groupSchema = new mongoose.Schema(
     latestMessage: { type: String },
     latestMessageTime: { type: String },
 
-    groupSenders: { type: String },
+    groupSenders: { type: Boolean },
   },
   { timestamps: true }
 );

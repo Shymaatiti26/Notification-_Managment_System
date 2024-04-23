@@ -45,6 +45,11 @@ const userSchema = new mongoose.Schema({
         sendLater:{type: String},
         groupName:{type: String}
     }],
+
+    followedUsers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }]
     
 })
 

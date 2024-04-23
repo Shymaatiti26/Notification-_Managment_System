@@ -24,34 +24,59 @@ const UserGroupsList = () => {
     groups,
     setGroups,
     showChat,
-    setShowChat,setIsGroupAdmin,IsGroupAdmin,setNotification,notification,setGroupSenders,muteGroup,setMuteGroup
+    setShowChat,
+    setIsGroupAdmin,
+    IsGroupAdmin,
+    setNotification,
+    notification,
+    setGroupSenders,
+    muteGroup,
+    setMuteGroup,
   } = useAuthContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [latestMessage, setLatestMessage] = useState();
   const [openedGroup, setOpenedGroup] = useState("");
   const userData = JSON.parse(localStorage.getItem("user")); //get the user  info of current logged in user
   const userId = userData._id;
+  const [mutedGroups, setMutedGroups] = useState([]);
 
   useEffect(() => {
     getUserGroups();
 
-    
-    // console.log(user1);
-    //console.log(user1._id);
-    //getLatestMessage();
+
+
   }, [groups]);
 
-
-
-  /*
   useEffect(() => {
-    localStorage.setItem(
-      "group",
-      JSON.stringify({ groupId: openedGroup._id, groupName: openedGroup.groupName, users: openedGroup.users })
-    );
-    //getLatestMessage();
-  },[openedGroup]);
-*/
+
+
+      // Fetch IsGroupMuted for each group and update the mutedGroups state
+      const fetchMutedStatus = async () => {
+        const mutedStatusPromises = groups.map((group) =>
+          IsGroupMuted(group._id)
+        );
+        const mutedStatuses = await Promise.all(mutedStatusPromises);
+        setMutedGroups(mutedStatuses);
+      };
+  
+      fetchMutedStatus(); // Fetch the muted status after user groups are f
+  }, []);
+
+
+  useEffect(() => {
+        // Fetch IsGroupMuted for each group and update the mutedGroups state
+        const fetchMutedStatus = async () => {
+          const mutedStatusPromises = groups.map((group) =>
+            IsGroupMuted(group._id)
+          );
+          const mutedStatuses = await Promise.all(mutedStatusPromises);
+          setMutedGroups(mutedStatuses);
+        };
+    
+        fetchMutedStatus(); // Fetch the muted status when component mounts or groups change
+
+  },[muteGroup]);
+
 
   //get all the user groups from db and store them on groups
   const getUserGroups = async () => {
@@ -65,14 +90,12 @@ const UserGroupsList = () => {
           params: { userId },
         }
       );
-     // console.log(response.data);
+      // console.log(response.data);
       setGroups(response.data);
     } catch (error) {
       throw error;
     }
   };
-
-
 
   /*
   //set the group data in the local storage
@@ -93,28 +116,24 @@ const UserGroupsList = () => {
     );
   };
 
-  const getGroupSenders = async (groupId) =>{
+  const getGroupSenders = async (groupId) => {
     const response = await axios.post(
       "http://localhost:3001/api/v1//getGroupSenders",
-      { groupId}
+      { groupId }
     );
     setGroupSenders(response.data);
-
-  }
-
-  //check if group muted
-  const IsGroupMuted = async (groupId) =>{
-    const response = await axios.post(
-      "http://localhost:3001/api/v1//checkUserExistInMute",
-      { groupId,userId}
-    );
-    setMuteGroup(response.data);
-
-
   };
 
+  //check if group muted
+  const IsGroupMuted = async (groupId) => {
+    const response = await axios.post(
+      "http://localhost:3001/api/v1//checkUserExistInMute",
+      { groupId, userId }
+    );
 
-
+    //setMuteGroup(response.data);
+    return response.data;
+  };
 
   /*
   //get the latest message
@@ -150,29 +169,35 @@ const UserGroupsList = () => {
 
       <br />
       <VStack className="groups" spacing={2} align="stretch" overflowY="auto">
-        {groups.map((group) => (
+        {groups.map((group, index) => (
           <Box>
             <Box
               className="groupBox"
               p={4}
               key={group._id}
-              onClick={() => {
-                
+              onClick={async () => {
                 setSelectedGroup(group);
+                const IsMuted = await IsGroupMuted(group._id);
+                setMuteGroup(IsMuted);
                 setShowChat(true);
-                IsGroupMuted(group._id);
                 getGroupSenders(group._id);
-                
               }}
             >
-              <strong>{group.groupName}</strong>
+              <div className="groupNameAndIcon">
+                <strong>{group.groupName}</strong>
+                {mutedGroups[index] && (
+                  <span class="material-symbols-outlined">volume_off</span>
+                )}
+              </div>
               <p>Last Message: {group.latestMessage} </p>
               <p className="sendingTime">{group.latestMessageTime}</p>
             </Box>
             <div className="footer">
               <button
                 className="delete_button"
-                onClick={() => {unfollorGroup(group._id); }}
+                onClick={() => {
+                  unfollorGroup(group._id);
+                }}
               >
                 Unfollow
               </button>

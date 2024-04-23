@@ -16,6 +16,7 @@ import {
 import Groups from './Groups'
 import ScheduledMsgsList from '../components/ScheduledMsgsList'
 import Notification from '../components/Notifications'
+import Users from '../components/Users'
 
 //import { useLogout } from './hooks/useLogout';
 const UserPage = () => {
@@ -63,6 +64,10 @@ const UserPage = () => {
     navigate("/Groups");
   };
 
+  const handleUsers = async () => {
+    navigate("/Users");
+  };
+
   const handleLogout = async () => {
     // remove user from storage
     localStorage.removeItem("user");
@@ -96,6 +101,7 @@ const UserPage = () => {
             
             <ScheduledMsgsList className="navbar-button" ></ScheduledMsgsList>
             <Groups></Groups>
+            <Users></Users>
           </div>
           <div className="navbar-right">
             <Notification></Notification>

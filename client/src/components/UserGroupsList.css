@@ -82,3 +82,9 @@
   color:#6c7a89;
 
 }
+
+.groupNameAndIcon{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
