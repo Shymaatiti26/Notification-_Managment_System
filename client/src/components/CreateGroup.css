@@ -8,3 +8,22 @@
     transition: background-color 0.3s;
     margin-top: 10px;
   }
+
+  .error{
+    display: flex;
+    color: red;
+    font-weight: bold;
+    padding: 5px;
+    justify-content: center;
+    font-size: large;
+  }
+
+  .successMsg{
+    display: flex;
+    color: rgb(7, 126, 27);
+    font-weight: bold;
+    padding: 5px;
+    justify-content: center;
+    font-size: large;
+
+  }

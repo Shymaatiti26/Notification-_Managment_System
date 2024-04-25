@@ -13,10 +13,11 @@ import {
   AlertTitle,
   AlertDescription,
 } from "@chakra-ui/react";
-import Groups from './Groups'
-import ScheduledMsgsList from '../components/ScheduledMsgsList'
-import Notification from '../components/Notifications'
-import Users from '../components/Users'
+import Groups from "./Groups";
+import ScheduledMsgsList from "../components/ScheduledMsgsList";
+import Notification from "../components/Notifications";
+import Users from "../components/Users";
+import { useToast } from '@chakra-ui/react'
 
 //import { useLogout } from './hooks/useLogout';
 const UserPage = () => {
@@ -48,25 +49,15 @@ const UserPage = () => {
     setShowChat,
   } = useAuthContext();
 
+  useEffect(() => {}, [notification]);
   useEffect(() => {
-    
-    
-  }, [notification]);
+    setShowChat(false);
+  }, []);
 
   const handleProfile = async () => {
     navigate("/Profile");
   };
 
-  const handleMessage = async () => {
-    navigate("/ScheduledMsgsList");
-  };
-  const handleGroups = async () => {
-    navigate("/Groups");
-  };
-
-  const handleUsers = async () => {
-    navigate("/Users");
-  };
 
   const handleLogout = async () => {
     // remove user from storage
@@ -76,9 +67,6 @@ const UserPage = () => {
     dispatch({ type: "LOGOUT" });
     navigate("/Home");
   };
-
-
-
 
   return (
     <div className="main-container">
@@ -98,14 +86,12 @@ const UserPage = () => {
             <img className="navbar-logo" src="/images/logo.png" alt="Logo" />
           </div>
           <div className="navbar-center">
-            
-            <ScheduledMsgsList className="navbar-button" ></ScheduledMsgsList>
+            <ScheduledMsgsList className="navbar-button"></ScheduledMsgsList>
             <Groups></Groups>
             <Users></Users>
           </div>
           <div className="navbar-right">
             <Notification></Notification>
-
 
             <div className="navbar-username" onClick={toggleDropdown}>
               <span className="username">Welcome {user.username} &#9660;</span>
@@ -122,15 +108,16 @@ const UserPage = () => {
         </div>
       )}
 
-      <Grid className="mainContainer" templateColumns="repeat(5, 1fr)" gap={6}>
-        <GridItem w="100%" h="10">
-          {" "}
-          <UserGroupsList></UserGroupsList>
+      <Grid
+        className="mainContainer"
+        templateColumns="0.3fr 1fr"
+        templateRows="1fr"
+        gap={6}
+      >
+        <GridItem>
+          <UserGroupsList />
         </GridItem>
-        <GridItem w="100%" h="10" className="chat-box">
-          {" "}
-          {showChat && <Chat />}
-        </GridItem>
+        <GridItem>{showChat && <Chat />}</GridItem>
       </Grid>
     </div>
   );

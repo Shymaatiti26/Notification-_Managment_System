@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuthContext } from "../hooks/useAuthComtext";
 import "./CreateGroup.css";
+import { useToast } from '@chakra-ui/react'
 
 const CreateGroup = () => {
   const [groupName, setGroupName] = useState("");
   const [groupId, setGroupId] = useState("");
-  const { user ,showErr,setShowErr} = useAuthContext();
-  const [groupExistErr, setGroupExistErr] = useState(false);
+  const { user } = useAuthContext();
+  const [groupExistErr, setGroupExistErr] = useState();
+  const[groupSuccessMsg,setGroupSuccessMsg] =useState();
 
 
   useEffect(() => {
@@ -20,6 +22,7 @@ const CreateGroup = () => {
   }, [groupId]);
 
   const Submit = async () => {
+    event.preventDefault(); // Prevent form submission
     const username = user.username;
     const response = await axios.post(
       "http://localhost:3001/api/v1/createGroup",
@@ -33,11 +36,11 @@ const CreateGroup = () => {
       JSON.stringify({ groupId: groupId, groupName: groupName })
     );
     setGroupExistErr(false);
-    setShowErr(false);
+    setGroupSuccessMsg(true);
   }else{
     //alert("This name already exist")
     setGroupExistErr(true);
-    setShowErr(true);
+    setGroupSuccessMsg(false);
   }
   };
 
@@ -53,7 +56,8 @@ const CreateGroup = () => {
           <input
             type="text"
             value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
+            onChange={(e) => {
+              setGroupName(e.target.value)}}
             required
           />
         </label>
@@ -62,7 +66,8 @@ const CreateGroup = () => {
         <button className="create-button" onClick={Submit}>
           Create
         </button>
-        {groupExistErr && (<p>group name is  existed!</p>)}
+        {groupExistErr && (<div className="error">This group name exist</div>)}
+        {groupSuccessMsg && (<div className="successMsg">Group created successfuly</div>)}
        
       </form>
     </div>

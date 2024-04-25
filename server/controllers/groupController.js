@@ -322,7 +322,7 @@ exports.checkUserExistInMute = catchAsyncErrors(async (req, res, next) => {
     }
 
     const isUserMuted = group.muteOnUsers.includes(userId);
-    console.log('isUserIncludeInMute :'+isUserMuted);
+    console.log('isUserIncludeInMute :'+isUserMuted+ " User ID:" +userId );
     res.json( isUserMuted );
   } catch (error) {
     console.error('Error checking user in mute list:', error);

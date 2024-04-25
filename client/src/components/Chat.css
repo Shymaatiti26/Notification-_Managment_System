@@ -5,11 +5,11 @@
   border-radius: 8px;
   background-color: hsl(246, 34%, 78%);
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-  margin: 0;
-  min-width:500px;
+  margin: 20px;
+  min-width:300px;
   min-height:fit-content;
-  margin-top: 20px;
-  width:150% ;
+  width:auto;
+  height: auto;
 }
 
 .chat-header {
@@ -23,6 +23,7 @@
   font-size: 2em;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  width: auto;
 }
 
 .settingIcon{
@@ -30,12 +31,13 @@ margin-left: auto;
 }
 
 .chat-body {
-  min-height: 300px;
   background: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   position: relative;
   margin-top: 10px;
   border-radius: 6px;
+  height: 100%;
+  width: auto;
 }
 
 .chat-body .message {
@@ -44,13 +46,13 @@ margin-left: auto;
   height: auto;
   padding: 10px;
   display: flex;
+  width: auto;
 }
 
 .chat-body .message .message-content {
   width: auto;
   height: auto;
   min-height: 40px;
-  max-width: 120px;
   background-color: #d396e7;
   border-radius: 5px;
   color: rgb(6, 6, 6);
@@ -139,7 +141,8 @@ margin-left: auto;
 }
 
 .chatMessages-body{
-  height:400px;
+  height:600px;
+
 
 }
 

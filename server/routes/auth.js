@@ -33,6 +33,8 @@ router.route('/getUserNotifications').post(getUserNotifications);
 
 router.route('/deleteNotification').post(deleteNotification);
 
+router.route('/users').get(allUsers);
+
 
 /*
 

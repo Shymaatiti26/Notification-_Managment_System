@@ -12,45 +12,83 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { SmallCloseIcon } from "@chakra-ui/icons";
+import Select from 'react-select';
 
 const Settings = () => {
   const {
     user,
     selectedGroup,
-    group,
-    errorAlert,
-    setErrorAlert,
-    showErr,
-    setShowErr,
     IsGroupAdmin,
     setIsGroupAdmin,
     groupSenders,
-    setGroupSenders,muteGroup,setMuteGroup,
+    setGroupSenders,
+    muteGroup,
+    setMuteGroup,
   } = useAuthContext();
   const [groupExistErr, setGroupExistErr] = useState(false);
   const [groupName, setGroupName] = useState(selectedGroup.groupName);
   const groupId = selectedGroup._id;
   const userId = user._id;
   const [users, setUsers] = useState([]);
+  const [groupSuccessMsg, setGroupSuccessMsg] = useState();
+  const [options, setOptions] = useState([]);
+  const [toGroups, setToGroups] = useState([]);
 
   useEffect(() => {
     checkAdmin();
     getGroupUsers();
   });
-//1.8.1.1.	handleSubmit: handle group name input change and save in db
+  //1.8.1.1.	handleSubmit: handle group name input change and save in db
   const handleSubmit = async () => {
+    event.preventDefault(); // Prevent form submission
     const response = await axios.post(
       "http://localhost:3001/api/v1/changeGgoupName",
       { groupName, groupId }
     );
 
     if (response.data.exist) {
-      setErrorAlert("group name is existed!");
-      //setShowErr(true);
+      setGroupExistErr(true);
+      setGroupSuccessMsg(false);
     } else {
-      //setShowErr(false);
+      setGroupExistErr(false);
+      setGroupSuccessMsg(true);
     }
   };
+
+  useEffect(() => {
+
+
+   
+    const fetchUsers = async () => {
+      
+      
+      try {
+        
+        //get all existing users
+        const response = await axios.get('http://localhost:3001/api/admin/users');
+       // setUsers(response.data);
+        const givenOptions = response.data.users.map(user => ({
+          label: user.username,
+          value: user._id
+        }));
+/*
+        //get all existing groups
+        const response = await axios.get('http://localhost:3001/api/v1/getGroups');
+        console.log(response.data)
+        const givenOptions = response.data.groups.map(group => ({
+          label: group.groupName,
+          value: group
+        }));*/
+
+
+        setOptions(givenOptions)
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   //delete Group
   const deleteGroup = (groupId) => {
@@ -100,20 +138,23 @@ const Settings = () => {
 
   const handleGroupSendersChange = async () => {
     // Set the groupSenders state and use a callback function to execute axios.post
-    setGroupSenders(prevGroupSenders => {
+    setGroupSenders((prevGroupSenders) => {
       // Toggle the groupSenders state
       const newGroupSenders = !prevGroupSenders;
-  
+
       // Now that the state has been updated, make the axios.post call
-      axios.post(
-        "http://localhost:3001/api/v1/setGroupSender",
-        { groupId, groupSenders: newGroupSenders } // Use the updated state here
-      ).then(response => {
-        // Handle response if needed
-      }).catch(error => {
-        // Handle error if needed
-      });
-  
+      axios
+        .post(
+          "http://localhost:3001/api/v1/setGroupSender",
+          { groupId, groupSenders: newGroupSenders } // Use the updated state here
+        )
+        .then((response) => {
+          // Handle response if needed
+        })
+        .catch((error) => {
+          // Handle error if needed
+        });
+
       // Return the new value of groupSenders
       return newGroupSenders;
     });
@@ -121,35 +162,33 @@ const Settings = () => {
 
   const handleMuteGroupChange = async () => {
     // Set the muteGroup state and use a callback function to execute axios.post
-    setMuteGroup(prevMuteGroup => {
+    setMuteGroup((prevMuteGroup) => {
       // Toggle the muteGroup state
       const newMuteGroup = !prevMuteGroup;
-  
+
       // Now that the state has been updated, make the axios.post call
-      axios.post(
-        "http://localhost:3001/api/v1/setMuteGroup",
-        { groupId, userId, muteGroup: newMuteGroup } // Use the updated state here
-      ).then(response => {
-        // Handle response if needed
-      }).catch(error => {
-        // Handle error if needed
-      });
-  
+      axios
+        .post(
+          "http://localhost:3001/api/v1/setMuteGroup",
+          { groupId, userId, muteGroup: newMuteGroup } // Use the updated state here
+        )
+        .then((response) => {
+          // Handle response if needed
+        })
+        .catch((error) => {
+          // Handle error if needed
+        });
+
       // Return the new value of muteGroup
       return newMuteGroup;
     });
   };
-  
-  
-/*
-  //handle the mute group switcher change
-  const handleMuteGroupChange = async () => {
-    setMuteGroup(!muteGroup);
-    const response = await axios.post(
-      "http://localhost:3001/api/v1/setMuteGroup",
-      { groupId, userId,muteGroup }
-    );
-  };*/
+
+
+  const handleGroupsChange = (e) => {
+    const selectedGroups = Array.from(e, (option) => option.value);
+    setToGroups(selectedGroups);
+  };
 
   return (
     <div>
@@ -169,12 +208,20 @@ const Settings = () => {
               <button className="save-button" type="submit">
                 Save
               </button>
+
             </div>
           )}
           {!IsGroupAdmin && <strong> {groupName}</strong>}
         </label>
 
-        <br />
+        {groupExistErr && (
+                <div className="error">This group name exist</div>
+              )}
+              {groupSuccessMsg && (
+                <div className="successMsg">Group created successfuly</div>
+              )}
+
+
 
         <div className="muteGroup">
           <p>Mute group:</p>
@@ -225,6 +272,16 @@ const Settings = () => {
               </Box>
             ))}
           </VStack>
+          <div>
+        <label>
+            Add new admin:
+            <Select
+            options={options}
+            isMulti
+            onChange={handleGroupsChange}
+            />
+          </label>
+        </div>
         </div>
 
         <div className="groupUsers">
@@ -266,10 +323,9 @@ const Settings = () => {
             Delete Group
           </button>
         )}
-
-        {groupExistErr && <p>group name is existed!</p>}
       </form>
     </div>
+    
   );
 };
 
