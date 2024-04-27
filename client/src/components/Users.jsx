@@ -105,7 +105,7 @@ const Users = () => {
                 ? "unfollow-button"
                 : "follow-button"
             }
-            onClick={() => handleFollow(row.original._id)}
+            onClick={() => handleFollow(row.original._id,row.original.username)}
           >
             {followedUsers.includes(row.original._id) ? "Unfollow" : "Follow"}
           </button>

@@ -116,13 +116,13 @@ const UserGroupsList = () => {
     );
   };
 
-  const getGroupSenders = async (groupId) => {
-    const response = await axios.post(
-      "http://localhost:3001/api/v1//getGroupSenders",
-      { groupId }
-    );
-    setGroupSenders(response.data);
-  };
+  // const getGroupSenders = async (groupId) => {
+  //   const response = await axios.post(
+  //     "http://localhost:3001/api/v1//getGroupSenders",
+  //     { groupId }
+  //   );
+  //   setGroupSenders(response.data);
+  // };
 
   //check if group muted
   const IsGroupMuted = async (groupId) => {

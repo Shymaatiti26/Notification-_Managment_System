@@ -17,7 +17,7 @@ import Groups from './Groups'
 import ScheduledMsgsList from '../components/ScheduledMsgsList'
 import Notification from '../components/Notifications'
 import Users from '../components/Users'
-
+import UserChatList from '../components/UserChatList'
 //import { useLogout } from './hooks/useLogout';
 const UserPage = () => {
   //const [user, setUser] = useState(null);
@@ -48,6 +48,11 @@ const UserPage = () => {
     setShowChat,
   } = useAuthContext();
 
+  //const navigate = useNavigate();
+  //const { user, dispatch } = useAuthContext();
+  const [showUsers, setShowUsers] = useState(false);
+  const [showGroups, setShowGroups] = useState(false);
+
   useEffect(() => {
     
     
@@ -67,6 +72,16 @@ const UserPage = () => {
   const handleUsers = async () => {
     navigate("/Users");
   };
+
+const handleUsersClick = () => {
+  setShowUsers(true);
+  setShowGroups(false);
+};
+
+const handleGroupsClick = () => {
+  setShowUsers(false);
+  setShowGroups(true);
+};
 
   const handleLogout = async () => {
     // remove user from storage
@@ -125,7 +140,19 @@ const UserPage = () => {
       <Grid className="mainContainer" templateColumns="repeat(5, 1fr)" gap={6}>
         <GridItem w="100%" h="10">
           {" "}
+          <button className="navbar-button" onClick={handleGroupsClick}>
+          Groups
+        </button>
+          {showGroups && <Groups />}
           <UserGroupsList></UserGroupsList>
+        </GridItem>
+        <GridItem w="100%" h="10">
+          {" "}
+          <button className="navbar-button" onClick={handleUsersClick}>
+          Users
+        </button>
+          {showUsers && <Users />}
+          <UserChatList></UserChatList>
         </GridItem>
         <GridItem w="100%" h="10" className="chat-box">
           {" "}

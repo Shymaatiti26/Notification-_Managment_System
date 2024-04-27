@@ -98,7 +98,7 @@ exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
     }
 
 
-    const user = await User.findByIdAndUpdate(req.user.id,newUserData,{
+    const user = await User.findByIdAndUpdate(req.body.id,newUserData,{
         new:true,
         runValidators:true,
         useFindAndModify:false

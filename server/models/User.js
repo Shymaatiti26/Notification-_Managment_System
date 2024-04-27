@@ -4,6 +4,19 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 
+
+const followedUserSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    username: {
+        type: String,
+        required: true
+    }
+});
+
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -46,11 +59,14 @@ const userSchema = new mongoose.Schema({
         groupName:{type: String}
     }],
 
-    followedUsers: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }]
-    
+//     followedUsers: [{
+//         type: mongoose.Schema.Types.ObjectId,
+//         ref: 'User'
+//     }],
+followedUsers: [followedUserSchema], // Updated to include followed users with userId and username
+latestMessage: { type: String },
+latestMessageTime: { type: String },
+
 })
 
 
@@ -78,16 +94,4 @@ userSchema.methods.getJwtToken = function () {
 
 module.exports = mongoose.model('User', userSchema);
 
-// const mongoose =require('mongoose')
 
-// const User =new mongoose.Schema({
-//     username: {type:String, unique:true},
-//     email: String,
-//     phone: String,
-//     password: String,
-//     confirmPassword:String
-// })
-
-// const UserModel =mongoose.model("User", User)
-
-// module.exports=UserModel

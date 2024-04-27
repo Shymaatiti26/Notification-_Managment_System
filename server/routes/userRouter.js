@@ -1,9 +1,10 @@
 const express = require('express');
-const { getAllUsers,followUser,UpdateUser1,removeUserFromUser1 } = require('../controllers/userController');
+const { getAllUsers,followUser,removeUserFromUser1,UnfollowUser,followedUsersList } = require('../controllers/userController');
 const router = express.Router(); 
 
 router.route('/getAllUsers').get(getAllUsers);
+router.route('/followedUsersList').get(followedUsersList);
 router.route('/followUser').post(followUser);
-//router.route('/UpdateUser1').put(UpdateUser1);
+router.route('/UnfollowUser').put(UnfollowUser);
 router.route('/removeUserFromUser1').put(removeUserFromUser1);
 module.exports= router;

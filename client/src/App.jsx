@@ -16,7 +16,7 @@ import Groups from './pages/Groups'
 import Settings from './components/Settings'
 import ScheduledMsgsList from './components/ScheduledMsgsList'
 import Notifications from './components/Notifications'
-
+import UserChatList from './components/UserChatList'
 //import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 function App() {
   const [count, setCount] = useState(0)
@@ -38,7 +38,7 @@ function App() {
         <Route path='/Settings' element={<Settings/>}/>
         <Route path='/ScheduledMsgsList' element={<ScheduledMsgsList/>}/>
         <Route path='/Notifications' element={<Notifications/>}/>
-
+       <Route path='/UserChatList' element={<UserChatList/>}/>
         
     </Routes>
     </AuthContextProvider>

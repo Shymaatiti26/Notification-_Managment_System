@@ -33,6 +33,7 @@ router.route('/getUserNotifications').post(getUserNotifications);
 
 router.route('/deleteNotification').post(deleteNotification);
 
+router.route('/me/update').put(updateProfile);
 
 /*
 

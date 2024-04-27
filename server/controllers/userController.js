@@ -15,95 +15,122 @@ exports.getAllUsers = catchAsyncErrors(async (req, res, next) => {
   });
 
 // create user Followers array -> api/v1/followUser
-  exports.followUser = catchAsyncErrors(async (req, res, next) => {
-    const { adminId, userId } = req.body;
+exports.followUser = catchAsyncErrors(async (req, res, next) => {
+  const { adminId, userId } = req.body;
   try {
     const admin = await User.findById(adminId);
     if (!admin) {
       console.log(adminId);
       console.log(userId);
-      return res.status(404).send("admin not found");
+      return res.status(404).send("Admin not found");
     }
 
-    admin.followedUsers.push(userId);
+    // Fetch the username associated with the userId
+    const followedUser = await User.findById(userId);
+    if (!followedUser) {
+      return res.status(404).send("User not found");
+    }
+    const { username } = followedUser;
+
+    // Add the followed user (userId and username) to the followedUsers array
+    admin.followedUsers.push({ userId, username });
     await admin.save();
 
-    res.status(200).send("follow User added to the array successfully");
+    res.status(200).send("Followed user added to the array successfully");
   } catch (error) {
     console.error("Error updating user array:", error);
     res.status(500).send("Error updating user array");
   }
-  });
+});
+
+  // exports.followUser = catchAsyncErrors(async (req, res, next) => {
+  //   const { adminId, userId } = req.body;
+  // try {
+  //   const admin = await User.findById(adminId);
+  //   if (!admin) {
+  //     console.log(adminId);
+  //     console.log(userId);
+  //     return res.status(404).send("admin not found");
+  //   }
+
+  //   admin.followedUsers.push(userId);
+  //   await admin.save();
+
+  //   res.status(200).send("follow User added to the array successfully");
+  // } catch (error) {
+  //   console.error("Error updating user array:", error);
+  //   res.status(500).send("Error updating user array");
+  // }
+  // });
 
   
   // Endpoint: api/v1/RemoveUserFromUser1
-exports.removeUserFromUser1 = catchAsyncErrors(async (req, res, next) => {
-    const { adminId, userId } = req.body;
+  exports.removeUserFromUser1 = catchAsyncErrors(async (req, res, next) => {
+    const { adminId, userId, username } = req.body;
     try {
-      const admin = await User.findById(adminId);
-      if (!admin) {
-        console.log(adminId);
-        console.log(userId);
-        return res.status(404).send("user not found");
-      }
-  
-      admin.followedUsers.remove(userId);
-      await admin.save();
-  
-      res.status(200).send("User removed from array successfully");
+        const admin = await User.findById(adminId);
+        if (!admin) {
+            console.log(adminId);
+            console.log(userId);
+            return res.status(404).send("User not found");
+        }
+
+        // Remove the user from the followedUsers array
+console.log(userId)
+        admin.followedUsers = admin.followedUsers.filter(user => user.userId != userId);
+        console.log(admin.followedUsers);
+        await admin.save();
+       
+        console.log("adminId");
+        res.status(200).send("User removed from array successfully");
     } catch (error) {
-      console.error("Error updating user array:", error);
-      res.status(500).send("Error updating user array");
+        console.error("Error updating user array:", error);
+        res.status(500).send("Error updating user array");
     }
-  
-  //   const { adminId, userId } = req.body;
-    
-  //   // Find the user with adminId
-  //   const adminUser = await User.findById(adminId);
-  //   if (!adminUser) {
-  //     return res.status(404).json({ success: false, message: 'Admin user not found' });
-  //   }
-    
-  //   // Check if the user with userId exists in followedUsers
-  //   if (!adminUser.followedUsers.includes(userId)) {
-  //     return res.status(400).json({ success: false, message: 'User is not followed' });
-  //   }
-    
-  //   // Remove the userId from followedUsers array
-  //   adminUser.followedUsers = adminUser.followedUsers.filter(id => id !== userId);
-  //   await adminUser.save();
-    
-  //   res.status(200).json({ success: true, message: 'User removed from followedUsers successfully', user: adminUser });
-  // } catch (error) {
-  //   console.error('Error removing user from followedUsers:', error);
-  //   next(error);
-  // }
 });
 
-// // Endpoint: api/v1/UpdateUser1
-// exports.UpdateUser1 = catchAsyncErrors(async (req, res, next) => {
-//   try {
-//     const { adminId, userId } = req.body;
-    
-//     // Find the user with adminId
-//     const adminUser = await User1.findById(adminId);
-//     if (!adminUser) {
-//       return res.status(404).json({ success: false, message: 'Admin user not found' });
-//     }
-    
-//     // Check if the user with userId already exists in followedUsers
-//     if (adminUser.followedUsers.includes(userId)) {
-//       return res.status(400).json({ success: false, message: 'User is already followed' });
-//     }
-    
-//     // Add the userId to followedUsers array
-//     adminUser.followedUsers.push(userId);
-//     await adminUser.save();
-    
-//     res.status(200).json({ success: true, message: 'User added to followedUsers successfully', user: adminUser });
-//   } catch (error) {
-//     console.error('Error adding user to followedUsers:', error);
-//     next(error);
-//   }
-// });
 
+
+ //delete user from followedusers array => api/v1//UnfollowUser
+ exports.UnfollowUser = catchAsyncErrors(async (req, res, next) => {
+  const userId = req.body.userId;
+  const adminId = req.body.adminId;
+  try {
+    const admin = await User.findById(adminId);
+    if (!admin) {
+        console.log(adminId);
+        console.log(userId);
+        return res.status(404).send("User not found");
+    }
+
+    // Remove the user from the followedUsers array
+console.log(userId)
+    admin.followedUsers = admin.followedUsers.filter(user => user.userId != userId);
+    console.log(admin.followedUsers);
+    await admin.save();
+  
+    res.status(200).send("User removed from array successfully");
+  } catch (error) {
+    console.error("Error unfollow user:", error);
+    res.status(500).send("Error unfollow user");
+  }
+});
+
+
+exports.followedUsersList = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const adminId = req.query.adminId;
+    const admin = await User.findById(adminId);
+    if (!admin)
+    {
+      return next(new ErrorHandler("No admin found", 404));
+    }
+    if(admin.followedUsers.length === 0) {
+      return next(new ErrorHandler("No followedUsers found", 404));
+    }
+    res.json(admin.followedUsers);
+  } catch (error) {
+    console.error("Error getting followed users:", error);
+    next(error);
+  }
+});
