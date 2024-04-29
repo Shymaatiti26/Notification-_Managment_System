@@ -86,6 +86,9 @@
     cursor: pointer;
     font-size: 16px;
   }
+  .active{
+    background-color: #420e72;
+  }
   
   .navbar-center {
     display: flex;

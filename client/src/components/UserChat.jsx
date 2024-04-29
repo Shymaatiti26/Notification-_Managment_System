@@ -1,7 +1,5 @@
-// src/components/Chat.js
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
-//import "./Chat.css";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { useAuthContext } from "../hooks/useAuthComtext";
 import axios from "axios";
@@ -14,81 +12,53 @@ import {
   ModalCloseButton,
   useDisclosure,
 } from "@chakra-ui/react";
-import Settings from "./Settings";
+import UserSettings from "./UserSettings";
 import DatePicker from "react-datepicker";
-import sound from '../assets/sound.wav'
+import sound from '../assets/sound.wav';
 
-const Chat = () => {
+const UserChat = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
-//   const {
-//     user,
-//     notification,
-//     setNotification,
-//     selectedGroup,
-//     setSelectedGroup,
-//     setShowChat,
-//     socket,
-//     setSocket,
-//     IsGroupAdmin,
-//     setIsGroupAdmin,groupSenders
-//   } = useAuthContext();
-const {
+
+  const {
     user,
     selectedUser,
-    setSelectedUser,
-    users,
-    setUsers,
-    showChat,
-    setShowChat,
-    setAdmin,
-    IsAdmin,
     setNotification,
-    notification,
-    setUsersSenders,
-    userSenders,
-    muteUser,
-    setMuteUser,
+    userSocket, 
+    setUserSocket
   } = useAuthContext();
-  const groupData = JSON.parse(localStorage.getItem("group"));
-  let groupId = selectedGroup._id;
+  //const groupData = JSON.parse(localStorage.getItem("group"));
+  const storedFollowedUsers = JSON.parse(localStorage.getItem("followedUsers"));
+ // const userId= storedFollowedUsers._id;
+  const userData = JSON.parse(localStorage.getItem("user")); //get the user  info of current logged in user
+  const adminId = userData._id;
+  let userId = selectedUser.userId;
+  //let groupId = selectedGroup._id;
   const [selectedDate, setSelectedDate] = useState(null);
   const [sendLater, setSendLater] = useState(false);
 
   useEffect(() => {
     //setGroupId(selectedGroup._id)
-    groupId = selectedGroup._id;
-    getGroupMessages();
-    checkAdmin();
-  }, [selectedGroup]);
+   // setSelectedUser(storedFollowedUsers.userId);
+    userId = selectedUser.userId;
+    getUserMessages();
+  }, [selectedUser]);
+
 
   useEffect(() => {
-    // Connect to the server
+    // Connect to the server for user chat
     const newSocket = io("http://localhost:3001");
-    setSocket(newSocket);
+    setUserSocket(newSocket);
 
     // Listen for incoming messages
-    newSocket.on("receive-message", (message,sendLater,msgId) => {
+    newSocket.on("receive-message", (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
-      
-     // if(!selectedGroup._id===message.groupId){
-     // setNotification((prevNotif) => [...prevNotif, message]);
-      //playSound();
-      //}
-      //if (sendLater===true){
-        //set the sendLater false
-       // console.log('TTTT');
-        setSenLaterToFalse(msgId);
-      //}
-      //saveMessageToServer(message,sendLater);
-      
-
     });
 
-   
-    // Listen for user incoming notification
-    newSocket.on('receive-notif', (notif,user) => {
+
+     // Listen for user incoming notification
+     newSocket.on('receive-notif', (notif,user) => {
       //console.log(notification)
       setNotification((prevNotif) => [...prevNotif, notif]);
       playSound();
@@ -96,23 +66,23 @@ const {
         saveNotificationToServer(notif,user)
       })
     });
-
+    
     // Cleanup on component unmount
     return () => {
       newSocket.disconnect();
     };
   }, []);
 
-  //save group message on db
+
+  //save  message on db
   const saveMessageToServer = async (message,sendLater) => {
     const response = await axios.post(
-      "http://localhost:3001/api/v1/getMessage",
+      "http://localhost:3001/api/v1/getUserMessage",
       { message }
     );
     return response.data;
-  
-
   };
+
 
   //set the group sendLater to false
   const setSenLaterToFalse=async (msgId)=>{
@@ -132,11 +102,11 @@ const {
 
 
 
-  //get group LastMessages
-  const getGroupMessages = async () => {
+  //get user LastMessages
+  const getUserMessages = async () => {
     const response = await axios.post(
-      "http://localhost:3001/api/v1/sendMessages",
-      { groupId }
+      "http://localhost:3001/api/v1/sendUserMessages",
+      { userId,adminId }
     );
     console.log(response.data.message);
     setMessages(response.data.messages);
@@ -144,76 +114,63 @@ const {
 
 
 
-  //set the latest message in group
-  const setLatestMessage = async (groupId, latestMessage) => {
+  //set the latest message in chat
+  const setLatestUserMessage = async (userId, latestMessage) => {
     const response = await axios.post(
-      "http://localhost:3001/api/v1/setLatestMessage",
-      { groupId: groupId, latestMessage: latestMessage }
+      "http://localhost:3001/api/v1/setLatestUserMessage",
+      { adminId: adminId, userId: userId, latestMessage: latestMessage }
     );
   };
 
+
+  
   //check if to send the message now or it is scheduled and send the message with sokot.io according to that
   const sendMessage = async () => {
     joinGroup();
     setUserRoom();
-    let timeSend = null;//flag if the message is schedualed 
-    if(sendLater===true){
-      timeSend = selectedDate.getHours()+ ":" + selectedDate.getMinutes();
-    }else{
-      timeSend = new Date(Date.now()).getHours() + ":" + new Date().getMinutes()
+    let timeSend = null; // flag if the message is scheduled
+    if (sendLater === true) {
+      timeSend = selectedDate.getHours() + ":" + selectedDate.getMinutes();
+    } else {
+      timeSend = new Date(Date.now()).getHours() + ":" + new Date().getMinutes();
     }
-
+  
     if (inputMessage.trim() !== "") {
       const messageData = {
-        groupId: groupId,
-        sender: user.username,
+          adminId: user._id,
+          adminName: user.username,
+          userId: userId,
+          username: selectedUser.username,
         message: inputMessage,
-        timeSent:timeSend,
-        users: selectedGroup.users,
-        group: selectedGroup,
-        sendLater:sendLater,
-        sendLaterDate:selectedDate,
+        timeSent: timeSend,
+        sendLater: sendLater,
       };
-      if(sendLater===false){
-      setLatestMessage(messageData.groupId, messageData);}
-
-      const msgId = await saveMessageToServer(messageData,sendLater);
-      console.log('msgIdFront:'+msgId);
-      await socket.emit("send-message", messageData,sendLater,msgId);
+  
+      if (sendLater === false) {
+        setLatestUserMessage(userId, inputMessage);
+      }
+  
+      const msgId = await saveMessageToServer(messageData, sendLater);
+      console.log('msgIdFront:' + msgId);
+      await userSocket.emit("send-message", messageData, sendLater, msgId);
       setInputMessage("");
-
-      //if(sendLater===true){
-        //save schedualed message to db
-        
-
-      //}
-
-
       setSendLater(false);
     }
   };
+  
 
 
 //join to socke.io group
   const joinGroup = async () => {
-    await socket.emit("joinGroup", groupId);
+    await userSocket.emit("joinGroup", userId);
   };
 
   //join user room for notification in socket.io
   const setUserRoom = async () => {
-    await socket.emit("userRoom", user._id);
+    await userSocket.emit("userRoom", user._id);
   };
 
-  //check if the loged in user is the group admin
-  const checkAdmin = () => {
-    let isAdmin = false; // Flag variable to track admin status
-    selectedGroup.groupAdmin.forEach((admin) => {
-      if (admin === user.username) {
-        isAdmin = true;
-      }
-    });
-    setIsGroupAdmin(isAdmin);
-  };
+
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -245,7 +202,7 @@ const {
           color="white"
           marginLeft="auto"
           onClick={() => {
-            setShowChat(false);
+            setShowUserChat(false);
           }}
         />
       </div>
@@ -255,13 +212,13 @@ const {
         <ModalContent bg="#b8b4da">
           <ModalCloseButton />
           <ModalBody>
-            <Settings></Settings>
+            <UserSettings></UserSettings>
           </ModalBody>
         </ModalContent>
       </Modal>
 
       <div className="chat-header">
-        <p>{selectedGroup.groupName}</p>
+        <p>{selectedUser.username}</p>
         <div className="settingIcon">
           <SettingsIcon cursor="pointer" boxSize={6} onClick={onOpen} />
         </div>
@@ -274,7 +231,7 @@ const {
               return (
                 <div
                   className="message"
-                  id={user.username === message.sender ? "you" : "other"}
+                  id={user.username === message.adminName ? "you" : "other"}
                 >
                   <div className="message-content">
                     <p>{message.message}</p>
@@ -290,7 +247,7 @@ const {
           </div>
         </ScrollToBottom>
       </div>
-      {( groupSenders || IsGroupAdmin) && (
+      {/* {( groupSenders || IsGroupAdmin) && ( */}
         <div className="chat-footer">
           <div className="senMessage">
             <input
@@ -326,9 +283,9 @@ const {
             </div>
           )}
         </div>
-      )}
+      {/* )} */}
     </div>
   );
 };
 
-export default Chat;
+export default UserChat;

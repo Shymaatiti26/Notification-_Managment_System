@@ -14,7 +14,21 @@ const followedUserSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true
-    }
+    },
+    muteOnUsers: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+    ],
+    Messages: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Message",
+        },
+      ],
+    latestMessage: { type: String },
+    latestMessageTime: { type: String },
 });
 
 const userSchema = new mongoose.Schema({
@@ -64,8 +78,6 @@ const userSchema = new mongoose.Schema({
 //         ref: 'User'
 //     }],
 followedUsers: [followedUserSchema], // Updated to include followed users with userId and username
-latestMessage: { type: String },
-latestMessageTime: { type: String },
 
 })
 

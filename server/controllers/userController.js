@@ -134,3 +134,89 @@ exports.followedUsersList = catchAsyncErrors(async (req, res, next) => {
     next(error);
   }
 });
+
+
+///api/v1/setMuteUser
+exports.setMuteUser = catchAsyncErrors(async (req, res, next) => {
+  const { adminId, userId, muteUser } = req.body;
+  try {
+    // Find the admin user
+    const admin = await User.findById(adminId);
+    if (!admin) {
+      return res.status(404).send("Admin user not found");
+    }
+
+    // Find the followed user within the admin's followedUsers array
+    const followedUser = admin.followedUsers.find(
+      (user) => user.userId.toString() === userId
+    );
+
+    if (!followedUser) {
+      return res.status(404).send("Followed user not found");
+    }
+
+    // Update the muteOnUsers array for the followed user
+    if (muteUser === true) {
+      if (followedUser.muteOnUsers.includes(adminId)) {
+        console.log('User is already muted');
+      } else {
+        followedUser.muteOnUsers.push(adminId);
+        await admin.save();
+        console.log('User muted successfully');
+      }
+    } else {
+      followedUser.muteOnUsers.pull(adminId);
+      await admin.save();
+      console.log('User unmuted successfully');
+    }
+
+    res.status(200).send("User mute status updated successfully");
+  } catch (error) {
+    console.error("Error updating muteOnUsers array:", error);
+    res.status(500).send("Error updating muteOnUsers array");
+  }
+});
+
+//save the lastest message in DB => api/v1/setLatestUserMessage
+exports.setLatestUserMessage = async (req, res, next) => {
+  try {
+    const { adminId, userId, latestMessage, timeSent } = req.body;
+
+    // Find the user by adminId
+    const admin = await User.findById(adminId);
+
+    if (!admin) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Find the followedUser object in the user's followedUsers array
+    const followedUser = admin.followedUsers.find(user => user.userId.toString() === userId);
+
+    if (!followedUser) {
+      return res.status(404).json({ success: false, message: 'Followed user not found' });
+    }
+
+    // Update the latestMessage and latestMessageTime fields
+    followedUser.latestMessage = latestMessage;
+    followedUser.latestMessageTime = timeSent;
+
+    // Update the document directly in the database
+    await User.findOneAndUpdate(
+      { _id: adminId, "followedUsers._id": followedUser._id },
+      {
+        $set: {
+          "followedUsers.$.latestMessage": latestMessage,
+          "followedUsers.$.latestMessageTime": timeSent
+        }
+      }
+    );
+
+    res.status(200).json({ success: true, message: 'Latest message updated successfully' });
+  } catch (error) {
+    console.log('Error setting latest message:', error);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+
+

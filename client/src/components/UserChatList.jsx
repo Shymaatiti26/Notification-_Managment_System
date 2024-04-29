@@ -34,6 +34,8 @@ const UserChatList = () => {
         userSenders,
         muteUser,
         setMuteUser,
+        showUserChat,
+        setShowUserChat
       } = useAuthContext();
 
       const { isOpen, onOpen, onClose } = useDisclosure();
@@ -70,7 +72,7 @@ const UserChatList = () => {
 
       //unfollow user chat
        const unfollowrUser = async (userId) => {
-          setShowChat(false);
+          setShowUserChat(false);
        const response = await axios.put(
         "http://localhost:3001/api/v1/UnfollowUser",
       { adminId,userId}
@@ -81,32 +83,34 @@ const UserChatList = () => {
     
 
       return (
-    <div>
-      <VStack className="groups" spacing={2} align="stretch" overflowY="auto">
+   
+      <div>
+         
+      <VStack className="groups" style={{backgroundColor:"white"}} spacing={2} align="stretch" overflowY="auto">
         {users.map((admin, index) => (
           <Box>
             <Box
-              className="userBox"
+              className="userBox" style={{padding:"20px"}}
               p={4}
               key={admin._id}
               onClick={async () => {
-                setSelectedUser(user);
+                setSelectedUser(admin);
                 //const IsMuted = await IsGroupMuted(admin._id);
                 //setMuteUser(IsMuted);
-                setShowChat(true);
+                setShowUserChat(true);
                 //getGroupSenders(admin._id);
               }}
             >
-              { <div className="userNameAndIcon">
+              { <div className="userNameAndIcon" style={{padding:"15px"}}>
                 <strong>{admin.username}</strong>
-                {/* {muteUser[index] && (
+                {muteUser[index] && (
                   <span class="material-symbols-outlined">volume_off</span>
-                )} */}
+                )}
               </div>}
               {/* <p>Last Message: {admin.latestMessage} </p>
               <p className="sendingTime">{admin.latestMessageTime}</p> */}
             </Box>
-            <div className="footer">
+            {/* <div className="footer">
               <button
                 className="delete_button"
                 onClick={() => {
@@ -115,7 +119,7 @@ const UserChatList = () => {
               >
                 Unfollow
               </button>
-            </div>
+            </div> */}
           </Box>
         ))}
       </VStack>

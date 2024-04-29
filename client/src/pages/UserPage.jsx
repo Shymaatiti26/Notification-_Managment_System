@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../components/Login";
 import "../components/Profile";
 import Chat from "../components/Chat";
+import UserChat from "../components/UserChat"
 import { useAuthContext } from "../hooks/useAuthComtext";
 import { Grid, GridItem } from "@chakra-ui/react";
 import UserGroupsList from "../components/UserGroupsList";
@@ -36,6 +37,8 @@ const UserPage = () => {
     setShowErr,
     setIsGroupAdmin,
     IsGroupAdmin,
+    isGroup,
+    setIsGroup
   } = useAuthContext();
   const { dispatch } = useAuthContext();
   //const groupData=JSON.parse(localStorage.getItem('group',))
@@ -46,6 +49,8 @@ const UserPage = () => {
     setSelectedGroup,
     showChat,
     setShowChat,
+    showUserChat,
+    setShowUserChat
   } = useAuthContext();
 
   //const navigate = useNavigate();
@@ -73,16 +78,27 @@ const UserPage = () => {
     navigate("/Users");
   };
 
-const handleUsersClick = () => {
-  setShowUsers(true);
-  setShowGroups(false);
-};
+// const handleUsersClick = () => {
+//   setShowUsers(true);
+//   setShowGroups(false);
+// };
 
+// const handleGroupsClick = () => {
+//   setShowUsers(false);
+//   setShowGroups(true);
+// };
 const handleGroupsClick = () => {
-  setShowUsers(false);
-  setShowGroups(true);
+ // setIsGroup(true);
+  setShowGroups(false);
+  setShowUsers(true);
+
 };
 
+const handleUsersClick = () => {
+  ///setIsGroup(false);
+  setShowGroups(true);
+  setShowUsers(false);
+};
   const handleLogout = async () => {
     // remove user from storage
     localStorage.removeItem("user");
@@ -138,26 +154,31 @@ const handleGroupsClick = () => {
       )}
 
       <Grid className="mainContainer" templateColumns="repeat(5, 1fr)" gap={6}>
-        <GridItem w="100%" h="10">
-          {" "}
-          <button className="navbar-button" onClick={handleGroupsClick}>
-          Groups
-        </button>
-          {showGroups && <Groups />}
-          <UserGroupsList></UserGroupsList>
-        </GridItem>
-        <GridItem w="100%" h="10">
-          {" "}
-          <button className="navbar-button" onClick={handleUsersClick}>
-          Users
-        </button>
-          {showUsers && <Users />}
-          <UserChatList></UserChatList>
-        </GridItem>
+      <GridItem w="100%" h="20"> {/* Adjust height as needed */}
+      <button
+        className={`navbar-button ${!showGroups ? 'active' : ''}`}
+        onClick={handleGroupsClick}
+      >
+        Groups
+      </button>
+      <button
+        className={`navbar-button ${!showUsers ? 'active' : ''}`}
+        onClick={handleUsersClick}
+      >
+        Users
+      </button>
+      {!showGroups && <UserGroupsList />}
+      {!showUsers && <UserChatList />}
+    </GridItem>
         <GridItem w="100%" h="10" className="chat-box">
           {" "}
           {showChat && <Chat />}
+          {showUserChat && <UserChat />}
         </GridItem>
+        {/* <GridItem w="100%" h="10" className="chat-box">
+          {" "}
+          {showUserChat && <UserChat />}
+        </GridItem> */}
       </Grid>
     </div>
   );
