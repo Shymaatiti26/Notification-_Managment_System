@@ -17,9 +17,11 @@ import './ScheduledMsgsList.css'
 
 //get all the user scheduled messages from db
 const ScheduledMsgsList = () => {
-  const { user } = useAuthContext();
+  const { user,selectedUser } = useAuthContext();
 
   const [messages, setMessages] = useState([]);
+  const[messagesUser,setMessagesUser]=useState([]);
+ // const username= selectedUser.username;
   //const userName = user.username;
   const userData = JSON.parse(localStorage.getItem("user")); //get the user  info of current logged in use
   const userName = userData.username;
@@ -27,7 +29,26 @@ const ScheduledMsgsList = () => {
 
   useEffect(() => {
     getScheduledMsgs();
-  }, [messages]);
+    getScheduledMsgsForUser();
+  }, [messages],[messagesUser]);
+
+  const getScheduledMsgsForUser= async()=>{
+    try {
+      const response = await axios.get(
+        "http://localhost:3001/api/v1/getScheduledMsgsForUser",
+        {
+          headers: {
+            Authorization: `Bearer ${userData.token}`,
+          },
+          params: { userName },
+        }
+      );
+      // console.log(response.data);
+      setMessagesUser(response.data);
+    } catch (error) {
+      throw error;
+    }
+  };
 //get the user scheduled messages from db
   const getScheduledMsgs = async () => {
     /*
@@ -71,6 +92,17 @@ const ScheduledMsgsList = () => {
         ))}
               <p> Message: {message.message} </p>
               <p className="sendingTime">send message at: {message.timeSent}</p>
+            </Box>
+            <div className="footer">
+              <button className="delete_button">Delete</button>
+            </div>
+            <Box className= "messageUserBox" p={4} key={messagesUser.adminId}>
+            {messagesUser.map((message) => (
+            <strong key={message.userId}>Send To User: {message.username}</strong>
+        ))}
+              <p> Message: {message.message} </p>
+              <p className="sendingTime">send message at: {message.timeSent}</p>
+
             </Box>
             <div className="footer">
               <button className="delete_button">Delete</button>

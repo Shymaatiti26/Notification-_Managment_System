@@ -7,8 +7,9 @@ const UserMessage =require('../models/UserMessages')
 exports.sendUserMessages=catchAsyncErrors(async(req,res,next)=>{
     const adminId = req.body.adminId;
     const userId=req.body.userId;
-    const messages = await UserMessage.find({ adminId: adminId, user: userId, sendLater: false });
-    //console.log(messages)
+    const messages = await UserMessage.find({ adminId: adminId, userId: userId, sendLater: false });
+    // const messages = messagesData.map(message => message.message);
+    // console.log(messages); 
     res.status(200).json({messages:messages})
 });
 
@@ -19,7 +20,7 @@ exports.getUserMessage=catchAsyncErrors(async(req,res,next)=>{
     const msgObj= await UserMessage.create({  
     adminId:message.adminId ,
     adminName:message.adminName,
-    user:message.user ,
+    userId:message.userId ,
     username:message.username,
     message: message.message,
     timeSent:message.timeSent,
@@ -44,12 +45,11 @@ exports.setSenLaterToFalse =catchAsyncErrors(async(req,res,next)=>{
 }});
 
 ////////
-exports.getScheduledMsgs = catchAsyncErrors(async(req,res,next)=>{
-    const adminName=req.query.adminName;
-    const messages = await UserMessage.find({adminName:adminName ,sendLater:true}).populate({
-        path: 'group',
-        select: 'adminName' // Select the fields you want to populate from the 'group' model
-    });
+exports.getScheduledMsgsForUser = catchAsyncErrors(async(req,res,next)=>{
+    const userName=req.query.userName;
+    const messages = await UserMessage.find({adminName:userName ,sendLater:true})
+    //const messages = messagesData.map(username => username.username);
     res.status(200).json(messages)
 
 });
+

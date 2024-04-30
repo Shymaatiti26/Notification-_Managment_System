@@ -49,7 +49,36 @@ const UserChatList = () => {
         getFollowedUsers();
     
       }, [users]);
+////////////////////////////////////////////////////
+useEffect(() => {
 
+
+  // Fetch IsGroupMuted for each group and update the mutedGroups state
+  const fetchMutedStatus = async () => {
+    const mutedStatusPromises = users.map((user) =>
+      IsGroupMuted(user._id,)
+    );
+    const mutedStatuses = await Promise.all(mutedStatusPromises);
+    setMutedChats(mutedStatuses);
+  };
+
+  fetchMutedStatus(); // Fetch the muted status after user groups are f
+}, []);
+
+useEffect(() => {
+  // Fetch IsGroupMuted for each group and update the mutedGroups state
+  const fetchMutedStatus = async () => {
+    const mutedStatusPromises = users.map((user) =>
+      IsGroupMuted(user._id)
+    );
+    const mutedStatuses = await Promise.all(mutedStatusPromises);
+    setMutedChats(mutedStatuses);
+  };
+
+  fetchMutedStatus(); // Fetch the muted status when component mounts or groups change
+
+},[muteUser]);
+/////////////////////////////////////////////
  //get all the followedusers from db and store them on users
  const getFollowedUsers = async () => {
     try {
@@ -71,17 +100,26 @@ const UserChatList = () => {
   };
 
       //unfollow user chat
-       const unfollowrUser = async (userId) => {
-          setShowUserChat(false);
-       const response = await axios.put(
-        "http://localhost:3001/api/v1/UnfollowUser",
-      { adminId,userId}
+    //    const unfollowrUser = async (userId) => {
+    //       setShowUserChat(false);
+    //    const response = await axios.put(
+    //     "http://localhost:3001/api/v1/UnfollowUser",
+    //   { adminId,userId}
 
-      );
-    };
+    //   );
+    // };
 
     
-
+    const IsGroupMuted = async (adminId) => {
+      const response = await axios.get(
+        "http://localhost:3001/api/v1//checkUserExistInMute1",
+        { adminId, userId }
+      );
+  
+      //setMuteGroup(response.data);
+      return response.data;
+    };
+  
       return (
    
       <div>
@@ -94,21 +132,21 @@ const UserChatList = () => {
               p={4}
               key={admin._id}
               onClick={async () => {
-                setSelectedUser(admin);
-                //const IsMuted = await IsGroupMuted(admin._id);
-                //setMuteUser(IsMuted);
+                 setSelectedUser(admin);
+                const IsMuted = await IsGroupMuted(admin._id);
+                setMuteUser(IsMuted);
                 setShowUserChat(true);
                 //getGroupSenders(admin._id);
               }}
             >
-              { <div className="userNameAndIcon" style={{padding:"15px"}}>
+              <div className="userNameAndIcon" style={{padding:"15px"}}>
                 <strong>{admin.username}</strong>
-                {muteUser[index] && (
-                  <span class="material-symbols-outlined">volume_off</span>
+                {mutedChats[index] && (
+                  <span class="material-symbols-outlined"> volume_off</span>
                 )}
-              </div>}
-              {/* <p>Last Message: {admin.latestMessage} </p>
-              <p className="sendingTime">{admin.latestMessageTime}</p> */}
+              </div>
+              <p>Last Message: {admin.latestMessage} </p>
+              <p className="sendingTime">{admin.latestMessageTime}</p>
             </Box>
             {/* <div className="footer">
               <button

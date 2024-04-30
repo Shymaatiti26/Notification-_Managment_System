@@ -4,7 +4,7 @@ const mongoose =require('mongoose')
 const usermessageSchema = new mongoose.Schema({
     adminId: { type: String, required: false },
     adminName: { type: String, required: false },
-    user: { type: String, required: false },
+    userId: { type: String, required: false },
     username: { type: String, required: false },
     message: { type: String, required: true },
     timeSent: { type: String},

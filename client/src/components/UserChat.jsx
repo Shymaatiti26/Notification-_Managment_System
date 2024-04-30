@@ -34,6 +34,7 @@ const UserChat = () => {
   const userData = JSON.parse(localStorage.getItem("user")); //get the user  info of current logged in user
   const adminId = userData._id;
   let userId = selectedUser.userId;
+  let username= selectedUser.username;
   //let groupId = selectedGroup._id;
   const [selectedDate, setSelectedDate] = useState(null);
   const [sendLater, setSendLater] = useState(false);
@@ -42,12 +43,13 @@ const UserChat = () => {
     //setGroupId(selectedGroup._id)
    // setSelectedUser(storedFollowedUsers.userId);
     userId = selectedUser.userId;
+    //username= selectedUser.username;
     getUserMessages();
   }, [selectedUser]);
 
 
   useEffect(() => {
-    // Connect to the server for user chat
+    // Connect tsetUserSocketo the server for user chat
     const newSocket = io("http://localhost:3001");
     setUserSocket(newSocket);
 
@@ -58,14 +60,28 @@ const UserChat = () => {
 
 
      // Listen for user incoming notification
-     newSocket.on('receive-notif', (notif,user) => {
-      //console.log(notification)
-      setNotification((prevNotif) => [...prevNotif, notif]);
+     newSocket.on('receive-notif', (notif, user) => {
+      // Assuming you want to send the notification to the first user in the array
+      const userToSendNotification = notif.users[0];
+  
+      // Update state with the notification
+      setNotification(prevNotif => [...prevNotif, notif]);
+  
+      // Play notification sound
       playSound();
-      notif.users.forEach(user => {
-        saveNotificationToServer(notif,user)
-      })
-    });
+  
+      // Send notification to the selected user
+      saveNotificationToServer(notif, userToSendNotification);
+  });
+  
+    //  newSocket.on('receive-notif', (notif,user) => {
+    //   //console.log(notification)
+    //   setNotification((prevNotif) => [...prevNotif, notif]);
+    //   playSound();
+    //   notif.users.forEach(user => {
+    //     saveNotificationToServer(notif,user)
+    //   })
+    // });
     
     // Cleanup on component unmount
     return () => {
@@ -110,6 +126,7 @@ const UserChat = () => {
     );
     console.log(response.data.message);
     setMessages(response.data.messages);
+    console.log(messages);
   };
 
 
@@ -137,10 +154,10 @@ const UserChat = () => {
   
     if (inputMessage.trim() !== "") {
       const messageData = {
-          adminId: user._id,
-          adminName: user.username,
-          userId: userId,
-          username: selectedUser.username,
+        adminId: user._id,
+        adminName: user.username,
+        userId: selectedUser.userId,
+        username: selectedUser.username,
         message: inputMessage,
         timeSent: timeSend,
         sendLater: sendLater,
@@ -238,7 +255,7 @@ const UserChat = () => {
                   </div>
                   <div className="message-meta">
                     <p>
-                      {message.timeSent} {message.sender}{" "}
+                      {message.timeSent} {message.adminName}{" "}
                     </p>
                   </div>
                 </div>
@@ -247,7 +264,7 @@ const UserChat = () => {
           </div>
         </ScrollToBottom>
       </div>
-      {/* {( groupSenders || IsGroupAdmin) && ( */}
+      {/* {( groupSenders || IsGroupAdmin) {(IsFollowedUser) && ( */}
         <div className="chat-footer">
           <div className="senMessage">
             <input

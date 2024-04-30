@@ -43,26 +43,6 @@ exports.followUser = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
-  // exports.followUser = catchAsyncErrors(async (req, res, next) => {
-  //   const { adminId, userId } = req.body;
-  // try {
-  //   const admin = await User.findById(adminId);
-  //   if (!admin) {
-  //     console.log(adminId);
-  //     console.log(userId);
-  //     return res.status(404).send("admin not found");
-  //   }
-
-  //   admin.followedUsers.push(userId);
-  //   await admin.save();
-
-  //   res.status(200).send("follow User added to the array successfully");
-  // } catch (error) {
-  //   console.error("Error updating user array:", error);
-  //   res.status(500).send("Error updating user array");
-  // }
-  // });
-
   
   // Endpoint: api/v1/RemoveUserFromUser1
   exports.removeUserFromUser1 = catchAsyncErrors(async (req, res, next) => {
@@ -218,5 +198,25 @@ exports.setLatestUserMessage = async (req, res, next) => {
   }
 };
 
+exports.checkUserExistInMute1 = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const { userId, adminId } = req.body;
+    const admin = await User.findById(adminId);
 
+    if (!admin) {
+      return res.status(404).json({ message: 'admin not found' });
+    }
+    const followedUser = admin.followedUsers.find(user => user.userId.toString() === userId);
+    if (!followedUser) {
+      return res.status(404).json({ success: false, message: 'Followed user not found' });
+    }
+
+    const isUserMuted = followedUser.muteOnUsers.includes(adminId);
+    console.log('isUserIncludeInMute :'+isUserMuted);
+    res.json( isUserMuted );
+  } catch (error) {
+    console.error('Error checking user in mute list:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
