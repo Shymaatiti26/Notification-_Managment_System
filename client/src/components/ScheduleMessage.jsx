@@ -17,6 +17,7 @@ const ScheduleMessage = () => {
   const [sendEmail, setSendEmail] = useState(false);
   const [options, setOptions] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
+  const[users,setUsers]=useState();
   
   const {
     user,
@@ -41,15 +42,15 @@ const ScheduleMessage = () => {
       
       
       try {
-        /*
+        
         //get all existing users
         const response = await axios.get('http://localhost:3001/api/users');
         setUsers(response.data);
         const givenOptions = response.data.map(user => ({
           label: user.username,
           value: user._id
-        }));*/
-
+        }));
+/*
         //get all existing groups
         const response = await axios.get('http://localhost:3001/api/v1/getGroups');
         console.log(response.data)
@@ -58,7 +59,7 @@ const ScheduleMessage = () => {
           value: group
         }));
 
-
+*/
         setOptions(givenOptions)
       } catch (error) {
         console.error('Error fetching users:', error);

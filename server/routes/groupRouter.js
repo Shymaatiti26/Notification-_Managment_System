@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router(); 
 const { createGroup, getUserGroups, deleteGroup, setLatestMessage, getAllGroups, UpdateGroup, RemoveUserFromGroup,ChangeGgoupName
-    ,UnfollowGroup ,getGroups,getGroupByID,getGroupUsers,setGroupSender,getGroupSenders,setMuteGroup,checkUserExistInMute } = require('../controllers/groupController');
+    ,UnfollowGroup ,getGroups,getGroupByID,getGroupUsers,setGroupSender,getGroupSenders,setMuteGroup,checkUserExistInMute,addAdmins ,
+    deleteAdmin,getUserfollowedGroups} = require('../controllers/groupController');
 
 router.route('/createGroup').post(createGroup);
 router.route('/UserGroupList').get(getUserGroups);
@@ -19,5 +20,9 @@ router.route('/setGroupSender').post(setGroupSender);
 router.route('/getGroupSenders').post(getGroupSenders);
 router.route('/setMuteGroup').post(setMuteGroup);
 router.route('/checkUserExistInMute').post(checkUserExistInMute);
+router.route('/addAdmins').post(addAdmins);
+router.route('/deleteAdmin').post(deleteAdmin);
+router.route('/getUserfollowedGroups').post(getUserfollowedGroups);
+
 
 module.exports= router;

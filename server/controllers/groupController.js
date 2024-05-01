@@ -2,6 +2,7 @@ const ErrorHandler = require("../utils/errorHandler");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const Group = require("../models/GroupModel");
 
+
 //Create new group => /api/v1/createGroup
 exports.createGroup = catchAsyncErrors(async (req, res, next) => {
   try {
@@ -128,9 +129,11 @@ exports.UpdateGroup = catchAsyncErrors(async (req, res, next) => {
       console.log(userId);
       return res.status(404).send("Group not found");
     }
+    if(!group.users.includes(userId)){
 
     group.users.push(userId);
     await group.save();
+    }
 
     res.status(200).send("User added to the array successfully");
   } catch (error) {
@@ -226,6 +229,7 @@ exports.getGroupByID = catchAsyncErrors(async (req, res, next) => {
   try {
     const groupId = req.body.groupId;
     const group = await Group.findById(groupId); // Replace 'Group' with your actual mongoose model name
+    //console.log(group);
 
     if (!group) {
       return res.status(404).json({ message: "Group not found" });
@@ -322,10 +326,55 @@ exports.checkUserExistInMute = catchAsyncErrors(async (req, res, next) => {
     }
 
     const isUserMuted = group.muteOnUsers.includes(userId);
-    console.log('isUserIncludeInMute :'+isUserMuted+ " User ID:" +userId );
+   // console.log('isUserIncludeInMute :'+isUserMuted+ " User ID:" +userId );
     res.json( isUserMuted );
   } catch (error) {
     console.error('Error checking user in mute list:', error);
     res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+//add admin  to group admins array
+exports.addAdmins =  catchAsyncErrors(async (req, res, next)=> {
+  const { adminUsername, groupId } = req.body;
+  try{
+     //console.log('addAdmin:'+adminUsername);
+  const group = await Group.findById(groupId);
+  group.groupAdmin.push(adminUsername);
+  await  group.save();
+ 
+} catch (error) {
+  console.error('Error adding admin:', error);
+}
+});
+
+//delete admin from the group admins array
+exports.deleteAdmin =catchAsyncErrors(async (req, res, next)=> {
+  const { adminUsername, groupId } = req.body;
+  try{
+    const group = await Group.findById(groupId);
+    group.groupAdmin.remove(adminUsername);
+    await  group.save() ;
+  } catch (error) {
+    console.error('Error deleting admin:', error);
+  }
+});
+
+//Get All groups that this user have
+exports.getUserfollowedGroups = catchAsyncErrors(async (req, res, next) => {
+  try {
+    //console.log('here');
+    const userId = req.body.userId;
+    const groups = await Group.find({ users: userId });
+    //const groups = await Group.find({});
+    if (!groups) {
+      return next(new ErrorHandler("No groups", 404));
+    }
+    //console.log(groups)
+    const groupIds = groups.map(group => group._id);
+    res.json(groupIds);
+  } catch (error) {
+    console.error("Error get user  Groups :", error);
+    next(error); // Pass the error to the error handling middleware
   }
 });

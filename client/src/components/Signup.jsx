@@ -29,15 +29,20 @@ const Register = () => {
 
   const [showPasswordMismatchAlert,setShowPasswordMismatchAlert]=useState(false);
   const[showUserExistAlert,setShowUserExistAlert]=useState(false);
+  const[errorMsg,setErrorMsg]= useState();
   //const[InputError,setInputError]=useState(false);
 
   //send form data and wait to response function
   const registerUser = async (formData) => {
     try{
     const response= await axios.post('http://localhost:3001/api/v1/register',formData);
+    console.log("response",response);
+
     return response;
     }catch(error){
-        throw error;
+        //throw error;
+        setErrorMsg(error.message);
+       // setErrorMsg(response.data.success);
     }
   };
 
@@ -51,6 +56,7 @@ const Register = () => {
     //check if user name exist show error msg
     if(responseData.data.success===false){
         setShowUserExistAlert(true)
+        //setErrorMsg(responseData.data.message);
     }else{
       //save the user to local storage
       localStorage.setItem('user',JSON.stringify(responseData.data));
@@ -123,7 +129,11 @@ const Register = () => {
   <div className="error">
     Email is already used
   </div>
+  
 )}
+
+<div className='error'>{errorMsg}</div>
+
       <div className="form-group">
         <input  type="submit" value="Register" className="form-submit"/>
       </div>

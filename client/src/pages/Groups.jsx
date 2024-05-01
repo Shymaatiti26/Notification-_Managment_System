@@ -14,21 +14,28 @@ import {
   Button,
 } from "@chakra-ui/react";
 import {SearchIcon } from "@chakra-ui/icons";
+import { useAuthContext } from "../hooks/useAuthComtext";
 
 const Groups = () => {
   const [groups, setGroups] = useState([]);
   const [followedGroups, setFollowedGroups] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
+  const {
+    user
+  } = useAuthContext();
+  const userId =user._id;
 
   useEffect(() => {
+    /*
     // Load followed groups from localStorage on component mount
     const storedFollowedGroups = JSON.parse(
       localStorage.getItem("followedGroups")
     );
     if (storedFollowedGroups) {
       setFollowedGroups(storedFollowedGroups);
-    }
+    }*/
+    getUserGroups();
 
     // Fetch groups from the server
     axios
@@ -39,7 +46,21 @@ const Groups = () => {
       .catch((error) => {
         console.error("Error fetching groups:", error);
       });
+      getUserGroups();
   }, []);
+
+  const getUserGroups =async ()=>{
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/api/v1/getUserfollowedGroups",{userId});
+       console.log('followed groups'+response.data);
+      setFollowedGroups(response.data);
+      //console.log(response.data)
+    } catch (error) {
+      throw error;
+    }
+
+  };
 
   const handleFollow = (groupId) => {
     const userData = JSON.parse(localStorage.getItem("user"));

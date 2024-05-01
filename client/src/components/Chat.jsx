@@ -17,6 +17,7 @@ import {
 import Settings from "./Settings";
 import DatePicker from "react-datepicker";
 import sound from "../assets/sound.wav";
+var newSocket,openedChat;
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
@@ -55,21 +56,30 @@ const Chat = () => {
     groupId = selectedGroup._id;
     getGroupMessages();
     checkAdmin();
+    //joinGroup();
+    openedChat =selectedGroup;
+    
   }, [selectedGroup]);
 
   useEffect(() => {
     // Connect to the server
-    const newSocket = io("http://localhost:3001");
+     newSocket = io("http://localhost:3001");
     setSocket(newSocket);
+    setUserRoom();
+
 
     // Listen for incoming messages
     newSocket.on("receive-message", (message, sendLater, msgId) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
+      console.log('selectedGroupId:'+selectedGroup._id+'  message.groupId:'+message.groupId);
 
-      // if(!selectedGroup._id===message.groupId){
-      // setNotification((prevNotif) => [...prevNotif, message]);
-      //playSound();
-      //}
+      
+
+       if(!openedChat||openedChat._id!==message.group._id){
+       setNotification((prevNotif) => [...prevNotif, message]);
+       playSound();
+      }else{
+        setMessages((prevMessages) => [...prevMessages, message]);
+      }
       //if (sendLater===true){
       //set the sendLater false
       // console.log('TTTT');
@@ -80,6 +90,13 @@ const Chat = () => {
 
     // Listen for user incoming notification
     newSocket.on("receive-notif", async (notif, user) => {
+      console.log('selectedGroupId:'+selectedGroup._id+'  message.groupId:'+notif.groupId);
+
+      if(openedChat!==null && openedChat._id===notif.group._id){
+        setMessages((prevMessages) => [...prevMessages, notif]);
+       }else{
+
+
       const groupId = notif.groupId;
       const userId = user.toString();
       console.log('the user is:'+user);
@@ -89,13 +106,13 @@ const Chat = () => {
         { groupId, userId }
       );
       //if not muted
-      if (response.data === false) {
+      if (response.data === false && selectedGroup!==notif.group) {
         setNotification((prevNotif) => [...prevNotif, notif]);
         playSound();
         notif.users.forEach((user) => {
           saveNotificationToServer(notif, user);
         });
-      }
+      }}
     });
 
     // Cleanup on component unmount
@@ -149,8 +166,8 @@ const Chat = () => {
 
   //check if to send the message now or it is scheduled and send the message with sokot.io according to that
   const sendMessage = async () => {
-    joinGroup();
-    setUserRoom();
+   // joinGroup();
+    //setUserRoom();
     let timeSend = null; //flag if the message is schedualed
     if (sendLater === true) {
       timeSend = selectedDate.getHours() + ":" + selectedDate.getMinutes();
@@ -163,6 +180,7 @@ const Chat = () => {
       const messageData = {
         groupId: groupId,
         sender: user.username,
+        senderId:user._id,
         message: inputMessage,
         timeSent: timeSend,
         users: selectedGroup.users,
@@ -176,8 +194,10 @@ const Chat = () => {
 
       const msgId = await saveMessageToServer(messageData, sendLater);
       console.log("msgIdFront:" + msgId);
-      await socket.emit("send-message", messageData, sendLater, msgId);
+      await newSocket.emit("send-message", messageData, sendLater, msgId);
       setInputMessage("");
+      //setUserRoom();
+      sendNotif(messageData, sendLater, msgId);
 
       //if(sendLater===true){
       //save schedualed message to db
@@ -188,14 +208,20 @@ const Chat = () => {
     }
   };
 
+  const sendNotif =  async (messageData, sendLater, msgId) => {
+    await newSocket.emit("send-notif", messageData, sendLater, msgId);
+
+
+  }
+
   //join to socke.io group
   const joinGroup = async () => {
-    await socket.emit("joinGroup", groupId);
+    await newSocket.emit("joinGroup", selectedGroup._id);
   };
 
   //join user room for notification in socket.io
   const setUserRoom = async () => {
-    await socket.emit("userRoom", user._id);
+    await newSocket.emit("userRoom", user._id);
   };
 
   //check if the loged in user is the group admin
@@ -236,13 +262,14 @@ const Chat = () => {
           marginLeft="auto"
           onClick={() => {
             setShowChat(false);
+            setSelectedGroup(null);
           }}
         />
       </div>
 
-      <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+      <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose} size={"lg"}>
         <ModalOverlay />
-        <ModalContent bg="#b8b4da">
+        <ModalContent bg="#b8b4da" >
           <ModalCloseButton />
           <ModalBody>
             <Settings></Settings>

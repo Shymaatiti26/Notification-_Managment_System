@@ -25,6 +25,7 @@ const groupRouter=require('./routes/groupRouter')
 const messageRouter=require('./routes/messageRouter')
 const userRouter= require('./routes/userRouter')
 //const task = require('./scheduleTasks');
+let latestGroup;
 
 app.use(express.json())
 app.use(cookieParser())
@@ -61,9 +62,15 @@ io.on('connection', (socket) => {
     socket.join(userId)
     console.log('set user Room success ')
 
+
   })
 
   socket.on('joinGroup',(data)=>{
+    if(latestGroup){
+    socket.leave(latestGroup)
+    console.log('group'+ latestGroup+' is left')
+    }
+    latestGroup=data;
     socket.join(data);
     console.log(`joined group: ${data}`)
 
@@ -74,28 +81,60 @@ io.on('connection', (socket) => {
 
     if(sendLater===true){
     schedule.scheduleJob(msg.sendLaterDate, function(){
-      console.log("Message Received : ",msg,'end')
+      //console.log("Message Received : ",msg,'end')
       io.to(msg.groupId).emit('receive-message', msg,sendLater,msgId);
-      msg.users.forEach(user => {
+    /*  msg.users.forEach(user => {
         io.to(user).emit('receive-notif', msg)
-      });
+      });*/
       
     });}else{
    
     // Broadcast the message to all connected clients
-    console.log("Message Received : ",msg,'end')
-    io.to(msg.groupId).emit('receive-message', msg,sendLater,msgId);
-    
+    //console.log("Message Received : ",msg,'end')
+    io.in(msg.groupId).emit('receive-message', msg,sendLater,msgId);
+
+
+    /*
     msg.users.forEach(user => {
       io.to(user).emit('receive-notif', msg,user)
     });
-
+*/
 
   }
   });
 
+    // Listen for incoming chat messages
+    socket.on('send-notif', (msg,sendLater,msgId) => {
+
+      if(sendLater===true){
+      schedule.scheduleJob(msg.sendLaterDate, function(){
+        msg.users.forEach(user => {
+          if(msg.senderId!==user){
+          io.to(user).emit('receive-notif', msg,user)
+          }
+        });
+        
+      });}else{
+      
+      msg.users.forEach(user => {
+        
+       // if(user !== msg.senderId){
+          console.log(msg.senderId+"=="+user)
+        io.to(user).emit('receive-notif', msg,user)
+        //}
+      });
+  
+  
+    }
+    });
 
 
+
+
+    socket.off('joinGroup', () => {
+      console.log("USER DISCONNECTED");
+      socket.leave(data);
+    });
   // Cleanup on user disconnect
   socket.on('disconnect', () => {
     console.log('User disconnected');

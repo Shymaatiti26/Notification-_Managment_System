@@ -11,7 +11,16 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
    try{
     const { username, email,phone, password } = req.body;
     //console.log("hi");
-    console.log(req.body);
+    //console.log(req.body);
+    /*
+    const checkNameExistance =await User.findOne({username})
+    if(checkNameExistance){
+        return res.status(400).json({ success: false, message: 'Username already exists' });
+    }
+    const checkMailExistance =await User.findOne({email})
+    if(checkMailExistance){
+        return res.status(400).json({ success: false, message: 'Email already exists' });
+    }*/
     const user = await User.create({
         username,
         email,
@@ -19,12 +28,25 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
         password,     
     })
     const token = createToken(user._id)
-    console.log({token});
-    res.status(200).json({username,token,_id:user._id,group:''})
+    //console.log({token});
+    res.status(200).json({username,token,_id:user._id,group:'',success:true})
 }
-catch(err) {
-    console.error('Error during signup:', err);
-    return res.status(500).json({ success: false, message: 'Internal server error' });
+catch (error) {
+      // Check if the error is a Mongoose validation error
+      if (error.name === 'ValidationError') {
+        // Extract error messages from the validation errors
+        const errorMessages = Object.values(error.errors).map(err => err.message);
+        // Return the validation error messages in the response
+        return res.status(400).json({ success: false, message: errorMessages });
+    } else if (error.code === 11000 && error.keyPattern.email) {
+        // Check if the error is a duplicate key error for the email field
+        return res.status(400).json({ success: false, message: ['Email already exists'] });
+    } else {
+        // Handle other types of errors
+        console.error('Error during user registration:', error);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+
 }
 })
 
@@ -50,7 +72,7 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
 
     const token = createToken(user._id)
     //console.log({token});
-    res.status(200).json({username:user.username,token,_id:user._id,group:''})
+    res.status(200).json({username:user.username,token,_id:user._id,group:'',success:true})
     
 
 })
@@ -130,7 +152,6 @@ exports.logout = catchAsyncErrors(async (req, res, next) => {
 exports.allUsers = catchAsyncErrors(async (req, res, next) => {
 
     const users = await User.find();
-    console.log(users);
 
     res.status(200).json({
         success:true,

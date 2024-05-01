@@ -176,11 +176,13 @@ const UserGroupsList = () => {
               p={4}
               key={group._id}
               onClick={async () => {
-                setSelectedGroup(group);
+                await setSelectedGroup(group);
+                console.log('selectedGroup: ', selectedGroup);
                 const IsMuted = await IsGroupMuted(group._id);
                 setMuteGroup(IsMuted);
                 setShowChat(true);
                 getGroupSenders(group._id);
+
               }}
             >
               <div className="groupNameAndIcon">

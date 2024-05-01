@@ -75,6 +75,7 @@
     border-color: black;
     border-width: 1px;
     
+    
   }
 
   .groupMember{
@@ -114,3 +115,100 @@
 
   }
 
+.addButton{
+  background-color: #553597;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 1em;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-left: 10px;
+
+}
+
+.add-admin-icon{
+  cursor: pointer;
+  background-color: #b8b4da;
+  width: fit-content;
+  height: fit-content;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 5px;
+
+
+  
+
+}
+
+.select-admins{
+  display:  flex;
+  flex-direction: row;
+  align-content: space-between;
+  justify-content: space-between;
+  padding: 5px;
+  border-radius: 8px;
+  background-color: #b8b4da;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  width: fit-content;
+  margin-bottom: 5px;
+
+}
+
+.select-members{
+  display:  flex;
+  flex-direction: row;
+  align-content: space-between;
+  justify-content: space-between;
+  padding: 5px;
+  border-radius: 8px;
+  background-color: #b8b4da;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  width: fit-content;
+
+}
+
+.groupUsers{
+  border-radius: 8px;
+  background-color: #d7d5eb;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 5px;
+  margin-top: 10px;
+
+}
+
+.GroupAdmins-Container{
+  border-radius: 8px;
+  background-color: #d7d5eb;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 5px;
+  margin-top: 10px;
+
+
+}
+
+.groupAdminHead{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.groupMembersHead{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+}
+
+.addAdminContainer{
+  display: flex;
+  flex-direction: row;
+  
+  
+
+}
+
+.addMemberContainer{
+  display: flex;
+  flex-direction: row;
+}
