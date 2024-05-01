@@ -220,3 +220,19 @@ exports.checkUserExistInMute1 = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
+//save notification in user db
+exports.saveNotificationToUser =catchAsyncErrors(async (req, res, next)=>{
+  const notification = req.body.notification;
+  const notif = {    sender:notification.sender ,//admin id
+      group:notification.group ,//user id
+      message: notification.message,
+      timeSent:notification.timeSent,
+      sendLater:notification.sendLater,
+      groupName:notification.group.groupName,//admin name
+  }
+
+  const user = await User.findById(req.body.userId)
+  user.notifications.push(notif)
+  await user.save();
+
+})

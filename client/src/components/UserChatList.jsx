@@ -133,9 +133,9 @@ useEffect(() => {
               key={admin._id}
               onClick={async () => {
                  setSelectedUser(admin);
-                const IsMuted = await IsGroupMuted(admin._id);
-                setMuteUser(IsMuted);
-                setShowUserChat(true);
+                //const IsMuted = await IsGroupMuted(admin._id);
+                // setMuteUser(IsMuted);
+                 setShowUserChat(true);
                 //getGroupSenders(admin._id);
               }}
             >

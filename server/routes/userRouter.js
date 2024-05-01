@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllUsers,followUser,removeUserFromUser1,UnfollowUser,followedUsersList,setLatestUserMessage ,setMuteUser,checkUserExistInMute1} = require('../controllers/userController');
+const { getAllUsers,followUser,removeUserFromUser1,UnfollowUser,followedUsersList,setLatestUserMessage ,setMuteUser,checkUserExistInMute1,saveNotificationToUser} = require('../controllers/userController');
 const {sendUserMessages,getUserMessage,setSenLaterToFalse,getScheduledMsgsForUser}=require('../controllers/userMessageController')
 const router = express.Router(); 
 
@@ -10,6 +10,7 @@ router.route('/UnfollowUser').put(UnfollowUser);
 router.route('/removeUserFromUser1').put(removeUserFromUser1);
 router.route('/setLatestUserMessage').post(setLatestUserMessage);
 router.route('/setMuteUser').post(setMuteUser);
+router.route('/saveNotificationToUser').post(saveNotificationToUser);
 router.route('/checkUserExistInMute1').get(checkUserExistInMute1);
 //from userMessageController
 router.route('/sendUserMessages').post(sendUserMessages);

@@ -62,7 +62,7 @@ const UserChat = () => {
      // Listen for user incoming notification
      newSocket.on('receive-notif', (notif, user) => {
       // Assuming you want to send the notification to the first user in the array
-      const userToSendNotification = notif.users[0];
+      const userToSendNotification = selectedUser.userId;
   
       // Update state with the notification
       setNotification(prevNotif => [...prevNotif, notif]);
@@ -111,7 +111,7 @@ const UserChat = () => {
 
   //save notification in db 
   const saveNotificationToServer = async (notification,userId) =>{
-    const response = await axios.post("http://localhost:3001/api/v1/saveNotification",{notification, userId})
+    const response = await axios.post("http://localhost:3001/api/v1/saveNotificationToUser",{notification, userId})
 
 
   }
