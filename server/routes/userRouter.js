@@ -17,6 +17,6 @@ router.route('/sendUserMessages').post(sendUserMessages);
 router.route('/getUserMessage').post(getUserMessage);
 router.route('/setSenLaterToFalse').post(setSenLaterToFalse);
 router.route('/getScheduledMsgsForUser').get(getScheduledMsgsForUser);
-router.route('/followedUsersList2').get(followedUsersList2);
+router.route('/followedUsersList2').post(followedUsersList2);
 
 module.exports= router;

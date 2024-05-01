@@ -46,8 +46,12 @@ const UserChatList = () => {
   const [mutedChats, setMutedChats] = useState([]);
 
   useEffect(() => {
-    getFollowedUsers();
+   // getFollowedUsers();
   }, [users]);
+
+  useEffect(()=>{
+    getFollowedUsers();
+  });
   ////////////////////////////////////////////////////
   useEffect(() => {
     // Fetch IsGroupMuted for each group and update the mutedGroups state

@@ -105,9 +105,7 @@ exports.followedUsersList = catchAsyncErrors(async (req, res, next) => {
     {
       return next(new ErrorHandler("No admin found", 404));
     }
-    if(admin.followedUsers.length === 0) {
-      return next(new ErrorHandler("No followedUsers found", 404));
-    }
+
    // console.loge('followedUsers:'+admin.followedUsers)
     res.json(admin.followedUsers);
 
@@ -225,18 +223,16 @@ exports.checkUserExistInMute1 = catchAsyncErrors(async (req, res, next) => {
 exports.followedUsersList2 = catchAsyncErrors(async (req, res, next) => {
   try {
     const adminId = req.body.adminId;
-    console.log(adminId);
+    console.log("Admin Id 2: "+adminId);
     const admin = await User.findById(adminId);
     if (!admin)
     {
       return next(new ErrorHandler("No admin found2", 404));
     }
-    if(admin.followedUsers.length === 0) {
-      return next(new ErrorHandler("No followedUsers found", 404));
-    }
+
    // console.loge('followedUsers:'+admin.followedUsers)
    const  followdUsers = admin.followedUsers.map(user =>user.userId);
-   console.loge('followedUsers:'+followdUsers)
+   //console.loge('followedUsers2:'+followdUsers)
     res.json(followdUsers);
 
   } catch (error) {

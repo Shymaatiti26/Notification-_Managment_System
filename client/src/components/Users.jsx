@@ -25,12 +25,13 @@ const Users = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
   const userData = JSON.parse(localStorage.getItem("user"));
-  const adminId = userData._id;
+  //const adminId = userData._id;
   const adminUsername = userData.username;
   const [userExistErr, setUserExistErr] = useState(false);
   const {
     user
   } = useAuthContext();
+  const adminId = user._id;
 
   useEffect(() => {
     /*
@@ -42,7 +43,7 @@ const Users = () => {
       setFollowedUsers(storedFollowedUsers);
     }*/
 
-    getFollowedUsers();
+    //getFollowedUsers();
 
     // Fetch users from the server
     axios
@@ -54,21 +55,21 @@ const Users = () => {
         console.error("Error fetching users:", error);
       });
 
-     // getFollowedUsers();
+      getFollowedUsers();
   }, []);
 
   useEffect(() => {
 
 
-   // getFollowedUsers();
-  }, []);
+    getFollowedUsers();
+  }, [user]);
 
   
 
   const getFollowedUsers = async () => {
-    const adminId = user._id;
+   
     try {
-      const response = await axios.get(
+      const response = await axios.post(
         "http://localhost:3001/api/v1/followedUsersList2",
         {adminId}
       );
