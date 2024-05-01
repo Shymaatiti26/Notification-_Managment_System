@@ -114,13 +114,15 @@ exports.updatePassword =  catchAsyncErrors(async (req, res, next) => {
 //Update user profile =>   /api/v1/me/update
 exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
     const newUserData = { 
-        name: req.body.name,
+        
+        username: req.body.username,
         email: req.body.email,
         phone:req.body.phone
+
     }
 
 
-    const user = await User.findByIdAndUpdate(req.user.id,newUserData,{
+    const user = await User.findByIdAndUpdate(req.body.id,newUserData,{
         new:true,
         runValidators:true,
         useFindAndModify:false

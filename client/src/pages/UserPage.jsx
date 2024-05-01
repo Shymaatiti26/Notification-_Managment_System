@@ -18,6 +18,9 @@ import ScheduledMsgsList from "../components/ScheduledMsgsList";
 import Notification from "../components/Notifications";
 import Users from "../components/Users";
 import { useToast } from '@chakra-ui/react'
+import UserChatList from '../components/UserChatList'
+import UserChat from "../components/UserChat"
+
 
 //import { useLogout } from './hooks/useLogout';
 const UserPage = () => {
@@ -37,6 +40,8 @@ const UserPage = () => {
     setShowErr,
     setIsGroupAdmin,
     IsGroupAdmin,
+    showUserChat,
+    setShowUserChat
   } = useAuthContext();
   const { dispatch } = useAuthContext();
   //const groupData=JSON.parse(localStorage.getItem('group',))
@@ -48,6 +53,8 @@ const UserPage = () => {
     showChat,
     setShowChat,
   } = useAuthContext();
+  const [showUsers, setShowUsers] = useState(false);
+  const [showGroups, setShowGroups] = useState(false);
 
   useEffect(() => {}, [notification]);
   useEffect(() => {
@@ -59,6 +66,8 @@ const UserPage = () => {
   };
 
 
+
+
   const handleLogout = async () => {
     // remove user from storage
     localStorage.removeItem("user");
@@ -68,6 +77,94 @@ const UserPage = () => {
     navigate("/Home");
   };
 
+  const handleGroupsClick = () => {
+    // setIsGroup(true);
+     setShowGroups(false);
+     setShowUsers(true);
+   
+   };
+   
+   const handleUsersClick = () => {
+     ///setIsGroup(false);
+     setShowGroups(true);
+     setShowUsers(false);
+   };
+
+   return (
+    <div className="main-container">
+      {showErr && (
+        <Alert status="error">
+          <AlertIcon />
+          <AlertTitle>Your browser is outdated!</AlertTitle>
+          <AlertDescription>
+            Your Chakra experience may be degraded.
+          </AlertDescription>
+        </Alert>
+      )}
+      {error && <div style={{ color: "red" }}>{error}</div>}
+      {user && (
+        <div className="navbar">
+          <div className="navbar-left">
+            <img className="navbar-logo" src="/images/logo.png" alt="Logo" />
+          </div>
+          <div className="navbar-center">
+            
+            <ScheduledMsgsList className="navbar-button" ></ScheduledMsgsList>
+            <Groups></Groups>
+            <Users></Users>
+          </div>
+          <div className="navbar-right">
+            <Notification></Notification>
+
+
+            <div className="navbar-username" onClick={toggleDropdown}>
+              <span className="username">Welcome {user.username} &#9660;</span>
+              <div className={`dropdown-content ${dropdownOpen ? "show" : ""}`}>
+                <button className="dropdown-item" onClick={handleProfile}>
+                  Profile
+                </button>
+                <button className="dropdown-item" onClick={handleLogout}>
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <Grid         className="mainContainer"
+        templateColumns="0.3fr 1fr"
+        templateRows="1fr"
+        gap={6}>
+      <GridItem w="100%" h="20"> {/* Adjust height as needed */}
+      <button
+        className={`navbar-button ${!showGroups ? 'active' : ''}`}
+        onClick={handleGroupsClick}
+      >
+        Groups
+      </button>
+      <button
+        className={`navbar-button ${!showUsers ? 'active' : ''}`}
+        onClick={handleUsersClick}
+      >
+        Users
+      </button>
+      {!showGroups && <UserGroupsList />}
+      {!showUsers && <UserChatList />}
+    </GridItem>
+        <GridItem w="100%" h="10" className="chat-box">
+          {" "}
+          {showChat && <Chat />}
+          {showUserChat && <UserChat />}
+        </GridItem>
+        {/* <GridItem w="100%" h="10" className="chat-box">
+          {" "}
+          {showUserChat && <UserChat />}
+        </GridItem> */}
+      </Grid>
+    </div>
+  );
+/*
   return (
     <div className="main-container">
       {showErr && (
@@ -120,7 +217,7 @@ const UserPage = () => {
         <GridItem>{showChat && <Chat />}</GridItem>
       </Grid>
     </div>
-  );
+  );*/
 };
 
 export default UserPage;

@@ -16,6 +16,9 @@ import Groups from './pages/Groups'
 import Settings from './components/Settings'
 import ScheduledMsgsList from './components/ScheduledMsgsList'
 import Notifications from './components/Notifications'
+import UserChatList from './components/UserChatList'
+import UserChat from './components/UserChat'
+//import { BrowserRouter as Router, Switch, 
 
 //import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 function App() {
@@ -38,6 +41,10 @@ function App() {
         <Route path='/Settings' element={<Settings/>}/>
         <Route path='/ScheduledMsgsList' element={<ScheduledMsgsList/>}/>
         <Route path='/Notifications' element={<Notifications/>}/>
+        <Route path='/UserChatList' element={<UserChatList/>}/>
+       <Route path='/UserChat' element={<UserChat/>}/>
+       
+
 
         
     </Routes>
