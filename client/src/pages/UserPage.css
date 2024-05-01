@@ -3,7 +3,7 @@
 .main-container {
   display: flex;
   flex-direction: column;
-  height: auto;
+  height: 900px;
 
   background-color: #b8b4da;
   width: 100vw; /* Full width of the viewport */

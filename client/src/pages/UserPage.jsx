@@ -20,6 +20,7 @@ import Users from "../components/Users";
 import { useToast } from '@chakra-ui/react'
 import UserChatList from '../components/UserChatList'
 import UserChat from "../components/UserChat"
+import Profile from "../components/Profile"
 
 
 //import { useLogout } from './hooks/useLogout';
@@ -54,11 +55,13 @@ const UserPage = () => {
     setShowChat,
   } = useAuthContext();
   const [showUsers, setShowUsers] = useState(false);
-  const [showGroups, setShowGroups] = useState(false);
+  const [showGroups, setShowGroups] = useState(true);
 
   useEffect(() => {}, [notification]);
   useEffect(() => {
     setShowChat(false);
+    setShowUsers(false);
+    setShowGroups(true);
   }, []);
 
   const handleProfile = async () => {
@@ -120,9 +123,9 @@ const UserPage = () => {
             <div className="navbar-username" onClick={toggleDropdown}>
               <span className="username">Welcome {user.username} &#9660;</span>
               <div className={`dropdown-content ${dropdownOpen ? "show" : ""}`}>
-                <button className="dropdown-item" onClick={handleProfile}>
-                  Profile
-                </button>
+
+                  <Profile></Profile>
+
                 <button className="dropdown-item" onClick={handleLogout}>
                   Logout
                 </button>
@@ -149,6 +152,7 @@ const UserPage = () => {
       >
         Users
       </button>
+
       {!showGroups && <UserGroupsList />}
       {!showUsers && <UserChatList />}
     </GridItem>

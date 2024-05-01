@@ -108,7 +108,9 @@ exports.followedUsersList = catchAsyncErrors(async (req, res, next) => {
     if(admin.followedUsers.length === 0) {
       return next(new ErrorHandler("No followedUsers found", 404));
     }
+   // console.loge('followedUsers:'+admin.followedUsers)
     res.json(admin.followedUsers);
+
   } catch (error) {
     console.error("Error getting followed users:", error);
     next(error);
@@ -217,6 +219,28 @@ exports.checkUserExistInMute1 = catchAsyncErrors(async (req, res, next) => {
   } catch (error) {
     console.error('Error checking user in mute list:', error);
     res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+exports.followedUsersList2 = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const adminId = req.body.adminId;
+    console.log(adminId);
+    const admin = await User.findById(adminId);
+    if (!admin)
+    {
+      return next(new ErrorHandler("No admin found2", 404));
+    }
+    if(admin.followedUsers.length === 0) {
+      return next(new ErrorHandler("No followedUsers found", 404));
+    }
+   // console.loge('followedUsers:'+admin.followedUsers)
+   const  followdUsers = admin.followedUsers.map(user =>user.userId);
+   console.loge('followedUsers:'+followdUsers)
+    res.json(followdUsers);
+
+  } catch (error) {
+    console.error("Error getting followed users:", error);
   }
 });
 

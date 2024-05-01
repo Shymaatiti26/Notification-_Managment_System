@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useTable, usePagination, useGlobalFilter } from "react-table";
 import axios from "axios";
@@ -15,6 +14,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
+import { useAuthContext } from "../hooks/useAuthComtext";
 
 //import CreateGroup from "../components/CreateGroup";
 //import { useAuthContext } from "../hooks/useAuthComtext";
@@ -26,19 +26,24 @@ const Users = () => {
   const btnRef = React.useRef();
   const userData = JSON.parse(localStorage.getItem("user"));
   const adminId = userData._id;
-  const adminUsername= userData.username;
+  const adminUsername = userData.username;
   const [userExistErr, setUserExistErr] = useState(false);
+  const {
+    user
+  } = useAuthContext();
 
-
-  
   useEffect(() => {
+    /*
     // Load followed users from localStorage on component mount
     const storedFollowedUsers = JSON.parse(
       localStorage.getItem("followedUsers")
     );
     if (storedFollowedUsers) {
       setFollowedUsers(storedFollowedUsers);
-    }
+    }*/
+
+    getFollowedUsers();
+
     // Fetch users from the server
     axios
       .get("http://localhost:3001/api/v1/getAllUsers")
@@ -48,26 +53,54 @@ const Users = () => {
       .catch((error) => {
         console.error("Error fetching users:", error);
       });
+
+     // getFollowedUsers();
   }, []);
+
+  useEffect(() => {
+
+
+   // getFollowedUsers();
+  }, []);
+
+  
+
+  const getFollowedUsers = async () => {
+    const adminId = user._id;
+    try {
+      const response = await axios.get(
+        "http://localhost:3001/api/v1/followedUsersList2",
+        {adminId}
+      );
+      console.log("followed groups" + response.data);
+      setFollowedUsers(response.data);
+      //console.log(response.data)
+    } catch (error) {
+      throw error;
+    }
+  };
+
   //createUserArray(adminId);
   const handleFollow = (userId) => {
-    
     //createUserArray(adminId);
-    if(followedUsers.includes(userId)){
+    if (followedUsers.includes(userId)) {
       axios
-      .put("http://localhost:3001/api/v1/RemoveUserFromUser1", {adminId,userId })
-      .then(() => {
-        // Update the state
-        setFollowedUsers(followedUsers.filter((id) => id !== userId));
-        // Update localStorage
-        localStorage.setItem(
-          "followedUsers",
-          JSON.stringify(followedUsers.filter((id) => id !== userId))
-        );
-      })
-      .catch((error) => {
-        console.error("Error removing user from user1:", error);
-      });
+        .put("http://localhost:3001/api/v1/RemoveUserFromUser1", {
+          adminId,
+          userId,
+        })
+        .then(() => {
+          // Update the state
+          setFollowedUsers(followedUsers.filter((id) => id !== userId));
+          // Update localStorage
+          localStorage.setItem(
+            "followedUsers",
+            JSON.stringify(followedUsers.filter((id) => id !== userId))
+          );
+        })
+        .catch((error) => {
+          console.error("Error removing user from user1:", error);
+        });
     } else {
       // If the group is not followed, follow it
       axios
@@ -85,10 +118,8 @@ const Users = () => {
           console.error("Error updating user:", error);
         });
     }
-
   };
 
-  
   const columns = React.useMemo(
     () => [
       {

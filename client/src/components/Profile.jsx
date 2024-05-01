@@ -1,11 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import {
+  HStack,
+  VStack,
+  Box,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+} from "@chakra-ui/react";
 
 const ProfilePage = () => {
   const [user, setUser] = useState('');
   const [error, setError] = useState(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [groupExistErr, setGroupExistErr] = useState();
+  const[successMsg,setSuccessMsg] =useState(false);
 
   useEffect(() => {
+    
     const fetchUserProfile = async () => {
       try {
         const userData = JSON.parse(localStorage.getItem('user'));
@@ -30,6 +46,7 @@ const ProfilePage = () => {
     };
 
     fetchUserProfile(); // Call the function when the component mounts
+    setSuccessMsg(false);
 
   }, []);
   
@@ -40,6 +57,7 @@ const ProfilePage = () => {
   };
 
   const handleSubmit = async () => {
+    event.preventDefault();
     const userData = {
       id:user._id,
       username: user.username,
@@ -50,13 +68,21 @@ const ProfilePage = () => {
     try {
       await axios.put('http://localhost:3001/api/v1/me/update',userData); // Adjust endpoint accordingly
       console.log('Changes saved successfully');
+      setSuccessMsg(true);
     } catch (error) {
       console.error('Error saving changes:', error);
     }
   };
   return (
     <div>
-     <h1 className="title">Your Details</h1>
+            <button onClick={onOpen}> Profile </button>
+
+<Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+  <ModalOverlay />
+  <ModalContent>
+    <ModalCloseButton color={"black"} />
+    <ModalBody pb={6}>
+     <h1 className="title">My profile</h1>
       {user ? ( // Render content if user is not null
              <form className="form"onSubmit={handleSubmit}>
                <div className="form-row">
@@ -90,12 +116,18 @@ const ProfilePage = () => {
                  <input type="submit" value="Save" className="form-submit"/>
                </div>
          
+        {successMsg && (<div className="successMsg">changes saved</div>)}
+       
              </form>
         
       ) : (
         <div>Loading...</div> // Render loading message while user data is being fetched
       )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </div>
+
   );
   
 };

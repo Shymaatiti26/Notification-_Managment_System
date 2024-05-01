@@ -13,26 +13,30 @@ import {
   ModalCloseButton,
   useDisclosure,
 } from "@chakra-ui/react";
-import './ScheduledMsgsList.css'
+import "./ScheduledMsgsList.css";
 
 //get all the user scheduled messages from db
 const ScheduledMsgsList = () => {
-  const { user,selectedUser } = useAuthContext();
+  const { user, selectedUser } = useAuthContext();
 
   const [messages, setMessages] = useState([]);
-  const[messagesUser,setMessagesUser]=useState([]);
- // const username= selectedUser.username;
+  const [messagesUser, setMessagesUser] = useState([]);
+  // const username= selectedUser.username;
   //const userName = user.username;
   const userData = JSON.parse(localStorage.getItem("user")); //get the user  info of current logged in use
   const userName = userData.username;
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  useEffect(() => {
-    getScheduledMsgs();
-    getScheduledMsgsForUser();
-  }, [messages],[messagesUser]);
+  useEffect(
+    () => {
+      getScheduledMsgs();
+      getScheduledMsgsForUser();
+    },
+    [messages],
+    [messagesUser]
+  );
 
-  const getScheduledMsgsForUser= async()=>{
+  const getScheduledMsgsForUser = async () => {
     try {
       const response = await axios.get(
         "http://localhost:3001/api/v1/getScheduledMsgsForUser",
@@ -49,7 +53,7 @@ const ScheduledMsgsList = () => {
       throw error;
     }
   };
-//get the user scheduled messages from db
+  //get the user scheduled messages from db
   const getScheduledMsgs = async () => {
     /*
         const response = await axios.get('http://localhost:3001/api/v1/getScheduledMsgs ',{user});
@@ -79,43 +83,59 @@ const ScheduledMsgsList = () => {
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalCloseButton color={'black'} />
+          <ModalCloseButton color={"black"} />
           <ModalBody pb={6}>
             <h3>My Scheduled Messages</h3>
-          <br />
-      <VStack className="messages" spacing={2} align="stretch" overflowY="auto">
-        {messages.map((message) => (
-          <Box>
-            <Box className="messageBox" p={4} key={message._id}>
-            {message.group.map((group) => (
-            <strong key={group._id}>Send To Group: {group.groupName}</strong>
-        ))}
-              <p> Message: {message.message} </p>
-              <p className="sendingTime">send message at: {message.timeSent}</p>
-            </Box>
-            <div className="footer">
-              <button className="delete_button">Delete</button>
-            </div>
-            <Box className= "messageUserBox" p={4} key={messagesUser.adminId}>
-            {messagesUser.map((message) => (
-            <strong key={message.userId}>Send To User: {message.username}</strong>
-        ))}
-              <p> Message: {message.message} </p>
-              <p className="sendingTime">send message at: {message.timeSent}</p>
+            <br />
+            <VStack
+              className="messages"
+              spacing={2}
+              align="stretch"
+              overflowY="auto"
+            >
+              {messages.map((message) => (
+                <Box>
+                  <Box className="messageBox" p={4} key={message._id}>
+                    {message.group.map((group) => (
+                      <strong key={group._id}>
+                        Send To Group: {group.groupName}
+                      </strong>
+                    ))}
+                    <p> Message: {message.message} </p>
+                    <p className="sendingTime">
+                      send message at: {message.timeSent}
+                    </p>
+                  </Box>
+                  <div className="footer">
+                    <button className="delete_button">Delete</button>
+                  </div>
+                </Box>
+              ))}
+              {messagesUser.map((message) => (
+                <Box>
+                  <Box
+                    className="messageUserBox"
+                    p={4}
+                    key={messagesUser.adminId}
+                  >
+                    <strong key={message.userId}>
+                      Send To User: {message.username}
+                    </strong>
 
-            </Box>
-            <div className="footer">
-              <button className="delete_button">Delete</button>
-            </div>
-          </Box>
-        ))}
-      </VStack>
+                    <p> Message: {message.message} </p>
+                    <p className="sendingTime">
+                      send message at: {message.timeSent}
+                    </p>
+                  </Box>
+                  <div className="footer">
+                    <button className="delete_button">Delete</button>
+                  </div>
+                </Box>
+              ))}
+            </VStack>
           </ModalBody>
-
-
         </ModalContent>
       </Modal>
-
     </div>
   );
 };

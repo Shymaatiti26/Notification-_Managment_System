@@ -32,6 +32,7 @@ const UserGroupsList = () => {
     setGroupSenders,
     muteGroup,
     setMuteGroup,
+    setShowUserChat
   } = useAuthContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [latestMessage, setLatestMessage] = useState();
@@ -148,7 +149,7 @@ const UserGroupsList = () => {
   return (
     <div className="myGroups_box">
       <div className="myGroups-head">
-        <HStack>
+
           <h3 className="groupTitle">My Groups</h3>
 
           <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
@@ -164,7 +165,7 @@ const UserGroupsList = () => {
           <Button onClick={onOpen} className="ceateGroup-button">
             Create New Group
           </Button>
-        </HStack>
+
       </div>
 
       <br />
@@ -180,8 +181,10 @@ const UserGroupsList = () => {
                 console.log('selectedGroup: ', selectedGroup);
                 const IsMuted = await IsGroupMuted(group._id);
                 setMuteGroup(IsMuted);
+                setShowUserChat(false);
                 setShowChat(true);
                 getGroupSenders(group._id);
+                
 
               }}
             >

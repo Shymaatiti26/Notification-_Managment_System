@@ -1,5 +1,6 @@
 const express = require('express');
-const { getAllUsers,followUser,removeUserFromUser1,UnfollowUser,followedUsersList,setLatestUserMessage ,setMuteUser,checkUserExistInMute1} = require('../controllers/userController');
+const { getAllUsers,followUser,removeUserFromUser1,UnfollowUser,followedUsersList,
+    setLatestUserMessage ,setMuteUser,checkUserExistInMute1,followedUsersList2} = require('../controllers/userController');
 const {sendUserMessages,getUserMessage,setSenLaterToFalse,getScheduledMsgsForUser}=require('../controllers/userMessageController')
 const router = express.Router(); 
 
@@ -16,4 +17,6 @@ router.route('/sendUserMessages').post(sendUserMessages);
 router.route('/getUserMessage').post(getUserMessage);
 router.route('/setSenLaterToFalse').post(setSenLaterToFalse);
 router.route('/getScheduledMsgsForUser').get(getScheduledMsgsForUser);
+router.route('/followedUsersList2').get(followedUsersList2);
+
 module.exports= router;

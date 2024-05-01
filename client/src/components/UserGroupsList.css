@@ -15,7 +15,7 @@
   position: relative;
   color: aliceblue;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   font-size: 2em;
   padding: 10px;
@@ -35,7 +35,6 @@
 }
 .groups {
   height:680px;
-  max-height: 680px;
 }
 
 .ceateGroup-button {
@@ -80,7 +79,9 @@
 
 .sendingTime{
   font-size: 15px;
-  color:#6c7a89;
+  color:#eff2f5;
+  font-weight: bold;
+  
 
 }
 
