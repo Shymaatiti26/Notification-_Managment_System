@@ -2,7 +2,7 @@ const User = require('../models/User')
 const ErrorHandler = require('../utils/errorHandler')
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 const createToken = require('../utils/jwtToken');
-
+const Group = require("../models/GroupModel")
 
 
 
@@ -240,11 +240,22 @@ exports.saveNotification = catchAsyncErrors(async (req, res, next) => {
     try {
         // Extract notification data from request body
         const notification = req.body.notification;
+        console.log("tttttttt",notification)
+        const GroupDetails = await Group.findById(notification.groupId);
+    if (!GroupDetails) {
+      throw new Error("Group details not found");
+    }
       //  const notificationsRecived = req.body.notificationsRecived;
-
+      const GroupObject = {
+        userId: GroupDetails._id,
+        username: GroupDetails.groupName, // Assuming username is a field in the User model
+        groupAdmin:GroupDetails.groupAdmin
+      };
         // Create notification object
         const notif = {
             sender: notification.sender,
+            senderDetails:GroupObject,
+            senderName:GroupObject.username,
             group: notification.group,
             message: notification.message,
             timeSent: notification.timeSent,

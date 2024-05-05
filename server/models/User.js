@@ -70,6 +70,7 @@ const userSchema = new mongoose.Schema({
             userId:{ type: String, default: "null"},
             username:{ type: String, default: "null"},
             email:{ type: String, default: "null"},
+            groupAdmin:[{type: String, default: "null"}]
          },
         senderName:{type: String, default: "null"},
         group: { type: String},

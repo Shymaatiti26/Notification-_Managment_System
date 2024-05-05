@@ -154,7 +154,6 @@ const Chat = () => {
       "http://localhost:3001/api/v1/sendMessages",
       { groupId }
     );
-    console.log(response.data.message);
     setMessages(response.data.messages);
   };
 
@@ -200,6 +199,13 @@ const Chat = () => {
       setInputMessage("");
       //setUserRoom();
       sendNotif(messageData, sendLater, msgId);
+      //adham
+selectedGroup.users.forEach((user) => {
+  debugger;
+  if(user !== messageData.senderId){
+    saveNotificationToServer(messageData, user);
+  }
+});
 
       //if(sendLater===true){
       //save schedualed message to db

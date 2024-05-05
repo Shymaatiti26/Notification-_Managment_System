@@ -50,28 +50,28 @@ const Notifications = () => {
           }
         }
       );
-             const notifications = response.data;
-             //change:
-             const filteredNotifications = notifications.filter(notif => notif.notificationsRecived !== "fromUser");
+            //  const notifications = response.data;
+            //  //change:
+            //  const filteredNotifications = notifications.filter(notif => notif.notificationsRecived !== "fromUser");
 
-            // Fetch group details for each notification
-            const updatedNotifications = await Promise.all(
-              filteredNotifications.map(async (notif) => {
-                const groupId = notif.group;
-                //console.log('my notifs: '+notif.group)
-                const groupResponse = await axios.get(
-                  "http://localhost:3001/api/v1/getGroupByID",{groupId}
-                );
-                const groupData = groupResponse.data;
+            // // Fetch group details for each notification
+            // const updatedNotifications = await Promise.all(
+            //   filteredNotifications.map(async (notif) => {
+            //     const groupId = notif.group;
+            //     //console.log('my notifs: '+notif.group)
+            //     const groupResponse = await axios.get(
+            //       "http://localhost:3001/api/v1/getGroupByID",{groupId}
+            //     );
+            //     const groupData = groupResponse.data;
                 
-                return { ...notif, group: groupData }; // Replace group ID with group details
-              })
-            );
+            //     return { ...notif, group: groupData }; // Replace group ID with group details
+            //   })
+            // );
             // Concatenate filtered notifications with updated notifications
             //change
-            const allNotifications = [...notifications.filter(notif => notif.notificationsRecived === "fromUser"), ...updatedNotifications];
+            //const allNotifications = [...notifications.filter(notif => notif.notificationsRecived === "fromUser"), ...updatedNotifications];
 
-            setNotification(allNotifications);
+            setNotification(response.data);
 
     } catch (error) {
       console.error("Error fetching user notifications:", error);
@@ -103,7 +103,13 @@ const Notifications = () => {
                   deleteNotification(notif._id);
                 }
                 else {
-                  setSelectedGroup(notif.group);
+                  var group = { 
+                    groupName : notif.senderDetails.username,
+                    groupAdmin:notif.senderDetails.groupAdmin,
+                    _id : notif.senderDetails.userId
+
+                  }
+                  setSelectedGroup(group);
                   setShowChat(true);
                   deleteNotification(notif._id);
                 }
