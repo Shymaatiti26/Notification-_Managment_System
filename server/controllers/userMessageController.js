@@ -12,7 +12,7 @@ exports.sendUserMessages=catchAsyncErrors(async(req,res,next)=>{
         { adminId: userId, userId: adminId, sendLater: false }
       ] });
     // const messages = messagesData.map(message => message.message);
-    // console.log(messages); 
+    console.log("tezeMessages",messages); 
     res.status(200).json({messages:messages})
 });
 

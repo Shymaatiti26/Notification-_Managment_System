@@ -66,18 +66,30 @@ const userSchema = new mongoose.Schema({
 
     notifications: [{
         sender:{type: String} ,
+        senderDetails:{ 
+            userId:{ type: String, default: "null"},
+            username:{ type: String, default: "null"},
+            email:{ type: String, default: "null"},
+         },
+        senderName:{type: String, default: "null"},
         group: { type: String},
         message:{type: String} ,
         timeSent:{type: String},
         sendLater:{type: String},
-        groupName:{type: String}
+        groupName:{type: String}, 
+        notificationsRecived:{
+            type:String,
+            default: "null"
+        },
     }],
 
+
+   
 //     followedUsers: [{
 //         type: mongoose.Schema.Types.ObjectId,
 //         ref: 'User'
 //     }],
-followedUsers: [followedUserSchema], // Updated to include followed users with userId and username
+   followedUsers: [followedUserSchema], // Updated to include followed users with userId and username
 
 })
 

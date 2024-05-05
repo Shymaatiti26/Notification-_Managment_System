@@ -15,7 +15,7 @@ import {
 import UserSettings from "./UserSettings";
 import DatePicker from "react-datepicker";
 import sound from '../assets/sound.wav';
-var newSocket,openedChat;
+var newSocket,openedChat,userId;
 
 const UserChat = () => {
   const [messages, setMessages] = useState([]);
@@ -25,17 +25,23 @@ const UserChat = () => {
   const {
     user,
     selectedUser,
-    setNotification,
+    setSelectedUser,
+    setUserNotification,
+    userNotification,
     userSocket, 
-    setUserSocket,setShowUserChat
+    notification,
+    setNotification,
+    setUserSocket,setShowUserChat,
+    
   } = useAuthContext();
+
   //const groupData = JSON.parse(localStorage.getItem("group"));
   const storedFollowedUsers = JSON.parse(localStorage.getItem("followedUsers"));
  // const userId= storedFollowedUsers._id;
   const userData = JSON.parse(localStorage.getItem("user")); //get the user  info of current logged in user
   const adminId = userData._id;
-  let userId = selectedUser.userId;
-  let username= selectedUser.username;
+  //let userId = selectedUser.userId;
+  //let username= selectedUser.username;
   //let groupId = selectedGroup._id;
   const [selectedDate, setSelectedDate] = useState(null);
   const [sendLater, setSendLater] = useState(false);
@@ -45,10 +51,11 @@ const UserChat = () => {
   useEffect(() => {
     //setGroupId(selectedGroup._id)
    // setSelectedUser(storedFollowedUsers.userId);
-    userId = selectedUser.userId;
+   userId = selectedUser.userId;
     //username= selectedUser.username;
     getUserMessages();
     openedChat =selectedUser;
+    
   }, [selectedUser]);
 
 
@@ -69,20 +76,24 @@ const UserChat = () => {
 
       // Assuming you want to send the notification to the first user in the array
       const userToSendNotification = notif.userId;
+      const notificationsRecived="fromUser";
   
-      if(openedChat!==null && (openedChat.userId===notif.userId ||openedChat.userId===notif.adminId) ){
+      if((openedChat!==null ) && (openedChat.userId===notif.userId ||openedChat.userId===notif.adminId) )
+      {
         setMessages((prevMessages) => [...prevMessages, notif]);
-       }else{
+    
+       }
+       //else{
 
       // Update state with the notification
-      setNotification(prevNotif => [...prevNotif, notif]);
-  
+      if(!openedChat||openedChat.userId!==notif.adminId)
+      {
+        setNotification(prevNotif => [...prevNotif, notif]);
+        console.log('notifications'+notification);
       // Play notification sound
       playSound();
-
-  
       // Send notification to the selected user
-     // saveNotificationToServer(notif, userToSendNotification);
+      saveNotificationToServer(notif, userToSendNotification,notificationsRecived);
     }
   });
   
@@ -122,8 +133,8 @@ const UserChat = () => {
   };
 
   //save notification in db 
-  const saveNotificationToServer = async (notification,userId) =>{
-    const response = await axios.post("http://localhost:3001/api/v1/saveNotification",{notification, userId})
+  const saveNotificationToServer = async (notification,userId,notificationsRecived) =>{
+    const response = await axios.post("http://localhost:3001/api/v1/saveNotificationforUser",{notification, userId,notificationsRecived})
 
 
   }
@@ -238,6 +249,7 @@ const UserChat = () => {
           marginLeft="auto"
           onClick={() => {
             setShowUserChat(false);
+            //setSelectedUser(null);
           }}
         />
       </div>
@@ -254,9 +266,9 @@ const UserChat = () => {
 
       <div className="chat-header">
         <p>{selectedUser.username}</p>
-        <div className="settingIcon">
+        {/* <div className="settingIcon">
           <SettingsIcon cursor="pointer" boxSize={6} onClick={onOpen} />
-        </div>
+        </div> */}
       </div>
 
       <div className="chat-body">

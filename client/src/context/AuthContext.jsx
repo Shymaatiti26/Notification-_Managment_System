@@ -33,6 +33,8 @@ export const AuthContextProvider = ({ children }) => {
     const[muteUser,setMuteUser]=useState();
     const[showUserChat,setShowUserChat] = useState(false);
     const [userSocket, setUserSocket] = useState();
+    const [userNotification, setUserNotification] = useState([]); //user notification
+    const [notificationsRecived, SetnotificationsRecived] = useState("");
     //end changes
   
 
@@ -57,7 +59,7 @@ export const AuthContextProvider = ({ children }) => {
       setNotification,selectedGroup, setSelectedGroup, groups, setGroups,showErr,setShowErr,error,setError,showChat,
       setShowChat,socket, setSocket, IsGroupAdmin, setIsGroupAdmin,groupSenders,setGroupSenders,muteGroup,setMuteGroup,
       selectedUser,userSocket, setUserSocket,setSelectedUser,users,setUsers,IsAdmin,setAdmin,userSenders
-      ,setUsersSenders,muteUser,setMuteUser,showUserChat,setShowUserChat }}>
+      ,setUsersSenders,muteUser,setMuteUser,showUserChat,setShowUserChat ,userNotification, setUserNotification,notificationsRecived, SetnotificationsRecived}}>
      
       {children}
     </AuthContext.Provider>
