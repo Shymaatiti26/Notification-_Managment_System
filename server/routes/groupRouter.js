@@ -14,7 +14,7 @@ router.route('/RemoveUserFromGroup').put(RemoveUserFromGroup);
 router.route('/changeGgoupName').post(ChangeGgoupName);
 router.route('/UnfollowGroup').post(UnfollowGroup);
 router.route('/getGroups').get(getGroups);
-router.route('/getGroupByID').post(getGroupByID);
+router.route('/getGroupByID').get(getGroupByID);
 router.route('/getGroupUsers').post(getGroupUsers);
 router.route('/setGroupSender').post(setGroupSender);
 router.route('/getGroupSenders').post(getGroupSenders);

@@ -240,3 +240,121 @@ exports.followedUsersList2 = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
+//save notification in user db
+// exports.saveNotificationforUser = catchAsyncErrors(async (req, res, next) => {
+//   try {
+//     // Extract notification data from request body
+//     const { notification, userId, notificationsRecived } = req.body;
+
+//     // Validate notification data to ensure it's properly formed
+
+//     // Create notification object to be saved in user's notifications array
+//     const notif = {
+//       sender: notification.adminId,
+//       group: notification.userId,
+//       message: notification.message,
+//       timeSent: notification.timeSent,
+//       sendLater: notification.sendLater,
+//       groupName: notification.username // Assuming notification.group exists
+//     };
+
+//     // Find the user by userId
+//     const user = await User.findById(userId);
+
+//     // If user is not found, handle the error
+//     if (!user) {
+//       return res.status(404).json({ error: 'User not found' });
+//     }
+
+//     // Push the notification to user's notifications array
+//     user.notifications.push(notif);
+
+//     // Ensure notificationsRecived is an array before pushing to it
+   
+//       user.notifications.notificationsRecived.push(notificationsRecived);
+    
+
+//     // Save the updated user document
+//     await user.save();
+
+//     // Send a success response
+//     res.status(200).json({ success: true, message: 'Notification saved successfully' });
+//   } catch (error) {
+//     // Handle any errors that occur during the process
+//     console.error('Error saving notification:', error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
+
+exports.saveNotificationforUser = catchAsyncErrors(async (req, res, next) => {
+  try {
+    // Extract notification data from request body
+    const { notification, userId, notificationsRecived } = req.body;
+
+    const senderDetails = await User.findById(notification.adminId);
+    if (!senderDetails) {
+      throw new Error("Sender details not found");
+    }
+    // Validate notification data to ensure it's properly formed
+    console.log("btehaaa",senderDetails)
+    const senderObject = {
+      userId: senderDetails._id,
+      username: senderDetails.username, // Assuming username is a field in the User model
+      email: senderDetails.email, // Assuming email is a field in the User model
+      // Add other required sender details as needed
+    };
+    // Create notification object to be saved in user's notifications array
+    const notif = {
+      sender: notification.adminId,
+      senderDetails: senderObject,
+      senderName: notification.adminName,
+      group: notification.userId,
+      message: notification.message,
+      timeSent: notification.timeSent,
+      sendLater: notification.sendLater,
+      groupName: notification.username, // Assuming notification.group exists
+      notificationsRecived // Assign notificationsRecived to the notification object
+    };
+
+    // Find the user by userId
+    const user = await User.findById(userId);
+    //const senderDetails = await User.findById(notif.sender);
+
+    // If user is not found, handle the error
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    console.log("userNotiAdham",notif);
+    // Push the notification to user's notifications array
+    notif.senderDetails=senderDetails;
+    user.notifications.push(notif);
+
+    // Save the updated user document
+    await user.save();
+
+    // Send a success response
+    res.status(200).json({ success: true, message: 'Notification saved successfully' });
+  } catch (error) {
+    // Handle any errors that occur during the process
+    console.error('Error saving notification:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+exports.getUserByID = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const userId = req.body.userId;
+    const user = await User.findById(userId); // Replace 'Group' with your actual mongoose model name
+    //console.log(group);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});

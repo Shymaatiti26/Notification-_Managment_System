@@ -90,6 +90,7 @@ const Chat = () => {
 
     // Listen for user incoming notification
     newSocket.on("receive-notif", async (notif, user) => {
+      // const notificationsRecived="fromGroup";
       console.log('selectedGroupId:'+selectedGroup._id+'  message.groupId:'+notif.groupId);
 
       if(openedChat!==null && openedChat._id===notif.group._id){
@@ -99,6 +100,7 @@ const Chat = () => {
 
       const groupId = notif.groupId;
       const userId = user.toString();
+      
       console.log('the user is:'+user);
       //check if the user muted this group
       const response = await axios.post(
@@ -125,7 +127,7 @@ const Chat = () => {
   const saveMessageToServer = async (message, sendLater) => {
     const response = await axios.post(
       "http://localhost:3001/api/v1/getMessage",
-      { message }
+      { message, }
     );
     return response.data;
   };

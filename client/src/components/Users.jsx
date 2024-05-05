@@ -196,12 +196,12 @@ const Users = () => {
               placeholder="Search Users..."
               onChange={(e) => setGlobalFilter(e.target.value)}
             />
-            <table {...getTableProps()} className="userTable">
+            <table {...getTableProps()} className="usersTable">
               <thead>
                 {headerGroups.map((headerGroup) => (
                   <tr {...headerGroup.getHeaderGroupProps()} className="">
                     {headerGroup.headers.map((column) => (
-                      <th {...column.getHeaderProps()} className="userTh">
+                      <th {...column.getHeaderProps()} className="usersTh">
                         {column.render("Header")}{" "}
                       </th>
                     ))}
@@ -215,7 +215,7 @@ const Users = () => {
                     <tr {...row.getRowProps()}>
                       {row.cells.map((cell) => {
                         return (
-                          <td className="userId" {...cell.getCellProps()}>
+                          <td className="usersTd" {...cell.getCellProps()}>
                             {cell.render("Cell")}
                           </td>
                         );

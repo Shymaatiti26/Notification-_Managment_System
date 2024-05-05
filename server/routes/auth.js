@@ -29,7 +29,7 @@ router.route('/me').get(getUserProfile);
 
 router.route('/saveNotification').post(saveNotification);
 
-router.route('/getUserNotifications').post(getUserNotifications);
+router.route('/getUserNotifications').get(getUserNotifications);
 
 router.route('/deleteNotification').post(deleteNotification);
 

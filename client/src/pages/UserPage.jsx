@@ -21,7 +21,7 @@ import { useToast } from '@chakra-ui/react'
 import UserChatList from '../components/UserChatList'
 import UserChat from "../components/UserChat"
 import Profile from "../components/Profile"
-
+import UserNotifications from "../components/UserNotification"
 
 //import { useLogout } from './hooks/useLogout';
 const UserPage = () => {
@@ -42,7 +42,8 @@ const UserPage = () => {
     setIsGroupAdmin,
     IsGroupAdmin,
     showUserChat,
-    setShowUserChat
+    setShowUserChat,
+    SetnotificationsRecived
   } = useAuthContext();
   const { dispatch } = useAuthContext();
   //const groupData=JSON.parse(localStorage.getItem('group',))
@@ -84,6 +85,7 @@ const UserPage = () => {
     // setIsGroup(true);
      setShowGroups(false);
      setShowUsers(true);
+    // SetnotificationsRecived("fromGroup");
    
    };
    
@@ -91,6 +93,7 @@ const UserPage = () => {
      ///setIsGroup(false);
      setShowGroups(true);
      setShowUsers(false);
+     //SetnotificationsRecived("fromUser");
    };
 
    return (
@@ -118,7 +121,6 @@ const UserPage = () => {
           </div>
           <div className="navbar-right">
             <Notification></Notification>
-
 
             <div className="navbar-username" onClick={toggleDropdown}>
               <span className="username">Welcome {user.username} &#9660;</span>

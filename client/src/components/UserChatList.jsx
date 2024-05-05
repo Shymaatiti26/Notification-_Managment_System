@@ -36,6 +36,7 @@ const UserChatList = () => {
     setMuteUser,
     showUserChat,
     setShowUserChat,
+    
   } = useAuthContext();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -141,6 +142,7 @@ useEffect(() => {
               key={admin._id}
               onClick={async () => {
                 setSelectedUser(admin);
+                //SetnotificationsRecived("fromUser");
                 //const IsMuted = await IsGroupMuted(admin._id);
                 // setMuteUser(IsMuted);
                 setShowChat(false);

@@ -18,6 +18,7 @@ import ScheduledMsgsList from './components/ScheduledMsgsList'
 import Notifications from './components/Notifications'
 import UserChatList from './components/UserChatList'
 import UserChat from './components/UserChat'
+import UserNotifications from './components/UserNotification'
 //import { BrowserRouter as Router, Switch, 
 
 //import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
@@ -42,8 +43,8 @@ function App() {
         <Route path='/ScheduledMsgsList' element={<ScheduledMsgsList/>}/>
         <Route path='/Notifications' element={<Notifications/>}/>
         <Route path='/UserChatList' element={<UserChatList/>}/>
-       <Route path='/UserChat' element={<UserChat/>}/>
-       
+        <Route path='/UserChat' element={<UserChat/>}/>
+        <Route path='/UserNotifications' element={<UserNotifications/>}/>
 
 
         

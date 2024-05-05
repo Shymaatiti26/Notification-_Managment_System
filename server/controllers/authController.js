@@ -217,49 +217,112 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
 })
 
 //save notification in user db
-exports.saveNotification =catchAsyncErrors(async (req, res, next)=>{
-    const notification = req.body.notification;
-    const notif = {    sender:notification.sender ,
-        group:notification.group ,
-        message: notification.message,
-        timeSent:notification.timeSent,
-        sendLater:notification.sendLater,
-        groupName:notification.group.groupName,
+// exports.saveNotification =catchAsyncErrors(async (req, res, next)=>{
+//     const notification = req.body.notification;
+//     const notificationsRecived= req.body.notificationsRecived;
+//     const notif = {    sender:notification.sender ,
+//         group:notification.group ,
+//         message: notification.message,
+//         timeSent:notification.timeSent,
+//         sendLater:notification.sendLater,
+//         groupName:notification.group.groupName,
+//         notificationsRecived
+//     }
+
+//     const user = await User.findById(req.body.userId)
+//     user.notifications.push(notif)
+//     await user.save();
+//    // user.notificationsRecived.push(notificationsRecived);
+//     //await user.save();
+
+// })
+exports.saveNotification = catchAsyncErrors(async (req, res, next) => {
+    try {
+        // Extract notification data from request body
+        const notification = req.body.notification;
+      //  const notificationsRecived = req.body.notificationsRecived;
+
+        // Create notification object
+        const notif = {
+            sender: notification.sender,
+            group: notification.group,
+            message: notification.message,
+            timeSent: notification.timeSent,
+            sendLater: notification.sendLater,
+            groupName: notification.group.groupName,
+        };
+
+        // Find the user by userId
+        const user = await User.findById(req.body.userId);
+
+        // If user is not found, handle the error
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Push the notification to user's notifications array
+        user.notifications.push(notif);
+
+        // Save the updated user document
+        await user.save();
+
+        // Send a success response
+        res.status(200).json({ success: true, message: 'Notification saved successfully' });
+    } catch (error) {
+        // Handle any errors that occur during the process
+        console.error('Error saving notification:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
+});
 
-    const user = await User.findById(req.body.userId)
-    user.notifications.push(notif)
-    await user.save();
-
-})
 
 //get user notification from db
 exports.getUserNotifications = catchAsyncErrors(async(req, res, next)=>{
-    const user = await  User.findById(req.body.userId).populate('notifications.group')
-    
+    const user = await  User.findById(req.query.userId).populate('notifications.group')
     res.status(200).json(user.notifications);
     //console.log(user.notifications);
     
 
 
 });
-
-exports.deleteNotification = catchAsyncErrors(async(req, res, next)=>{
-    const notifId= req.body.notifId;
+exports.deleteNotification = catchAsyncErrors(async(req, res, next) => {
+    const notifId = req.body.notifId;
     const userId = req.body.userId;
 
-    try{
-    const notif = await User.findByIdAndUpdate(
-        userId, 
-        { $pull: {notifications: { _id: notifId }} },
-        { new: true }
-    );
+    try {
+        const user = await User.findByIdAndUpdate(
+            userId,
+            { $pull: { notifications: { _id: notifId } } },
+            { new: true }
+        );
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.status(200).json({ success: true, message: 'Notification deleted successfully' });
+    } catch (error) {
+        console.error("Error deleting notification:", error);
+        res.status(500).json({ error: 'Internal server error' });
     }
-    catch (error) {
-        console.error("Error delete notification:", error);
-        res.status(500).send("Error delete notification");
-      }
+});
+
+// exports.deleteNotification = catchAsyncErrors(async(req, res, next)=>{
+//     const notifId= req.body.notifId;
+//     const userId = req.body.userId;
+
+//     try{
+//     const notif = await User.findByIdAndUpdate(
+//         userId, 
+//         { $pull: {notifications: { _id: notifId }} },
+//         { new: true }
+//     );
+//     }
+//     catch (error) {
+//         console.error("Error delete notification:", error);
+//         res.status(500).send("Error delete notification");
+//       }
 
     
-})
+// })
 
