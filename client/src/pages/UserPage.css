@@ -1,0 +1,168 @@
+
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  height: 900px;
+
+  background-color: #b8b4da;
+  width: 100vw; /* Full width of the viewport */
+  
+}
+
+.toolbar {
+    display: flex;
+    flex-direction:row;
+    align-items:center;
+    max-height: 150px;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #fcfcfc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin:5px;
+    min-width:auto;
+  }
+
+  .toolbar-username {
+    font-size: 22px;
+    color: #553597;
+    font-weight: bold;
+    margin-left: 5px;
+  }
+
+  .toolbar-logo {
+    max-width:fit-content;
+    height: auto;
+    margin-bottom: 5px;
+    width: 400px; /* Set the width as per your requirement */
+    height: 190px; /* Set the height as per your requirement */
+    padding: 10px;
+    align-items: center;
+  }
+
+  .logout-button {
+    background-color: #553597;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+  }
+
+
+  .chat-box{
+
+    width: auto;
+    height: auto;
+    
+
+
+
+  }
+
+
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #55628f;
+    color: white;
+        height: 70px;
+  }
+  
+  .navbar-logo {
+    height: 60px;
+
+  }
+  
+  .navbar-button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .navbar-center {
+    display: flex;
+    flex-grow: 1; /* This ensures the center section takes up remaining space */
+    text-align: center;
+    flex-direction: row;
+    justify-content:center;
+    
+    justify-content: space-around;
+    
+  }
+  
+  .navbar-right {
+    display: flex;
+    flex-direction:row;
+    position: relative;
+
+
+  }
+  
+  .navbar-username {
+    cursor: pointer;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #333;
+    min-width: 100px;
+    right: 0;
+    top: 100%;
+    z-index: 1;
+  }
+  
+  .dropdown-content.show {
+    display: block;
+  }
+  
+  .dropdown-item {
+    color: white;
+    padding: 8px 10px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+  }
+  
+  .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .dropdown-arrow {
+    margin-left: 10px;
+  }
+  
+  .arrow {
+    font-size: 14px;
+  }
+  
+  .rotate {
+    transform: rotate(180deg);
+  }
+
+  .mainContainer{
+    display: flex;
+    flex-direction: row;
+
+    height: auto;
+    width: auto;
+    
+    
+  }
+
+  .searchIcon{
+    cursor: pointer;
+    margin-left: 5px;
+
+
+  }

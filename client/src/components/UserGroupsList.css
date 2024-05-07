@@ -1,0 +1,92 @@
+.myGroups_box {
+  background-color: #fdfdfd;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: auto;
+  height: auto;
+}
+
+.myGroups-head {
+  max-height: fit-content;
+  width: auto;
+  border-radius: 6px;
+  background: #420e72;
+  position: relative;
+  color: aliceblue;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 2em;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.groupBox {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #b8b4da;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  max-height: 120px;
+  cursor: pointer;
+}
+.groups {
+  height:680px;
+}
+
+.ceateGroup-button {
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  background-color: #420e72;
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: auto;
+  height: 20px;
+}
+
+.groupTitle {
+  margin: 0;
+  color: #fff;
+}
+
+
+.footer{
+  display: flex;
+  align-items: end;
+  justify-content: end;
+
+}
+
+.delete_button{
+  padding: 2px;
+  border: none;
+  border-radius: 8px;
+  background-color: #420e72;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: fit-content;
+  height:fit-content; 
+  align-items: end;
+}
+
+.sendingTime{
+  font-size: 15px;
+  color:#eff2f5;
+  font-weight: bold;
+  
+
+}
+
+.groupNameAndIcon{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

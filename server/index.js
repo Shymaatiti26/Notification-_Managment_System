@@ -1,68 +1,170 @@
-const express =require("express")
-const mongoose = require('mongoose')
-const cors = require("cors")
-const UsersModel = require('./models/User')
-const jwt = require('jsonwebtoken');
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const jwt = require("jsonwebtoken");
+const bodyParser = require("body-parser");
+const nodemailer = require("nodemailer");
+const connectDB = require("./connectDB");
+const loginRouter = require("./routes/loginRouter");
+const signup = require("./routes/signupRouter");
+const newMessage = require("./routes/NewMessageHandler");
+//const chat=require('./routes/chatRouter')
+const app = express();
+//app.use(cors())
+const http = require("http");
+const socketIo = require("socket.io");
+const Profile = require("./routes/Profile");
+const schedule = require("node-schedule");
 
-const app=express()
-app.use(express.json())
-app.use(cors())
+//new changes
+const cookieParser = require("cookie-parser");
+const errorMiddleware = require("./middlewares/errors");
+const auth = require("./routes/auth");
+const groupRouter = require("./routes/groupRouter");
+const messageRouter = require("./routes/messageRouter");
+const userRouter = require("./routes/userRouter");
+//const task = require('./scheduleTasks');
+let latestGroup;
 
-mongoose.connect("mongodb://127.0.0.1:27017/NotificationsSystem");
+app.use(express.json());
+app.use(cookieParser());
 
+//////// end new changes
 
-app.post('/signup',async(req,res)=>{
-    const formData = req.body.formData;
-  try{
-     // Check if the username already exists
-     const ExistingUser=await UsersModel.findOne({username:formData.username});
-    if(ExistingUser){
-        return res.json({success:false, message:'Username already exists' } )
-    }
-   // Username doesn't exist, create a new user
-    UsersModel.create(formData)
-    res.json({ success: true, message: 'User registered successfully' });
+////
+// Use http.createServer to create a server
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://localhost:3000"],
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true, // Enable credentials (cookies, authorization headers, etc.)
+  })
+);
 
-    }catch (error) {
-    console.error('Error during signup:', error);
-    return res.status(500).json({ success: false, message: 'Internal server error', error: error });
-  }
- 
-})
-
-// Login route
-app.post('/login', async (req, res) => {
-  const { username, password } = req.body;
-
-  try {
-    const user =await UsersModel.findOne({username:username})
-    const userP=await UsersModel.findOne({password:password})
-    if(user){
-      if (userP) {
-        res.json({ success: true, message: 'Login successful' });
-      }else{
-        res.json({ success: false, message: 'Wrong password' });
-      }
-
-    }else {
-      res.json({ success: false, message: "No such user" })
-
-    }
-    /*
-    const user = await UsersModel.findOne({ username, password });
-    if (user) {
-      const token = jwt.sign({ username: user.username }, 'secret_key');
-      res.json({ success: true, message: 'Login successful', token });
-    } else {
-      res.status(401).json({ success: false, message: 'Invalid username or password' });
-    }*/
-  } catch (err) {
-    console.error('Error during login:', err.message);
-    res.status(500).json({ success: false, message: 'Internal server error' });
-  }
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: ["http://localhost:5173", "http://localhost:3000"], // Replace with your React app's URL
+    methods: ["GET", "POST"],
+  },
 });
 
+// Socket.IO event handling for chat
+io.on("connection", (socket) => {
+  console.log("User connected");
 
-app.listen(3001, ()=>{
-    console.log("server is running")
-})
+  socket.on("userRoom", (userId) => {
+    console.log(userId + "is in room");
+    socket.join(userId);
+    console.log("set user Room success ");
+  });
+
+  socket.on("joinGroup", (data) => {
+    if (latestGroup) {
+      socket.leave(latestGroup);
+      console.log("group" + latestGroup + " is left");
+    }
+    latestGroup = data;
+    socket.join(data);
+    console.log(`joined group: ${data}`);
+  });
+
+  // Listen for incoming chat messages
+  socket.on("send-message", (msg, sendLater, msgId) => {
+    if (sendLater === true) {
+      schedule.scheduleJob(msg.sendLaterDate, function () {
+        //console.log("Message Received : ",msg,'end')
+        io.to(msg.groupId).emit("receive-message", msg, sendLater, msgId);
+        /*  msg.users.forEach(user => {
+        io.to(user).emit('receive-notif', msg)
+      });*/
+      });
+    } else {
+      // Broadcast the message to all connected clients
+      //console.log("Message Received : ",msg,'end')
+      io.in(msg.groupId).emit("receive-message", msg, sendLater, msgId);
+
+      /*
+    msg.users.forEach(user => {
+      io.to(user).emit('receive-notif', msg,user)
+    });
+*/
+    }
+  });
+
+  // Listen for incoming chat messages
+  socket.on("send-notif", (msg, sendLater, msgId) => {
+    //if it is group chat
+    if (msg.users && msg.users.length > 0) {
+      if (sendLater === true) {
+        schedule.scheduleJob(msg.sendLaterDate, function () {
+          msg.users.forEach((user) => {
+            //if (msg.senderId !== user) {
+              io.to(user).emit("receive-notif", msg, user);
+            //}
+          });
+        });
+      } else {
+        msg.users.forEach((user) => {
+           //if(user !== msg.senderId){
+          console.log(msg.senderId + "==" + user);
+          io.to(user).emit("receive-notif", msg, user);
+          //}
+        });
+      }
+      //if it is user chat
+    } else if (msg.userId) {
+      // Handle user-to-user messages
+      if (sendLater === true) {
+        schedule.scheduleJob(msg.sendLaterDate, function () {
+        //  console.log("Message Received : ", msg, "end");
+          // io.to(msg.userId).emit("receive-message", msg, sendLater, msgId);
+          io.to(msg.userId).emit("receive-notif", msg);
+          io.to(msg.adminId).emit("receive-notif", msg);
+        });
+      } else {
+        // Broadcast the message to the specified user
+       // console.log("Message Received : ", msg, "end");
+        //io.to(msg.userId).emit("receive-message", msg, sendLater, msgId);
+        io.to(msg.userId).emit("receive-notif", msg);
+       // console.log("adminId:" + msg.adminId + "userId:" + msg.userId);
+        io.to(msg.adminId).emit("receive-notif", msg);
+      }
+    } else {
+      console.log("Error: msg.users is undefined or empty");
+    }
+  });
+
+  socket.off("joinGroup", () => {
+    console.log("USER DISCONNECTED");
+    socket.leave(data);
+  });
+  // Cleanup on user disconnect
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
+});
+////
+
+//const PORT = process.env.PORT || 5000;
+app.use(bodyParser.json());
+
+connectDB().then((r) => console.log("DB connection successful!"));
+
+// app.use("/",signup);
+// app.use("/",loginRouter);
+app.use("/", newMessage);
+//app.use("/",chat);
+app.use("/", Profile);
+
+app.use("/api/v1", auth);
+app.use(errorMiddleware);
+app.use("/api/v1", groupRouter);
+app.use("/api/v1", messageRouter);
+app.use("/api/v1", userRouter);
+
+const PORT = process.env.PORT || 3001;
+server.listen(PORT, () => {
+  console.log(`server is running on port ${PORT}`);
+});
