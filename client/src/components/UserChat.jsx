@@ -86,7 +86,7 @@ const UserChat = () => {
        //else{
 
       // Update state with the notification
-      if(!openedChat||openedChat.userId!==notif.adminId)
+      else if(!openedChat||openedChat.userId!==notif.adminId)
       {
         setNotification(prevNotif => [...prevNotif, notif]);
         console.log('notifications'+notification);

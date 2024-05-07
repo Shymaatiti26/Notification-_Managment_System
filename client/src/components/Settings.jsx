@@ -55,40 +55,46 @@ const Settings = () => {
   };
 
   useEffect(() => {
-
     fetchUsers();
   }, []);
 
-      //fetch users to show on the select
-      const fetchUsers = async () => {
-        try {
-          //get all existing users
-          const response = await axios.get("http://localhost:3001/api/users");
-          setSelectUsers(response.data);
-          const filteredUsers = selectUsers.filter((user) => user !== user1Id);
-  
-          const givenOptions = response.data.map((user) => ({
-            label: user.username,
-            value: user._id,
-          }));
+  //fetch users to show on the select
+  const fetchUsers = async () => {
+    try {
+      //get all existing users
+      const response = await axios.get("http://localhost:3001/api/users");
+      setSelectUsers(response.data);
+      const filteredUsers = selectUsers.filter((user) => user !== user1Id);
 
-  
-          const response2 = await axios.post(
-            "http://localhost:3001/api/v1/getGroupUsers",
-            { groupId }
-          );
-          const adminsOptions = response2.data.map((user) => ({
-            label: user.username,
-            value: user,
-          }));
-  
-          setAdminsOptions(adminsOptions.filter(admin => !selectedGroup.groupAdmin.includes(admin.label)));
+      const givenOptions = response.data.map((user) => ({
+        label: user.username,
+        value: user._id,
+      }));
 
-          setOptions(givenOptions.filter(option=>!selectedGroup.users.includes(option.value)));
-        } catch (error) {
-          console.error("Error fetching users:", error);
-        }
-      };
+      const response2 = await axios.post(
+        "http://localhost:3001/api/v1/getGroupUsers",
+        { groupId }
+      );
+      const adminsOptions = response2.data.map((user) => ({
+        label: user.username,
+        value: user,
+      }));
+
+      setAdminsOptions(
+        adminsOptions.filter(
+          (admin) => !selectedGroup.groupAdmin.includes(admin.label)
+        )
+      );
+
+      setOptions(
+        givenOptions.filter(
+          (option) => !selectedGroup.users.includes(option.value)
+        )
+      );
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
 
   //delete Group
   const deleteGroup = (groupId) => {
@@ -126,7 +132,7 @@ const Settings = () => {
     );
   };
 
-  //handle group senders swich 
+  //handle group senders swich
   const handleGroupSendersChange = async () => {
     // Set the groupSenders state and use a callback function to execute axios.post
     setGroupSenders((prevGroupSenders) => {
@@ -175,7 +181,7 @@ const Settings = () => {
       return newMuteGroup;
     });
   };
-//handle selected  Members in the select 
+  //handle selected  Members in the select
   const handleMembersChange = (e) => {
     const selectedGroups = Array.from(e, (option) => option.value);
     setMembers(selectedGroups);
@@ -208,20 +214,22 @@ const Settings = () => {
 
   const getGroupByID = async () => {
     try {
-      const response = await axios.post("http://localhost:3001/api/v1/getGroupById", { groupId });
+      const response = await axios.post(
+        "http://localhost:3001/api/v1/getGroupById",
+        { groupId }
+      );
       setSelectedGroup(response.data);
     } catch (error) {
       console.error("Error fetching group details:", error);
       // Handle error if needed
     }
   };
-  
 
-  const deleteAdmin = async(adminUsername)=>{
-    response= await axios.post("http://localhost:3001/api/v1/deleteAdmin",
-    { groupId, adminUsername }
-  );
-
+  const deleteAdmin = async (adminUsername) => {
+    response = await axios.post("http://localhost:3001/api/v1/deleteAdmin", {
+      groupId,
+      adminUsername,
+    });
   };
 
   return (
@@ -300,16 +308,16 @@ const Settings = () => {
                   </button>
                 </div>
               )}
-              {IsGroupAdmin&&(
-              <div className="add-admin-icon">
-                
-                <span
-                  class="material-symbols-outlined"
-                  onClick={() => setShowAddAdminSelect(!showAddAdminSelect)}
-                >
-                  group_add
-                </span>
-              </div>)}
+              {IsGroupAdmin && (
+                <div className="add-admin-icon">
+                  <span
+                    class="material-symbols-outlined"
+                    onClick={() => setShowAddAdminSelect(!showAddAdminSelect)}
+                  >
+                    group_add
+                  </span>
+                </div>
+              )}
             </div>
           </div>
           <VStack
@@ -335,9 +343,7 @@ const Settings = () => {
                     {" "}
                     (you)
                   </span>
-
                 )}
-
               </Box>
             ))}
           </VStack>
@@ -363,14 +369,16 @@ const Settings = () => {
                 </div>
               )}
 
-              <div className="add-admin-icon">
-                {IsGroupAdmin&&(<span
-                  class="material-symbols-outlined"
-                  onClick={() => setShowAddMemberSelect(!showAddMemberSelect)}
-                >
-                  group_add
-                </span>)}
-              </div>
+              {IsGroupAdmin && (
+                <div className="add-admin-icon">
+                  <span
+                    class="material-symbols-outlined"
+                    onClick={() => setShowAddMemberSelect(!showAddMemberSelect)}
+                  >
+                    group_add
+                  </span>
+                </div>
+              )}
             </div>
           </div>
           <VStack
@@ -382,15 +390,17 @@ const Settings = () => {
             {users.map((user) => (
               <Box className="groupMember">
                 <strong>{user.label}</strong>
-                {IsGroupAdmin&&!(user.value._id === userId) && !selectedGroup.groupAdmin.includes(user.label) && (
-                  <button onClick={() => deleteGroupMember(user.value._id)}>
-                    <SmallCloseIcon
-                      className="closeIcon"
-                      boxSize={5}
-                      color="red.500"
-                    ></SmallCloseIcon>
-                  </button>
-                )}
+                {IsGroupAdmin &&
+                  !(user.value._id === userId) &&
+                  !selectedGroup.groupAdmin.includes(user.label) && (
+                    <button onClick={() => deleteGroupMember(user.value._id)}>
+                      <SmallCloseIcon
+                        className="closeIcon"
+                        boxSize={5}
+                        color="red.500"
+                      ></SmallCloseIcon>
+                    </button>
+                  )}
                 {selectedGroup.groupAdmin.includes(user.label) && (
                   <span style={{ fontWeight: "bold", color: "gray" }}>
                     {" "}

@@ -95,38 +95,40 @@ io.on("connection", (socket) => {
 
   // Listen for incoming chat messages
   socket.on("send-notif", (msg, sendLater, msgId) => {
+    //if it is group chat
     if (msg.users && msg.users.length > 0) {
       if (sendLater === true) {
         schedule.scheduleJob(msg.sendLaterDate, function () {
           msg.users.forEach((user) => {
-            if (msg.senderId !== user) {
+            //if (msg.senderId !== user) {
               io.to(user).emit("receive-notif", msg, user);
-            }
+            //}
           });
         });
       } else {
         msg.users.forEach((user) => {
-          // if(user !== msg.senderId){
+           //if(user !== msg.senderId){
           console.log(msg.senderId + "==" + user);
           io.to(user).emit("receive-notif", msg, user);
           //}
         });
       }
+      //if it is user chat
     } else if (msg.userId) {
       // Handle user-to-user messages
       if (sendLater === true) {
         schedule.scheduleJob(msg.sendLaterDate, function () {
-          console.log("Message Received : ", msg, "end");
-         // io.to(msg.userId).emit("receive-message", msg, sendLater, msgId);
+        //  console.log("Message Received : ", msg, "end");
+          // io.to(msg.userId).emit("receive-message", msg, sendLater, msgId);
           io.to(msg.userId).emit("receive-notif", msg);
           io.to(msg.adminId).emit("receive-notif", msg);
         });
       } else {
         // Broadcast the message to the specified user
-        console.log("Message Received : ", msg, "end");
+       // console.log("Message Received : ", msg, "end");
         //io.to(msg.userId).emit("receive-message", msg, sendLater, msgId);
         io.to(msg.userId).emit("receive-notif", msg);
-        console.log('adminId:'+msg.adminId+'userId:'+msg.userId);
+       // console.log("adminId:" + msg.adminId + "userId:" + msg.userId);
         io.to(msg.adminId).emit("receive-notif", msg);
       }
     } else {
