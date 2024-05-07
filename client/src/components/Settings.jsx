@@ -300,14 +300,16 @@ const Settings = () => {
                   </button>
                 </div>
               )}
+              {IsGroupAdmin&&(
               <div className="add-admin-icon">
+                
                 <span
                   class="material-symbols-outlined"
                   onClick={() => setShowAddAdminSelect(!showAddAdminSelect)}
                 >
                   group_add
                 </span>
-              </div>
+              </div>)}
             </div>
           </div>
           <VStack
@@ -362,12 +364,12 @@ const Settings = () => {
               )}
 
               <div className="add-admin-icon">
-                <span
+                {IsGroupAdmin&&(<span
                   class="material-symbols-outlined"
                   onClick={() => setShowAddMemberSelect(!showAddMemberSelect)}
                 >
                   group_add
-                </span>
+                </span>)}
               </div>
             </div>
           </div>
@@ -380,7 +382,7 @@ const Settings = () => {
             {users.map((user) => (
               <Box className="groupMember">
                 <strong>{user.label}</strong>
-                {!(user.value._id === userId) && !selectedGroup.groupAdmin.includes(user.label) && (
+                {IsGroupAdmin&&!(user.value._id === userId) && !selectedGroup.groupAdmin.includes(user.label) && (
                   <button onClick={() => deleteGroupMember(user.value._id)}>
                     <SmallCloseIcon
                       className="closeIcon"
